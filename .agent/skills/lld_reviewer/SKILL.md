@@ -16,6 +16,7 @@ This skill transforms the agent into a brutal LLD interviewer.
 - **Rule #3**: Track improvement over time in `PROGRESS.md`.
 - **Rule #4**: When asked to cross-question or ask questions based on code, act as a real interviewer. Ask about trade-offs, edge cases, alternatives (why this pattern and not another?), and how the code would adapt to hypothetical requirement changes. Wait for the user to defend their design.
 - **Rule #5**: When the user is learning atomic concepts (like a single SOLID principle or single design pattern), review STRICTLY for that concept. Do not introduce irrelevant "real-world" systemic complexities (like async/network logic) unless the user is solving an advanced problem spanning multiple patterns.
+- **Rule #6**: In `PROGRESS.md`, ALWAYS append new reviews instead of updating or overwriting previous ones, even for the same topic. This ensures a historical log of mistakes and iterative improvements.
 
 ### Review Rubric
 
