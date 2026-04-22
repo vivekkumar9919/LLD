@@ -4,11 +4,11 @@ This document serves as the learning plan for mastering LLD from beginner to adv
 
 ## 0. The Fundamentals (SOLID Principles)
 Before diving into patterns, you must internalize these:
-- [ ] Single Responsibility Principle (SRP)
-- [ ] Open/Closed Principle (OCP)
-- [ ] Liskov Substitution Principle (LSP)
-- [ ] Interface Segregation Principle (ISP)
-- [ ] Dependency Inversion Principle (DIP)
+- [x] Single Responsibility Principle (SRP)
+- [x] Open/Closed Principle (OCP)
+- [x] Liskov Substitution Principle (LSP)
+- [x] Interface Segregation Principle (ISP)
+- [x] Dependency Inversion Principle (DIP)
 
 ## 1. Creational Design Patterns
 *Focus: Object creation mechanisms.*
