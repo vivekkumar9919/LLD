@@ -9,3 +9,4 @@ This document serves as the tracker for Vivek's backend LLD interview preparatio
 | 2026-04-20 | LSP (SOLID) | Perfect inheritance structure. Avoided duplicated withdrawal logic. | None. Flawless LSP execution. | 10/10 |
 | 2026-04-22 | ISP (SOLID) | Great segregation of 2D and 3D shapes. Good use of inheritance tree solving the fat interface. | Just note that JS leans heavily toward Object Composition instead of deep inheritance for ISP later on. | 9.5/10 |
 | 2026-04-23 | DIP (SOLID) | Flawless Dependency Injection. Tightly coupled constructor fixed. Great use of encapsulation with `getItems()`. | None. Perfect final piece to SOLID. | 10/10 |
+| 2026-04-27 | Singleton (Creational) | Handled JS async race conditions perfectly. Used Node's module caching native Eager Singleton correctly. | Basic implementation has a fatal logical bug (`__instance` vs `_instance` typo). | 8.5/10 |
