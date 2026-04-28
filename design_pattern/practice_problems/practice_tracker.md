@@ -15,3 +15,11 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 - [ ] Implement a **Database Connection Pool** class asynchronously. Ensure the exact same pool instance is securely returned to 3 incoming API requests running concurrently. 
 - [ ] Implement a **Logger** class eagerly. Ensure all components in the app write to the exact same log buffer array without race conditions.
 - [ ] Implement a Singleton `FeatureToggleService` that fetches a massive remote JSON config (delay mock with setTimeout). Test what happens if multiple modules request the toggle status while the network request is still pending.
+
+## Creational: Factory Patterns
+*Status: Ready to Practice*
+- [ ] **Factory Method**: Implement a `LogisticsApp`. Use a Factory Method to handle the creation of `Truck` (Road) and `Ship` (Sea) transport. Ensure you can add `Airplane` (Air) transport later without touching the main logic.
+- [ ] **Abstract Factory**: Build a `CrossPlatformUI` toolkit. Create an Abstract Factory `UIFactory` that produces `Button` and `Checkbox`. Implement concrete factories `WindowsFactory` and `MacFactory` to produce OS-specific variants.
+- [ ] **Abstract Factory**: Implement a `CloudResourceFactory` that manages families of related cloud services: `ComputeInstance` and `StorageBucket`. Provide concrete implementations for `AWSFactory` and `GCPFactory`.
+- [ ] **Simple Factory**: Refactor an e-commerce `DiscountCalculator` that uses a messy `switch` statement for 'BLACK_FRIDAY', 'CHRISTMAS', and 'HOLI' into a clean Factory structure.
+- [ ] **Hybrid**: Create a `PizzaStore` using the Factory Method for different regions (New York, Chicago) and then use an Abstract Factory inside those stores to create "Families" of ingredients (ThinCrust, Mozzarella vs ThickCrust, Reggiano).
