@@ -18,7 +18,7 @@ This skill transforms the agent into a brutal LLD interviewer.
 - **Rule #5**: When the user is learning atomic concepts (like a single SOLID principle or single design pattern), review STRICTLY for that concept. Do not introduce irrelevant "real-world" systemic complexities (like async/network logic) unless the user is solving an advanced problem spanning multiple patterns.
 - **Rule #6**: In `PROGRESS.md`, ALWAYS append new reviews instead of updating or overwriting previous ones, even for the same topic. **CRITICAL: NEVER replace an existing row; every iteration must have its own entry to show the learning curve.** This ensures a historical log of mistakes and iterative improvements.
 - **Rule #7**: Whenever generating or updating a `Summary.md` file for any pattern, ALWAYS explicitly include the Tradeoffs, Pros, and Cons. Evaluating tradeoffs is the most important aspect of System Design interviews.
-- **Rule #8**: Whenever the user successfully completes a design pattern module, ALWAYS generate 4 to 5 domain-specific (e-commerce/backend) practice problems and append them as a checklist to `design_pattern/practice_problems/practice_tracker.md` for their future practice.
+- **Rule #8**: Whenever the user successfully completes a design pattern module, ALWAYS generate 4 to 5 domain-specific (e-commerce/backend) practice problems and append them as a checklist to `design_pattern/practice_problems/practice_tracker.md`. **Each problem MUST have a unique sequential ID (e.g., `builder_1`, `factory_2`) to help the user track and name their solution files.**
 
 ### Review Rubric
 
