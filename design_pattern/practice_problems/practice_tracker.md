@@ -23,3 +23,11 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 - [ ] **Abstract Factory**: Implement a `CloudResourceFactory` that manages families of related cloud services: `ComputeInstance` and `StorageBucket`. Provide concrete implementations for `AWSFactory` and `GCPFactory`.
 - [ ] **Simple Factory**: Refactor an e-commerce `DiscountCalculator` that uses a messy `switch` statement for 'BLACK_FRIDAY', 'CHRISTMAS', and 'HOLI' into a clean Factory structure.
 - [ ] **Hybrid**: Create a `PizzaStore` using the Factory Method for different regions (New York, Chicago) and then use an Abstract Factory inside those stores to create "Families" of ingredients (ThinCrust, Mozzarella vs ThickCrust, Reggiano).
+
+## Creational: Builder Pattern
+*Status: Ready to Practice*
+- [ ] **Query Builder**: Implement a `SQLQueryBuilder` that supports `select()`, `from()`, `where()`, `join()`, and `limit()`. Ensure the `build()` method returns a valid SQL string and handles multiple `where` clauses correctly.
+- [ ] **E-commerce Order**: Create an `OrderBuilder`. Use a **Director** to provide templates like `buildGuestOrder()` and `buildPremiumMemberOrder()` which automatically apply different discounts.
+- [ ] **Stepwise Form**: Build a `RegistrationFormBuilder` using the **Step Builder** pattern. Enforce the sequence: `Username -> Email -> Password -> (Optional) ProfilePic -> Build`.
+- [ ] **Report Generator**: Implement a `ReportBuilder` for a dashboard. It should support `setHeader()`, `addTableData()`, and `setFooter()`. Ensure that `addTableData()` can be called multiple times, but `setHeader()` can only be called once.
+- [ ] **Game Character**: Create a `CharacterBuilder` for an RPG. It should handle complex attributes like `setStats(str, dex, int)`, `setEquipments([])`, and `setAbilities([])`. Use the Builder to ensure a character cannot be built without a minimum "Health" value.
