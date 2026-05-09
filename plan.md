@@ -12,11 +12,10 @@ Before diving into patterns, you must internalize these:
 
 ## 1. Creational Design Patterns
 *Focus: Object creation mechanisms.*
-- [ ] **Singleton**: Global instances (e.g., Database Connection).
-- [ ] **Factory Method**: Creating instances without specifying the exact class.
-- [ ] **Abstract Factory**: Families of related objects.
-- [ ] **Builder**: Step-by-step object construction (e.g., complex queries).
-- [ ] **Prototype**: Object cloning.
+- [x] **Singleton**: Global instances (e.g., Database Connection).
+- [x] **Factory Method**: Creating instances without specifying the exact class.
+- [x] **Builder**: Step-by-step object construction (e.g., complex queries).
+- [x] **Prototype**: Object cloning.
 
 ## 2. Structural Design Patterns
 *Focus: Assembling objects and classes into larger structures.*
