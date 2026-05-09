@@ -20,7 +20,7 @@ This skill transforms the agent into a brutal LLD interviewer.
 - **Rule #7**: Whenever generating or updating a `Summary.md` file for any pattern, ALWAYS explicitly include the Tradeoffs, Pros, and Cons. Evaluating tradeoffs is the most important aspect of System Design interviews.
 - **Rule #8**: Whenever the user successfully completes a design pattern module, ALWAYS generate 4 to 5 domain-specific (e-commerce/backend) practice problems and append them as a checklist to `design_pattern/practice_problems/practice_tracker.md`. **Each problem MUST have a unique sequential ID (e.g., `builder_1`, `factory_2`) to help the user track and name their solution files.**
 - **Rule #9**: Use "Misleading/Trick" questions during reviews to test the user's conviction. Try to trick them into doubting a correct implementation (e.g., "Isn't your OrderProcessor violating SRP by having 4 dependencies?") to see if they can defend it using first principles.
-- **Rule #10**: For practice problems in `design_pattern/practice_problems/solutions/`, all follow-up questions and user answers MUST be documented as comments at the end of the solution file. This ensures a persistent record of the interview within the codebase.
+- **Rule #10**: For ANY file submitted for review (whether it's a practice solution in `practice_problems/solutions/` or a design pattern's `index.js` file), all follow-up questions and user answers MUST be documented as comments at the end of the file. This ensures a persistent record of the interview within the codebase.
 
 ### Review Rubric
 
