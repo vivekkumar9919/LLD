@@ -19,7 +19,7 @@ Before diving into patterns, you must internalize these:
 
 ## 2. Structural Design Patterns
 *Focus: Assembling objects and classes into larger structures.*
-- [ ] **Adapter**: Making incompatible interfaces collaborate.
+- [x] **Adapter**: Making incompatible interfaces collaborate.
 - [ ] **Decorator**: Dynamically adding behaviors.
 - [ ] **Facade**: Simplified interface to a complex system.
 - [ ] **Proxy**: Controlling access to an object.

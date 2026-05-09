@@ -17,3 +17,4 @@ This document serves as the tracker for Vivek's backend LLD interview preparatio
 | 2026-05-01 | Practice: solid_1 (SRP) | Clean extraction of responsibilities. Strong conceptual defense of SRP vs. Orchestration. | Tightly coupled constructor (needs DI). Needs to clarify Static vs. Instance tradeoffs. | 9/10 |
 | 2026-05-09 | Prototype Pattern (Initial) | Demonstrated JS language feature (`prototype`) correctly. | Confused JS language feature (Prototypal Inheritance) with GoF Prototype Design Pattern. Needs `clone()`. | 4/10 |
 | 2026-05-09 | Prototype Pattern (Final) | Excellent correction. Proper `clone()` method using `[...this.skills]` to prevent array mutation. | Need to explicitly consider deep cloning tradeoffs if objects have deeply nested properties. | 9/10 |
+| 2026-05-10 | Adapter Pattern (Initial) | Solid Object Adapter via composition. Good adherence to SRP and OCP. | Class name `XMLDataProviderAdapter` is slightly verbose. | 9/10 |
