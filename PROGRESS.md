@@ -19,3 +19,4 @@ This document serves as the tracker for Vivek's backend LLD interview preparatio
 | 2026-05-09 | Prototype Pattern (Final) | Excellent correction. Proper `clone()` method using `[...this.skills]` to prevent array mutation. | Need to explicitly consider deep cloning tradeoffs if objects have deeply nested properties. | 9/10 |
 | 2026-05-10 | Adapter Pattern (Initial) | Solid Object Adapter via composition. Good adherence to SRP and OCP. | Class name `XMLDataProviderAdapter` is slightly verbose. | 9/10 |
 | 2026-05-11 | Practice: solid_2 (OCP) | Perfect Strategy pattern implementation. Embraced Duck Typing correctly. | Parameter shadowing confusion (`data` vs `this.data`). Answers to interrogation missing. | 9/10 |
+| 2026-05-12 | Practice: solid_3 (LSP) | Brilliant demonstration of splitting hierarchy to avoid contract violations. | Need to address how this works in "batch" processing scenarios. | 9.5/10 |
