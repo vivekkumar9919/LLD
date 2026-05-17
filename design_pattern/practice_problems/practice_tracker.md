@@ -61,3 +61,10 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 - [ ] **facade_2** (E-Commerce Checkout): Build a `CheckoutFacade` that coordinates `InventoryService.checkStock()`, `PaymentGateway.process()`, and `ShippingService.schedule()`. Ensure the facade takes dependencies via constructor (DIP).
 - [ ] **facade_3** (Smart Home API): Create a `SmartHomeFacade` to easily trigger "Morning Mode" or "Night Mode", which internally coordinates `LightingSystem`, `Thermostat`, and `SecuritySystem`.
 - [ ] **facade_4** (Database Migration): Hide the complexity of a database migration behind a `MigrationFacade` that coordinates `SchemaAnalyzer`, `DataTransferAgent`, and `ConnectionPoolManager`.
+
+## Structural: Proxy Pattern
+*Status: Ready to Practice*
+- [ ] **proxy_1** (Virtual Proxy - Heavy Document): Build a `DocumentProxy` that only loads a massive 100MB `RealDocument` from disk when the `render()` method is called, but can return the document's `metadata` instantly without loading the file.
+- [ ] **proxy_2** (Protection Proxy - Admin API): Implement a `DatabaseProxy` that intercepts `deleteRow()` calls and throws an Error if the `currentUser.role` is not 'SUPER_ADMIN'. Allow `getRow()` calls for everyone.
+- [ ] **proxy_3** (Cache Proxy - API Fetcher): Create a `WeatherAPIProxy` that wraps a `RealWeatherAPI`. If `getWeather(city)` is called, the proxy should return a cached response if it was fetched within the last 5 minutes. Otherwise, it delegates to the real API and updates the cache.
+- [ ] **proxy_4** (Smart Reference Proxy): Build a `ConnectionProxy` that wraps a `DBConnection`. The proxy should keep track of the number of active clients using the connection. If the active clients drop to 0, it automatically calls `realConnection.close()`.

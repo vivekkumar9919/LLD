@@ -22,7 +22,7 @@ Before diving into patterns, you must internalize these:
 - [x] **Adapter**: Making incompatible interfaces collaborate.
 - [x] **Decorator**: Dynamically adding behaviors.
 - [x] **Facade**: Simplified interface to a complex system.
-- [ ] **Proxy**: Controlling access to an object.
+- [x] **Proxy**: Controlling access to an object.
 - [ ] **Composite**: Tree structures (e.g., file systems).
 - [ ] **Bridge**: Separating abstraction from implementation.
 - [ ] **Flyweight**: Efficiently sharing large numbers of objects.

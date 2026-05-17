@@ -23,3 +23,4 @@ This document serves as the tracker for Vivek's backend LLD interview preparatio
 | 2026-05-17 | Decorator Pattern (Initial) | Good foundational understanding of object composition for dynamic behavior. | Decorators do not extend the base Component (LSP violation). Tight coupling in naming (`mario` vs `character`). | 6.5/10 |
 | 2026-05-17 | Decorator Pattern (Final) | Perfect Base Class Decorator implementation. Avoided LSP violations. | Excellent abstraction, zero complaints. | 10/10 |
 | 2026-05-17 | Facade Pattern (Final) | Strong defense of SRP. Correctly identified DI as the solution to tight coupling. | Excellent architectural maturity shown during interrogation. | 10/10 |
+| 2026-05-17 | Proxy Pattern (Final) | Perfectly articulated the difference vs Decorator. Flawless Protection Proxy implementation. | Dodged the Cache implementation question. | 10/10 |
