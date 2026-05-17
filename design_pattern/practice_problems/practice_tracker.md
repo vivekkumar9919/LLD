@@ -32,12 +32,7 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 - [ ] **builder_4** (Report Generator): Implement a `ReportBuilder` for a dashboard. It should support `setHeader()`, `addTableData()`, and `setFooter()`. Ensure that `addTableData()` can be called multiple times, but `setHeader()` can only be called once.
 - [ ] **builder_5** (Game Character): Create a `CharacterBuilder` for an RPG. It should handle complex attributes like `setStats(str, dex, int)`, `setEquipments([])`, and `setAbilities([])`. Use the Builder to ensure a character cannot be built without a minimum "Health" value.
 
-## Structural: Decorator Pattern
-*Status: Ready to Practice*
-- [ ] **decorator_1** (Coffee Shop): Implement a `Beverage` base class. Create decorators like `Milk`, `Mocha`, and `Whip` that dynamically calculate the `cost()` and `getDescription()` of the beverage.
-- [ ] **decorator_2** (Notifier System): Build an `EmailNotifier`. Decorate it with `SMSNotifier` and `SlackNotifier` so that a critical system alert can be sent via Email + SMS + Slack by stacking the decorators.
-- [ ] **decorator_3** (Data Source API): Implement a basic `FileDataSource` that writes/reads string data. Create a `EncryptionDecorator` (encrypts before writing) and a `CompressionDecorator` (compresses before writing). Chain them together.
-- [ ] **decorator_4** (Web Request Logger): Build a `BaseRequestHandler`. Add decorators like `AuthenticationCheck`, `Logging`, and `RateLimiting` that wrap the core handler to add middleware-like behavior without modifying the base handler.
+
 
 ## Creational: Prototype Pattern
 *Status: Ready to Practice*
@@ -52,3 +47,17 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 - [ ] **adapter_2** (Logger Migration): Your app uses a custom `Logger` with a `logMessage(msg)`. You want to switch to a powerful third-party library `WinstonLogger` which uses `info(text)` and `error(text)`. Write an Adapter to wrap `WinstonLogger` without changing your app's codebase.
 - [ ] **adapter_3** (Legacy DB to ORM): You have a `LegacyDatabase` class with `executeSQL(query)`. You are migrating to a modern `MongoORM` that requires `insertOne(document)`. Create an Adapter that intercepts SQL-like method calls and translates them to MongoDB document inserts.
 - [ ] **adapter_4** (Multi-Format Data Reader): Your application only understands JSON. You need to read data from a legacy API that returns CSV, and another that returns XML. Create `CSVAdapter` and `XMLAdapter` classes that convert these formats into the standard JSON interface your app expects.
+
+## Structural: Decorator Pattern
+*Status: Ready to Practice*
+- [ ] **decorator_1** (Coffee Shop): Implement a `Beverage` base class. Create decorators like `Milk`, `Mocha`, and `Whip` that dynamically calculate the `cost()` and `getDescription()` of the beverage.
+- [ ] **decorator_2** (Notifier System): Build an `EmailNotifier`. Decorate it with `SMSNotifier` and `SlackNotifier` so that a critical system alert can be sent via Email + SMS + Slack by stacking the decorators.
+- [ ] **decorator_3** (Data Source API): Implement a basic `FileDataSource` that writes/reads string data. Create a `EncryptionDecorator` (encrypts before writing) and a `CompressionDecorator` (compresses before writing). Chain them together.
+- [ ] **decorator_4** (Web Request Logger): Build a `BaseRequestHandler`. Add decorators like `AuthenticationCheck`, `Logging`, and `RateLimiting` that wrap the core handler to add middleware-like behavior without modifying the base handler.
+
+## Structural: Facade Pattern
+*Status: Ready to Practice*
+- [ ] **facade_1** (Video Converter): Create a `VideoConversionFacade` that hides the complexities of `AudioMixer`, `VideoFile`, `BitrateReader`, and `CodecFactory` behind a single `convertVideo(filename, format)` method.
+- [ ] **facade_2** (E-Commerce Checkout): Build a `CheckoutFacade` that coordinates `InventoryService.checkStock()`, `PaymentGateway.process()`, and `ShippingService.schedule()`. Ensure the facade takes dependencies via constructor (DIP).
+- [ ] **facade_3** (Smart Home API): Create a `SmartHomeFacade` to easily trigger "Morning Mode" or "Night Mode", which internally coordinates `LightingSystem`, `Thermostat`, and `SecuritySystem`.
+- [ ] **facade_4** (Database Migration): Hide the complexity of a database migration behind a `MigrationFacade` that coordinates `SchemaAnalyzer`, `DataTransferAgent`, and `ConnectionPoolManager`.
