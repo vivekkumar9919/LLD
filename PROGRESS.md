@@ -22,3 +22,4 @@ This document serves as the tracker for Vivek's backend LLD interview preparatio
 | 2026-05-12 | Practice: solid_3 (LSP) | Brilliant demonstration of splitting hierarchy to avoid contract violations. | Need to address how this works in "batch" processing scenarios. | 9.5/10 |
 | 2026-05-17 | Decorator Pattern (Initial) | Good foundational understanding of object composition for dynamic behavior. | Decorators do not extend the base Component (LSP violation). Tight coupling in naming (`mario` vs `character`). | 6.5/10 |
 | 2026-05-17 | Decorator Pattern (Final) | Perfect Base Class Decorator implementation. Avoided LSP violations. | Excellent abstraction, zero complaints. | 10/10 |
+| 2026-05-17 | Facade Pattern (Initial) | Successfully hid complex subsystem operations behind a simple unified interface. | Tightly coupled constructor (DIP violation). Duplicated subsystem calls inside the facade method. | 7.5/10 |
