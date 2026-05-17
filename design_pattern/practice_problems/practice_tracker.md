@@ -32,6 +32,13 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 - [ ] **builder_4** (Report Generator): Implement a `ReportBuilder` for a dashboard. It should support `setHeader()`, `addTableData()`, and `setFooter()`. Ensure that `addTableData()` can be called multiple times, but `setHeader()` can only be called once.
 - [ ] **builder_5** (Game Character): Create a `CharacterBuilder` for an RPG. It should handle complex attributes like `setStats(str, dex, int)`, `setEquipments([])`, and `setAbilities([])`. Use the Builder to ensure a character cannot be built without a minimum "Health" value.
 
+## Structural: Decorator Pattern
+*Status: Ready to Practice*
+- [ ] **decorator_1** (Coffee Shop): Implement a `Beverage` base class. Create decorators like `Milk`, `Mocha`, and `Whip` that dynamically calculate the `cost()` and `getDescription()` of the beverage.
+- [ ] **decorator_2** (Notifier System): Build an `EmailNotifier`. Decorate it with `SMSNotifier` and `SlackNotifier` so that a critical system alert can be sent via Email + SMS + Slack by stacking the decorators.
+- [ ] **decorator_3** (Data Source API): Implement a basic `FileDataSource` that writes/reads string data. Create a `EncryptionDecorator` (encrypts before writing) and a `CompressionDecorator` (compresses before writing). Chain them together.
+- [ ] **decorator_4** (Web Request Logger): Build a `BaseRequestHandler`. Add decorators like `AuthenticationCheck`, `Logging`, and `RateLimiting` that wrap the core handler to add middleware-like behavior without modifying the base handler.
+
 ## Creational: Prototype Pattern
 *Status: Ready to Practice*
 - [ ] **prototype_1** (Invoice Cloning): Implement an `Invoice` object with an array of `lineItems`. Create a deep clone mechanism so that when an invoice is cloned for a recurring monthly payment, modifying the new invoice's `lineItems` doesn't affect the original invoice.

@@ -11,23 +11,28 @@ class Mario extends Character {
     }
 }
 
-class HeightUp {
-
+class CharacterDecorator extends Character {
     constructor(character) {
+        super();
+        if (this.constructor === CharacterDecorator) {
+            throw new Error("Abstract classes can't be instantiated.");
+        }
         this.character = character;
     }
     getAbilities() {
-        return this.character.getAbilities() + "+ Height Up";
+        return this.character.getAbilities();
     }
 }
 
-class GunPower {
-
-    constructor(character) {
-        this.character = character;
-    }
+class HeightUp extends CharacterDecorator {
     getAbilities() {
-        return this.character.getAbilities() + "+ Gun Power ";
+        return super.getAbilities() + "+ Height Up";
+    }
+}
+
+class GunPower extends CharacterDecorator {
+    getAbilities() {
+        return super.getAbilities() + "+ Gun Power ";
     }
 }
 
