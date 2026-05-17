@@ -43,32 +43,38 @@ class OperatingSystem {
 
 class ComputerFacade {
 
-    constructor() {
-        this.powerSupply = new PowerSupply();
-        this.coolingSystem = new CoolingSystem();
-        this.cpu = new CPU();
-        this.memory = new Memory();
-        this.hardDrive = new HardDrive();
-        this.bios = new BIOS();
-        this.os = new OperatingSystem();
+    constructor(powerSupply, coolingSystem, cpu, memory, hardDrive, bios, os) {
+        this.powerSupply = powerSupply;
+        this.coolingSystem = coolingSystem;
+        this.cpu = cpu;
+        this.memory = memory;
+        this.hardDrive = hardDrive;
+        this.bios = bios;
+        this.os = os;
     }
 
     startComputer() {
         console.log("Starting Computer ...");
         this.powerSupply.providePower();
         this.coolingSystem.startFans();
-        this.cpu.initialize();
-        this.memory.selfTest();
+        // Removed redundant cpu.initialize() and memory.selfTest()
         this.hardDrive.spinUp();
-        this.bios.boot(this.cpu, this.memory);
+        this.bios.boot(this.cpu, this.memory); // BIOS handles cpu and memory
         this.os.load();
         console.log("Computer started ");
     }
 
-
 }
 
-const computer = new ComputerFacade();
+const power = new PowerSupply();
+const cooling = new CoolingSystem();
+const cpu = new CPU();
+const memory = new Memory();
+const hd = new HardDrive();
+const bios = new BIOS();
+const os = new OperatingSystem();
+
+const computer = new ComputerFacade(power, cooling, cpu, memory, hd, bios, os);
 computer.startComputer();
 
 /**
@@ -85,7 +91,7 @@ computer.startComputer();
  *    minutes in a real system), how would I mock the HardDrive with your 
  *    current design? How should you refactor the constructor to fix this?
  * 
- * 3. The "God Object" Trap (Misleading Question): Since a Facade connects 
+ * 3. The "God Object" Trap: Since a Facade connects
  *    to many subsystems, isn't it violating the Single Responsibility Principle (SRP) 
  *    by managing Power, Cooling, Memory, and Storage all at once? Doesn't 
  *    this make it a "God Object" that we should avoid?
