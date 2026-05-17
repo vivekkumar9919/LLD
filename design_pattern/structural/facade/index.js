@@ -106,4 +106,51 @@ computer.startComputer();
  *    cpu, memory , harddrive class respectively
  *    facade only provide a simplied interface to the complex system
  * 
+ * 4. The DI Paradox (User Question): "In my previous method, clients were not aware 
+ *    of the internal methods. But now we have made it tightly coupled here. If clients 
+ *    now know all the methods and their dependencies, why not call them directly 
+ *    instead of using the facade pattern?"
+ *    
+ *    AI Answer: You are 100% correct. If the *End Client* has to manually write 
+ *    `new PowerSupply()`, etc., the Facade has failed its primary goal of hiding complexity.
+ *    To get both Hidden Complexity AND Testability, we use a Factory (or IoC container).
+ *    The Factory builds the Facade. The Client only talks to the Factory.
+ *    `const myComputer = ComputerFactory.createStandardComputer();`
+ *    This isolates the Client from complexity, while still allowing Unit Tests to 
+ *    inject mocks directly into `new ComputerFacade(mockPower...)`.
+ *    
+ *    Solution 1: The Factory Pattern
+ *    
+     class ComputerFactory {
+        static createStandardComputer() {
+            // The factory handles all the messy instantiations
+            return new ComputerFacade(new PowerSupply(), new CoolingSystem(), new CPU(), new Memory(), new HardDrive(), new BIOS(), new OperatingSystem());
+        }
+    }
+
+    // 👑 The Client code is now beautiful and ignorant again:
+    const myComputer = ComputerFactory.createStandardComputer();
+    myComputer.startComputer();
+
+ * Solution 2: Default Parameters (The JS Way)
+
+ * class ComputerFacade {
+    constructor(
+        powerSupply = new PowerSupply(), 
+        cooling = new CoolingSystem(),
+        // ... etc
+    ) {
+        this.powerSupply = powerSupply;
+        this.coolingSystem = cooling;
+    }
+  }
+
+// 👑 The Client just does this:
+const computer = new ComputerFacade(); // Uses defaults
+computer.startComputer();
+
+// 🧪 But the Unit Test does this:
+const testComputer = new ComputerFacade(mockPower, mockCooling); 
+
+ * 
  */
