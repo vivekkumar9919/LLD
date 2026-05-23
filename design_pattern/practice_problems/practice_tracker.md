@@ -68,3 +68,10 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 - [ ] **proxy_2** (Protection Proxy - Admin API): Implement a `DatabaseProxy` that intercepts `deleteRow()` calls and throws an Error if the `currentUser.role` is not 'SUPER_ADMIN'. Allow `getRow()` calls for everyone.
 - [ ] **proxy_3** (Cache Proxy - API Fetcher): Create a `WeatherAPIProxy` that wraps a `RealWeatherAPI`. If `getWeather(city)` is called, the proxy should return a cached response if it was fetched within the last 5 minutes. Otherwise, it delegates to the real API and updates the cache.
 - [ ] **proxy_4** (Smart Reference Proxy): Build a `ConnectionProxy` that wraps a `DBConnection`. The proxy should keep track of the number of active clients using the connection. If the active clients drop to 0, it automatically calls `realConnection.close()`.
+
+## Structural: Composite Pattern
+*Status: Ready to Practice*
+- [ ] **composite_1** (UI Components): Implement a UI hierarchy with a `UIComponent` interface. Create Leaf nodes (`Button`, `Input`) and Composite nodes (`Panel`, `Window`). Ensure calling `render()` on the Window recursively renders all children.
+- [ ] **composite_2** (Organization Chart): Model a company structure with `Employee` (Leaf) and `Manager` (Composite). Implement a `getSalary()` method that calculates the total salary of a manager and all their direct/indirect subordinates.
+- [ ] **composite_3** (HTML DOM Builder): Create an object-oriented DOM builder. An `HTMLElement` can contain text (Leaf) or other `HTMLElement`s (Composite). Implement a `toHTML()` method that outputs the properly nested HTML string (e.g., `<div><p>Hello</p></div>`).
+- [ ] **composite_4** (Math Expression Tree): Build an expression evaluator where `Operand` (Leaf, e.g., 5) and `Operator` (Composite, e.g., Add, Multiply) share an `evaluate()` interface. Construct the tree for `(5 + 3) * 2` and call `evaluate()` on the root.
