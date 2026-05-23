@@ -25,3 +25,4 @@ This document serves as the tracker for Vivek's backend LLD interview preparatio
 | 2026-05-17 | Facade Pattern (Final) | Strong defense of SRP. Correctly identified DI as the solution to tight coupling. | Excellent architectural maturity shown during interrogation. | 10/10 |
 | 2026-05-17 | Proxy Pattern (Final) | Perfectly articulated the difference vs Decorator. Flawless Protection Proxy implementation. | Dodged the Cache implementation question. | 10/10 |
 | 2026-05-23 | Composite Pattern (Final) | Brilliant connection between ISP and the "Safety" approach. Correctly identified circular dependency fixes. | None. Exceptional architectural defense. | 10/10 |
+| 2026-05-23 | Bridge Pattern (Initial) | Perfectly demonstrated decoupling abstraction (Car) from implementation (Engine) to avoid class explosion. | Minor OOP bug in subclass constructors (`super()` without args). | 9/10 |

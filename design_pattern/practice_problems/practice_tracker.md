@@ -75,3 +75,10 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 - [ ] **composite_2** (Organization Chart): Model a company structure with `Employee` (Leaf) and `Manager` (Composite). Implement a `getSalary()` method that calculates the total salary of a manager and all their direct/indirect subordinates.
 - [ ] **composite_3** (HTML DOM Builder): Create an object-oriented DOM builder. An `HTMLElement` can contain text (Leaf) or other `HTMLElement`s (Composite). Implement a `toHTML()` method that outputs the properly nested HTML string (e.g., `<div><p>Hello</p></div>`).
 - [ ] **composite_4** (Math Expression Tree): Build an expression evaluator where `Operand` (Leaf, e.g., 5) and `Operator` (Composite, e.g., Add, Multiply) share an `evaluate()` interface. Construct the tree for `(5 + 3) * 2` and call `evaluate()` on the root.
+
+## Structural: Bridge Pattern
+*Status: Ready to Practice*
+- [ ] **bridge_1** (Device & Remote): Create a `Device` interface (`TV`, `Radio`) and a `RemoteControl` abstraction (`BasicRemote`, `AdvancedRemote`). The remotes should take a device in their constructor. The advanced remote adds a `mute()` method.
+- [ ] **bridge_2** (Message Sender): Create a `MessageSender` abstraction (`TextMessage`, `HtmlMessage`) and a `MessagePlatform` implementor (`EmailPlatform`, `SMSPlatform`, `WhatsAppPlatform`). Send formatted messages across different platforms without class explosion.
+- [ ] **bridge_3** (Theme System): Build a UI framework with `UIElement` abstraction (`Button`, `Dropdown`) and a `Theme` implementor (`DarkTheme`, `LightTheme`). A `Button` injected with a `DarkTheme` renders differently than one with a `LightTheme`.
+- [ ] **bridge_4** (Payment Gateway Provider): Separate the abstraction `PaymentMethod` (`Subscription`, `OneTimePurchase`) from the implementor `PaymentGateway` (`Stripe`, `PayPal`). Process a recurring subscription using Stripe, and a one-time purchase using PayPal.
