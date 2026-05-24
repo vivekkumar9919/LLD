@@ -26,3 +26,5 @@ This document serves as the tracker for Vivek's backend LLD interview preparatio
 | 2026-05-17 | Proxy Pattern (Final) | Perfectly articulated the difference vs Decorator. Flawless Protection Proxy implementation. | Dodged the Cache implementation question. | 10/10 |
 | 2026-05-23 | Composite Pattern (Final) | Brilliant connection between ISP and the "Safety" approach. Correctly identified circular dependency fixes. | None. Exceptional architectural defense. | 10/10 |
 | 2026-05-23 | Bridge Pattern (Initial) | Perfectly demonstrated decoupling abstraction (Car) from implementation (Engine) to avoid class explosion. | Minor OOP bug in subclass constructors (`super()` without args). | 9/10 |
+| 2026-05-24 | Flyweight Pattern (Initial) | Correct isolation of Intrinsic/Extrinsic state. Excellent Factory caching logic. | Memory calculation bug (serializes the nested flyweight inside each context, distorting stats). | 8/10 |
+| 2026-05-24 | Flyweight Pattern (Final) | Strong defense of Flyweight mutability using Object.freeze. Accurate e-commerce scenario analysis. | Missing the final memory calculation refactor in code. | 9.5/10 |
