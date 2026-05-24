@@ -9,6 +9,8 @@ class AsteroidFlyweight {
         this.color = color;
         this.texture = texture;
         this.material = material;
+        // Make the shared intrinsic state immutable
+        Object.freeze(this);
     }
 
     render(posX, posY, velocityX, velocityY) {
@@ -97,7 +99,15 @@ class AsteroidContext {
     }
 
     getMemoryUsage() {
-        return new Blob([JSON.stringify(this)]).size;
+        // Exclude the shared flyweight object to avoid double-counting.
+        // Stringify only the extrinsic state and add 8 bytes for the pointer reference.
+        const extrinsicState = {
+            posX: this.posX,
+            posY: this.posY,
+            velocityX: this.velocityX,
+            velocityY: this.velocityY
+        };
+        return new Blob([JSON.stringify(extrinsicState)]).size + 8;
     }
 }
 
@@ -156,6 +166,14 @@ class SpaceGameWithFlyweight {
     getAsteroidCount() {
         return this.asteroids.length;
     }
+
+    calculateMemoryUsage() {
+        let totalContextMemory = 0;
+        for (const asteroid of this.asteroids) {
+            totalContextMemory += asteroid.getMemoryUsage();
+        }
+        return this.factory.getTotalFlyweightMemory() + totalContextMemory;
+    }
 }
 
 const ASTEROID_COUNT = 15;
@@ -179,6 +197,11 @@ console.log(
 console.log(
     "Flyweight Shared Memory ---",
     game.factory.getTotalFlyweightMemory()
+);
+
+console.log(
+    "Total Memory Usage ---",
+    game.calculateMemoryUsage()
 );
 
 /*

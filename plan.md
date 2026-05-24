@@ -25,7 +25,7 @@ Before diving into patterns, you must internalize these:
 - [x] **Proxy**: Controlling access to an object.
 - [x] **Composite**: Tree structures (e.g., file systems).
 - [x] **Bridge**: Separating abstraction from implementation.
-- [ ] **Flyweight**: Efficiently sharing large numbers of objects.
+- [x] **Flyweight**: Efficiently sharing large numbers of objects.
 
 ## 3. Behavioral Design Patterns
 *Focus: Algorithms and the assignment of responsibilities between objects.*

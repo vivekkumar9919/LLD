@@ -82,3 +82,10 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 - [ ] **bridge_2** (Message Sender): Create a `MessageSender` abstraction (`TextMessage`, `HtmlMessage`) and a `MessagePlatform` implementor (`EmailPlatform`, `SMSPlatform`, `WhatsAppPlatform`). Send formatted messages across different platforms without class explosion.
 - [ ] **bridge_3** (Theme System): Build a UI framework with `UIElement` abstraction (`Button`, `Dropdown`) and a `Theme` implementor (`DarkTheme`, `LightTheme`). A `Button` injected with a `DarkTheme` renders differently than one with a `LightTheme`.
 - [ ] **bridge_4** (Payment Gateway Provider): Separate the abstraction `PaymentMethod` (`Subscription`, `OneTimePurchase`) from the implementor `PaymentGateway` (`Stripe`, `PayPal`). Process a recurring subscription using Stripe, and a one-time purchase using PayPal.
+
+## Structural: Flyweight Pattern
+*Status: Ready to Practice*
+- [ ] **flyweight_1** (E-commerce Product Catalog): Build a `ProductCatalog` where multiple instances of the same Product ID share the same `ProductFlyweight` (Name, Category, ImageURL, Brand, Specifications) but have unique `ProductItem` contexts (SKU, Price, StockCount, WarehouseLocation).
+- [ ] **flyweight_2** (Chat System Memory Optimization): Create a `ChatApp` where millions of messages share a `MessageFlyweight` (SenderName, AvatarURL, ThemeSettings) but have unique `MessageContext` (MessageText, Timestamp, MessageID, DeliveryStatus).
+- [ ] **flyweight_3** (Text Editor Formatting): Implement a text editor where each character in a document of 100,000 letters shares a `CharacterFlyweight` (FontFamily, FontSize, Color, Style) to avoid storing styling parameters for every single letter, while the position and the character code are stored in the context.
+- [ ] **flyweight_4** (E-commerce Order History Tracker): Implement an `OrderHistoryTracker`. Millions of orders share an `OrderStatusFlyweight` (StatusName, IconURL, EmailNotificationTemplate, SLAHours) while each individual order contains unique `OrderContext` (OrderID, CustomerID, UpdateTime, Comments).
