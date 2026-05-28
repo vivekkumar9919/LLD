@@ -4,11 +4,11 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 
 ## SOLID Principles
 *Status: Ready to Practice*
-- [x] **solid_1** (SRP): Refactor a monolithic `OrderProcessor` class that currently calculates tax, applies discounts, generates a PDF receipt, and saves to the DB into strictly separate classes.
-- [x] **solid_2** (OCP): Build an `AuthenticationService` that can support `OAuthLogin`, `EmailLogin`, and `SSOLogin` without ever modifying the core orchestrator.
-- [x] **solid_3** (LSP): Implement a generic `PaymentMethod` interface. Ensure that a subclass `WalletPayment` and `CryptoPayment` never unexpectedly crash or require the client code to write explicit `instanceof` checks if a specific feature (like "refund") is requested.
-- [x] **solid_4** (ISP): Segregate an interface/base class called `UserOperations` (which holds methods like `login`, `logout`, `banUser`, `grantPermissions`) so that normal `Customer` objects aren't forced to inherit admin methods they shouldn't trigger.
-- [x] **solid_5** (DIP): Build a `NotificationManager`. Instead of hardcoding `new SMSService()`, inject an abstract messaging dependency through the constructor so you can swap it for an `EmailService` instantly.
+- ✅ **solid_1** (SRP): Refactor a monolithic `OrderProcessor` class that currently calculates tax, applies discounts, generates a PDF receipt, and saves to the DB into strictly separate classes.
+- ✅ **solid_2** (OCP): Build an `AuthenticationService` that can support `OAuthLogin`, `EmailLogin`, and `SSOLogin` without ever modifying the core orchestrator.
+- ✅ **solid_3** (LSP): Implement a generic `PaymentMethod` interface. Ensure that a subclass `WalletPayment` and `CryptoPayment` never unexpectedly crash or require the client code to write explicit `instanceof` checks if a specific feature (like "refund") is requested.
+- ✅ **solid_4** (ISP): Segregate an interface/base class called `UserOperations` (which holds methods like `login`, `logout`, `banUser`, `grantPermissions`) so that normal `Customer` objects aren't forced to inherit admin methods they shouldn't trigger.
+- ✅ **solid_5** (DIP): Build a `NotificationManager`. Instead of hardcoding `new SMSService()`, inject an abstract messaging dependency through the constructor so you can swap it for an `EmailService` instantly.
 
 ## Creational: Singleton
 *Status: Ready to Practice*

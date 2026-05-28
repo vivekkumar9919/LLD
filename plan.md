@@ -4,32 +4,32 @@ This document serves as the learning plan for mastering LLD from beginner to adv
 
 ## 0. The Fundamentals (SOLID Principles)
 Before diving into patterns, you must internalize these:
-- [x] Single Responsibility Principle (SRP)
-- [x] Open/Closed Principle (OCP)
-- [x] Liskov Substitution Principle (LSP)
-- [x] Interface Segregation Principle (ISP)
-- [x] Dependency Inversion Principle (DIP)
+- ✅ Single Responsibility Principle (SRP)
+- ✅ Open/Closed Principle (OCP)
+- ✅ Liskov Substitution Principle (LSP)
+- ✅ Interface Segregation Principle (ISP)
+- ✅ Dependency Inversion Principle (DIP)
 
 ## 1. Creational Design Patterns
 *Focus: Object creation mechanisms.*
-- [x] **Singleton**: Global instances (e.g., Database Connection).
-- [x] **Factory Method**: Creating instances without specifying the exact class.
-- [x] **Builder**: Step-by-step object construction (e.g., complex queries).
-- [x] **Prototype**: Object cloning.
+- ✅ **Singleton**: Global instances (e.g., Database Connection).
+- ✅ **Factory Method**: Creating instances without specifying the exact class.
+- ✅ **Builder**: Step-by-step object construction (e.g., complex queries).
+- ✅ **Prototype**: Object cloning.
 
 ## 2. Structural Design Patterns
 *Focus: Assembling objects and classes into larger structures.*
-- [x] **Adapter**: Making incompatible interfaces collaborate.
-- [x] **Decorator**: Dynamically adding behaviors.
-- [x] **Facade**: Simplified interface to a complex system.
-- [x] **Proxy**: Controlling access to an object.
-- [x] **Composite**: Tree structures (e.g., file systems).
-- [x] **Bridge**: Separating abstraction from implementation.
-- [x] **Flyweight**: Efficiently sharing large numbers of objects.
+- ✅ **Adapter**: Making incompatible interfaces collaborate.
+- ✅ **Decorator**: Dynamically adding behaviors.
+- ✅ **Facade**: Simplified interface to a complex system.
+- ✅ **Proxy**: Controlling access to an object.
+- ✅ **Composite**: Tree structures (e.g., file systems).
+- ✅ **Bridge**: Separating abstraction from implementation.
+- ✅ **Flyweight**: Efficiently sharing large numbers of objects.
 
 ## 3. Behavioral Design Patterns
 *Focus: Algorithms and the assignment of responsibilities between objects.*
-- [x] **Observer**: Subscribing to events (Crucial in JS/Node).
+- ✅ **Observer**: Subscribing to events (Crucial in JS/Node).
 - [ ] **Strategy**: Creating a family of interchangeable algorithms.
 - [ ] **State**: Changing object behavior when internal state changes.
 - [ ] **Command**: Encapsulating a request as an object.
