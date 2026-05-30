@@ -32,3 +32,4 @@ This document serves as the tracker for Vivek's backend LLD interview preparatio
 | 2026-05-24 | Observer Pattern (Final) | Excellent refactor to dynamic Pull Model. Proper encapsulation inside the `uploadVideo` state changes. | Redundant constructor args remained in client script `new Subscriber("Name", channels)`. | 10/10 |
 | 2026-05-28 | Practice: solid_4 (ISP) | Clean segregation of Admin vs Normal operations using class inheritance. | Lacks composition alternatives (could lead to deep inheritance tree if roles expand). | 9/10 |
 | 2026-05-28 | Practice: solid_5 (DIP) | Clear application of Dependency Inversion using constructor dependency injection. | Basic mock implementation, didn't account for dynamic multi-channel payloads. | 9/10 |
+| 2026-05-30 | Strategy Pattern (Initial) | Good composition of Walk/Fly strategy families. Clear delegation in the Robot context. | Comma syntax smell in constructor; lacks runtime strategy setters. | 9/10 |

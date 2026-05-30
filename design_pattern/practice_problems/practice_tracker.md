@@ -96,3 +96,10 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 - [ ] **observer_2** (E-commerce Order Status Notification): Implement an `OrderTracker` (Subject). Whenever an order's status changes (e.g., PLACED -> SHIPPED -> DELIVERED), trigger notifications. Observers like `SMSNotificationService`, `EmailNotificationService`, and `InventorySystem` should update accordingly.
 - [ ] **observer_3** (Bid Auction System): Build a `RealTimeAuction` platform where the `AuctionProduct` acts as the Subject. When a bidder places a higher bid, all other registered bidders (Observers) must be immediately notified of the new high bid amount.
 - [ ] **observer_4** (Multi-channel Newsletter): Create a `NewsletterPublisher` (Subject) that pushes monthly articles. Introduce `PushNotificationClient` and `EmailClient`. Demonstrate unsubscribe logic cleanly.
+
+## Behavioral: Strategy Pattern
+*Status: Ready to Practice*
+- [ ] **strategy_1** (E-commerce Payment Gateway): Implement an `OrderCheckout` context that calculates order totals. Create interchangeable payment strategies: `CreditCardPayment`, `PayPalPayment`, and `CryptoPayment`. Support runtime selection of payment methods.
+- [ ] **strategy_2** (E-commerce Shipping Calculator): Build a `ShippingCostCalculator` context. Implement different shipping rate calculation strategies: `StandardShipping`, `ExpressShipping`, and `InternationalShipping` based on package weight and destination.
+- [ ] **strategy_3** (Discount & Pricing Engine): Create a `PricingEngine` context for a store checkout system. Define strategies for applying discounts: `FlatDiscountStrategy` ($10 off), `PercentageDiscountStrategy` (15% off), and `NoDiscountStrategy`. Ensure strategies can be swapped dynamically.
+- [ ] **strategy_4** (Image Compression Tool): Build an `ImageProcessor` context. Define interchangeable compression strategies: `JPEGCompression`, `PNGCompression`, and `WebPCompression`. Demonstrate runtime switching depending on desired quality/speed requirements.
