@@ -36,3 +36,4 @@ This document serves as the tracker for Vivek's backend LLD interview preparatio
 | 2026-05-30 | Strategy Pattern (Final) | Excellent defense of Context encapsulation. Fully resolved constructor syntax smell and implemented dynamic strategy setters. | None. Excellent composition-based design. | 10/10 |
 | 2026-05-30 | State Pattern (Initial) | Highly complete Vending Machine implementation with distinct state transitions. | Encapsulation leak (client forced to call `dispense()` manually); potential crash risk if states return undefined. | 9/10 |
 | 2026-05-30 | State Pattern (Final) | Refactored context to auto-trigger dispensing, maintaining clean client encapsulation. Added transition safety guards. | None. Robust state management design. | 10/10 |
+| 2026-06-01 | Command Pattern (Initial) | Good decoupling of Invoker (Remote) and Receiver (Light/Fan). | Flawed implementation of `undo` in the Invoker (used a boolean toggle instead of a history stack). | 8.5/10 |
