@@ -2,110 +2,137 @@
 
 class Command {
 
-    execute(){
+    execute() {
 
     }
-    undo(){
+    undo() {
 
     }
 }
 
 class Light {
-    on(){
+    on() {
         console.log("Light ON");
     }
-    off(){
+    off() {
         console.log("Light OFF");
     }
 }
 
 class Fan {
-    on(){
+    on() {
         console.log("Fan ON");
     }
-    off(){
+    off() {
         console.log("Fan OFF");
     }
 }
 
-class LightCommand extends Command{
-    constructor(light){
+class LightCommand extends Command {
+    constructor(light) {
         super();
         this.light = light;
     }
-    execute(){
+    execute() {
         this.light.on();
     }
-    undo(){
+    undo() {
         this.light.off();
     }
 }
 
-class FanCommand  extends Command {
-    constructor(fan){
+class FanCommand extends Command {
+    constructor(fan) {
         super()
         this.fan = fan;
     }
-    execute(){
+    execute() {
         this.fan.on();
     }
-    undo(){
+    undo() {
         this.fan.off();
     }
 }
 
+class MacroCommand extends Command {
+    constructor(commands) {
+        super();
+        this.commands = commands;
+    }
+    execute() {
+        this.commands.forEach(cmd => cmd.execute());
+    }
+    undo() {
+        // Must undo in reverse order!
+        this.commands.slice().reverse().forEach(cmd => cmd.undo());
+    }
+}
+
 class RemoteController {
-    constructor(){
+    constructor() {
         this.numButton = 4;
         this.buttons = [];
-        this.buttonPressed = [];
-        for(let i = 0;i<this.numButton;i++){
-            this.buttons[i]  = null;
-            this.buttonPressed[i] = false;
+        this.history = []; // The Undo Stack!
+        
+        for (let i = 0; i < this.numButton; i++) {
+            this.buttons[i] = null;
         }
     }
-    setCommand(index, cmd){
-        if(index >= 0 && index < this.numButton){
-            if(this.buttons[index] != null){
-                this.buttons[index] = null;
-            }
+    
+    setCommand(index, cmd) {
+        if (index >= 0 && index < this.numButton) {
             this.buttons[index] = cmd;
-            this.buttonPressed[index] = false;
         }
     }
-    pressButton(index){
-        if(index >= 0 && index < this.numButton && this.buttons[index] != null){
-            if(this.buttonPressed[index] == false){
-                this.buttonPressed[index] = true;
-                this.buttons[index].execute();
-            }
-            else {
-                this.buttonPressed[index] = false;
-                this.buttons[index].undo();
-            }
-        }
-        else {
-            console.log("No command assign to index ", index)
+    
+    pressButton(index) {
+        if (index >= 0 && index < this.numButton && this.buttons[index] != null) {
+            const cmd = this.buttons[index];
+            cmd.execute();
+            this.history.push(cmd); // Push to history stack after execution
+        } else {
+            console.log("No command assign to index ", index);
         }
     }
 
-
+    pressUndoButton() {
+        if (this.history.length > 0) {
+            const lastCmd = this.history.pop();
+            lastCmd.undo();
+        } else {
+            console.log("Nothing to undo!");
+        }
+    }
 }
 
 const light1 = new Light();
-const fan1 =  new Fan();
+const fan1 = new Fan();
+
+const lightCmd = new LightCommand(light1);
+const fanCmd = new FanCommand(fan1);
+
+// Create the Macro Command
+const partyModeCmd = new MacroCommand([lightCmd, fanCmd]);
 
 const remote = new RemoteController();
 
-remote.setCommand(0, new LightCommand(light1));
-remote.setCommand(1, new FanCommand(fan1));
+remote.setCommand(0, lightCmd);
+remote.setCommand(1, fanCmd);
+remote.setCommand(3, partyModeCmd);
 
-remote.pressButton(0);
-remote.pressButton(1);
-remote.pressButton(0);
-remote.pressButton(1);
+console.log("--- Normal Usage ---");
+remote.pressButton(0); // Light ON
+remote.pressButton(1); // Fan ON
 
-remote.pressButton(2);
+console.log("\n--- Global Undo ---");
+remote.pressUndoButton(); // Undoes Fan (Fan OFF)
+remote.pressUndoButton(); // Undoes Light (Light OFF)
+
+console.log("\n--- Party Mode (Macro Command) ---");
+remote.pressButton(3); // Light ON, Fan ON
+
+console.log("\n--- Undo Party Mode ---");
+remote.pressUndoButton(); // Fan OFF, Light OFF
 
 /**
  * 🎙️ INTERROGATION - LLD REVIEWER
@@ -125,5 +152,30 @@ remote.pressButton(2);
  *    or the Receiver classes?
  * 
  * --- VIVEK'S ANSWERS ---
+ * 1. there is limitations in my current implementation of undo functionality, to implement global 
+ *    undo we can use a stack data structure to impplement this undo functionality
+ * 2. this is simple so in this case it work but in realworld scenarios callback are not enough 
+ *    to implement this functionality it can be a complex logic and implementaion and It if we are
+ *    using class then we can make one single class where we can have all type of like on, off, change 
+ *    temparture, timers etc which is not possible in callback  and callback will break the DRY principle
+ *    and It will be hard to maintain the code
+ * 3. we can implement party button by addine a one more if condition in pressButton method
+ *         else if (index == 3) {
+ *             this.pressButton(0);
+ *             this.pressButton(1);
+ *         }
  * 
+ * --- AI EVALUATION ---
+ * 1. RIGHT: Spot on. You need a `stack` (array) in the RemoteController. Every time a command executes, you push it to the stack: `this.history.push(cmd)`. When the user presses "Undo", you pop the last command and call `cmd.undo()`.
+ * 2. PARTIALLY RIGHT: You mentioned complex logic and grouping, which is true. But the MOST important reason we use a Command object instead of a callback `() => light.on()` is because of the `undo()` requirement and STATE. A simple callback cannot undo itself, nor can it remember the "previous temperature" if it was changing a thermostat.
+ * 3. WRONG: You failed the constraint! I specifically asked how to do it WITHOUT modifying the `RemoteController`. Your solution hardcodes `index == 3` into the Invoker, violating the Open/Closed Principle. The correct design pattern way is to create a `MacroCommand` class:
+ *    ```javascript
+ *    class MacroCommand extends Command {
+ *        constructor(commands) { super(); this.commands = commands; }
+ *        execute() { this.commands.forEach(c => c.execute()); }
+ *        undo() { this.commands.slice().reverse().forEach(c => c.undo()); }
+ *    }
+ *    // Client usage (NO changes to RemoteController needed!):
+ *    remote.setCommand(3, new MacroCommand([new LightCommand(light1), new FanCommand(fan1)]));
+ *    ```
  */
