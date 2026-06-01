@@ -32,7 +32,7 @@ Before diving into patterns, you must internalize these:
 - ✅ **Observer**: Subscribing to events (Crucial in JS/Node).
 - ✅ **Strategy**: Creating a family of interchangeable algorithms.
 - ✅ **State**: Changing object behavior when internal state changes.
-- [ ] **Command**: Encapsulating a request as an object.
+- ✅ **Command**: Encapsulating a request as an object.
 - [ ] **Chain of Responsibility**: Passing requests along a chain of handlers.
 - [ ] **Iterator**: Traversing elements of a collection.
 - [ ] **Mediator**: Centralizing complex communications.
