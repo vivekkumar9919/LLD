@@ -34,7 +34,7 @@ Before diving into patterns, you must internalize these:
 - ✅ **State**: Changing object behavior when internal state changes.
 - ✅ **Command**: Encapsulating a request as an object.
 - ✅ **Chain of Responsibility**: Passing requests along a chain of handlers.
-- [ ] **Iterator**: Traversing elements of a collection.
+- ✅ **Iterator**: Traversing elements of a collection.
 - [ ] **Mediator**: Centralizing complex communications.
 - [ ] **Memento**: Saving and restoring state.
 - [ ] **Template Method**: Defining the skeleton of an algorithm.

@@ -124,3 +124,10 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 - [ ] **cor_2** (Express Middleware Simulator): Create an HTTP `Request` object and pass it through a chain of middlewares: `AuthMiddleware` (checks token), `LoggingMiddleware` (logs IP), and `ValidationMiddleware` (checks payload). If any middleware fails, it should abort the chain and throw an Error.
 - [ ] **cor_3** (Customer Support System): Build a ticketing system. A `Ticket` has an `issueType` and `difficulty`. Pass it through `Level1Support`, `Level2Support`, and `ManagerSupport`. If Level 1 can't handle the difficulty, they pass it up the chain.
 - [ ] **cor_4** (E-commerce Discount Pipeline): Create a chain of discount appliers (`CouponDiscount`, `LoyaltyDiscount`, `SeasonalSale`). Pass a `Cart` object through the chain where each handler reduces the `cart.totalPrice` sequentially before checkout.
+
+## Behavioral: Iterator Pattern
+*Status: Ready to Practice*
+- [ ] **iterator_1** (Native JS Iterable): Build a custom `PaginationCollection` that holds 100 items. Implement the native `[Symbol.iterator]()` so that a client can do `for (const page of pagination) { ... }` and it yields exactly 10 items at a time.
+- [ ] **iterator_2** (Graph Traversal): Create a `GraphCollection` (nodes and edges). Implement two iterators: `BFSGraphIterator` and `DFSGraphIterator`. The collection should expose `createBFSIterator()` and `createDFSIterator()`.
+- [ ] **iterator_3** (Filtering Iterator): Create an `EmployeeCollection`. Build a `HighSalaryIterator` that wraps the standard array iterator but automatically skips any employee whose salary is under $100k during the `next()` call.
+- [ ] **iterator_4** (Fail-Fast Collection): Re-implement the `ArrayCollection` to include a `modCount` property. Create a `FailFastIterator` that caches the `modCount` on creation, and throws a `ConcurrentModificationException` inside `next()` if the collection's `modCount` has changed.
