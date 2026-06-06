@@ -117,3 +117,10 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 - [ ] **command_2** (Banking Transactions): Create a `BankAccount` (Receiver). Implement `DepositCommand` and `WithdrawCommand`. Add a `TransactionManager` (Invoker) that can execute, undo, and log all transactions to a file.
 - [ ] **command_3** (Smart Home Macros): Extend the Smart Home remote. Create a `MacroCommand` that accepts an array of Commands. Build a "Morning Routine" macro that turns on the lights, starts the coffee maker, and opens the blinds.
 - [ ] **command_4** (Job Queue System): Build a `Queue` that holds `Command` objects. A background worker loop should pop commands off the queue and call `execute()`. Implement `SendEmailCommand` and `ProcessImageCommand`.
+
+## Behavioral: Chain of Responsibility Pattern
+*Status: Ready to Practice*
+- [ ] **cor_1** (Logger System): Build a `Logger` hierarchy (`DebugLogger`, `InfoLogger`, `ErrorLogger`). A message with severity `ERROR` should bubble past Debug/Info and only be handled by the `ErrorLogger`. 
+- [ ] **cor_2** (Express Middleware Simulator): Create an HTTP `Request` object and pass it through a chain of middlewares: `AuthMiddleware` (checks token), `LoggingMiddleware` (logs IP), and `ValidationMiddleware` (checks payload). If any middleware fails, it should abort the chain and throw an Error.
+- [ ] **cor_3** (Customer Support System): Build a ticketing system. A `Ticket` has an `issueType` and `difficulty`. Pass it through `Level1Support`, `Level2Support`, and `ManagerSupport`. If Level 1 can't handle the difficulty, they pass it up the chain.
+- [ ] **cor_4** (E-commerce Discount Pipeline): Create a chain of discount appliers (`CouponDiscount`, `LoyaltyDiscount`, `SeasonalSale`). Pass a `Cart` object through the chain where each handler reduces the `cart.totalPrice` sequentially before checkout.

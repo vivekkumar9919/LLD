@@ -33,7 +33,7 @@ Before diving into patterns, you must internalize these:
 - ✅ **Strategy**: Creating a family of interchangeable algorithms.
 - ✅ **State**: Changing object behavior when internal state changes.
 - ✅ **Command**: Encapsulating a request as an object.
-- [ ] **Chain of Responsibility**: Passing requests along a chain of handlers.
+- ✅ **Chain of Responsibility**: Passing requests along a chain of handlers.
 - [ ] **Iterator**: Traversing elements of a collection.
 - [ ] **Mediator**: Centralizing complex communications.
 - [ ] **Memento**: Saving and restoring state.
