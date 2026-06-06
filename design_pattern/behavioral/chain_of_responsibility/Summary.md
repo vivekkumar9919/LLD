@@ -4,7 +4,7 @@
 - 
 
 ## Resources
-- [YouTube Video Link]()
+- [YouTube Video Link](https://www.youtube.com/watch?v=LXVKB6deQMo)
 - [Doc Link]()
 
 ## My Notes
