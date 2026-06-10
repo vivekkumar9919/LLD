@@ -35,7 +35,7 @@ Before diving into patterns, you must internalize these:
 - ✅ **Command**: Encapsulating a request as an object.
 - ✅ **Chain of Responsibility**: Passing requests along a chain of handlers.
 - ✅ **Iterator**: Traversing elements of a collection.
-- [ ] **Mediator**: Centralizing complex communications.
+- ✅ **Mediator**: Centralizing complex communications.
 - [ ] **Memento**: Saving and restoring state.
 - [ ] **Template Method**: Defining the skeleton of an algorithm.
 - [ ] **Visitor**: Adding new operations without modifying existing classes.
