@@ -1,11 +1,22 @@
 
 
+const mementoKey = Symbol('DatabaseMementoKey');
+
 class DatabaseMemento {
-    constructor(dbData) {
-        this.data = dbData;
+    #data;
+
+    constructor(dbData, key) {
+        if (key !== mementoKey) {
+            throw new Error("Access Denied: Only Database can instantiate DatabaseMemento");
+        }
+        this.#data = dbData;
     }
-    getState() {
-        return this.data;
+
+    getState(key) {
+        if (key !== mementoKey) {
+            throw new Error("Access Denied: Only Database can retrieve state from DatabaseMemento");
+        }
+        return this.#data;
     }
 }
 
@@ -16,32 +27,35 @@ class Database {
 
     insert(key, value) {
         this.record.set(key, value);
-        console.log("Inserted -", key, value)
+        console.log("Inserted -", key, value);
     }
+
     update(key, value) {
-        if (this.record.get(key)) {
+        if (this.record.has(key)) {
             this.record.set(key, value);
-            console.log("Updated -", key, value)
-        }
-        else {
+            console.log("Updated -", key, value);
+        } else {
             console.log("No keys found to update", key, value);
         }
-
     }
-    remove() {
-        if (this.record.get(key)) {
-            this.myMap.delete(key);
-            console.log("Deleted -", key, value)
+
+    remove(key) {
+        if (this.record.has(key)) {
+            this.record.delete(key);
+            console.log("Deleted -", key);
+        } else {
+            console.log("No key found to delete", key);
         }
     }
 
     createMemento() {
         console.log("Creating database backup...", this.record);
-        return new DatabaseMemento(new Map(this.record));
+        return new DatabaseMemento(new Map(this.record), mementoKey);
     }
+
     restoreFromMemento(memento) {
         this.record = new Map(
-            memento.getState()
+            memento.getState(mementoKey)
         );
 
         console.log(
@@ -49,11 +63,10 @@ class Database {
             this.record
         );
     }
+
     displayRecord() {
         console.log("Record is -", this.record);
     }
-
-
 }
 
 class TransactionManager {
