@@ -37,7 +37,7 @@ Before diving into patterns, you must internalize these:
 - ✅ **Iterator**: Traversing elements of a collection.
 - ✅ **Mediator**: Centralizing complex communications.
 - ✅ **Memento**: Saving and restoring state.
-- [ ] **Template Method**: Defining the skeleton of an algorithm.
+- ✅ **Template Method**: Defining the skeleton of an algorithm.
 - [ ] **Visitor**: Adding new operations without modifying existing classes.
 
 ## 4. Advanced Practice Problems
