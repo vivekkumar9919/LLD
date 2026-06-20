@@ -37,48 +37,58 @@ class MacCheckBox extends CheckBox {
 }
 
 class UIFactory {
-    createButton(type) {
+    createButton() {
         throw new Error("Method 'createButton()' must be implemented.")
     }
-    createCheckBox(type) {
+    createCheckBox() {
         throw new Error("Method 'createCheckBox()' must be implemented.")
     }
 }
 
 class WindowFactory extends UIFactory {
-    createButton(type) {
-        if (type.toLowerCase() == 'button') {
-            return new WindowButton();
-        }
+    createButton() {
+
+        return new WindowButton();
+
     }
-    createCheckBox(type) {
-        if (type.toLowerCase() == 'checkbox') {
-            return new WindowCheckBox();
-        }
+    createCheckBox() {
+
+        return new WindowCheckBox();
+
 
     }
 }
 class MacFactory extends UIFactory {
-    createButton(type) {
-        if (type.toLowerCase() == 'button') {
-            return new MacButton();
-        }
+    createButton() {
+
+        return new MacButton();
+
     }
-    createCheckBox(type) {
-        if (type.toLowerCase() == 'checkbox') {
-            return new MacCheckBox();
-        }
+    createCheckBox() {
+
+        return new MacCheckBox();
+
 
     }
 }
 
-const windowButton = new WindowFactory().createButton('button');
-windowButton.render();
-const windowCheckbox = new WindowFactory().createCheckBox('checkbox')
-windowCheckbox.toggle();
+class RenderApp {
+    constructor(factory) {
+        this.factory = factory;
+    }
+    views() {
+        this.button = this.factory.createButton();
+        this.button.render();
+        this.checkbox = this.factory.createCheckBox();
+        this.checkbox.toggle();
+    }
+}
+const renderAppWindow = new RenderApp(new WindowFactory);
+renderAppWindow.views();
 
-const macButton = new MacFactory().createButton('button');
-macButton.render();
+const renderAppMac = new RenderApp(new MacFactory);
+renderAppMac.views();
+
 
 
 /*
@@ -88,9 +98,12 @@ macButton.render();
 **Rating:** ⭐⭐⭐ (3/5)
 
 ### 🚨 Code Issues & Concept Check
-You have successfully implemented the class hierarchy for the Abstract Factory pattern! You correctly defined the Abstract Products (`Button`, `CheckBox`), Concrete Products, Abstract Factory (`UIFactory`), and Concrete Factories.
+You have successfully implemented the class hierarchy for the Abstract Factory 
+pattern! You correctly defined the Abstract Products (`Button`, `CheckBox`), 
+Concrete Products, Abstract Factory (`UIFactory`), and Concrete Factories.
 
-However, you brought over a bad habit from the "Simple Factory" pattern: passing strings!
+However, you brought over a bad habit from the "Simple Factory" pattern: passing 
+strings!
 
 Look at this code:
 ```javascript
@@ -118,8 +131,30 @@ renderApp(new WindowFactory()); // Boom! Entire app is now Windows mode.
 ```
 
 ### 🧠 Deep Dive Questions
-1. **Cross-Pattern Context:** Imagine if your `WindowFactory` was also implemented as a **Singleton**. Why is combining Singleton and Abstract Factory often a very good idea? (Think about memory and performance).
+1. **Cross-Pattern Context:** Imagine if your `WindowFactory` was also implemented 
+as a **Singleton**. Why is combining Singleton and Abstract Factory often a very good 
+idea? (Think about memory and performance).
 
 **Next Steps:** Refactor the factories to remove the useless `type` string arguments, create a generic `renderApp(factory)` client function to test it, drop your answer below, and ping me for a re-review! Let's get that rating up to a 5/5!
+================================================================================
+1. yes we can combine singleton and abstract factory because  in  abstract factory the concrete factories are created once and reused throughout the application. if we use singleton then it will ensure that only one instance of the factory is created and reused throughout the application.
+
+--------------------------------------------------------------------------------
+🏆 FINAL EVALUATION
+--------------------------------------------------------------------------------
+**Rating:** ⭐⭐⭐⭐⭐ (5/5)
+
+**Code Review:** Flawless! By removing the string arguments, you restored the strong 
+typing and compile-time safety of the Abstract Factory pattern. 
+Your `RenderApp` class perfectly demonstrates the core principle: 
+the client code asks for UI elements and renders them without ever needing 
+to know or care which OS it is currently running on.
+
+**Q1 (Singleton + Abstract Factory):** Exactly. Concrete Factories rarely hold any 
+internal state; they just exist to contain the creation logic. Therefore, 
+constantly doing `new WindowFactory()` is a waste of memory. Implementing them 
+as Singletons is a highly recommended best practice!
+
+**Status:** ✅ Completed! 
 ================================================================================
 */
