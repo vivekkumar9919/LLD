@@ -46,19 +46,30 @@ class UIFactory {
 }
 
 class WindowFactory extends UIFactory {
+    static instance = null;
+    static getinstance() {
+        if (!this.instance) {
+            console.log("Creating new instance ...")
+            this.instance = new WindowFactory();
+        }
+        return this.instance;
+    }
     createButton() {
-
         return new WindowButton();
-
     }
     createCheckBox() {
-
         return new WindowCheckBox();
-
-
     }
 }
 class MacFactory extends UIFactory {
+    static instance = null;
+    static getinstance() {
+        console.log("Creating new instance ...")
+        if (!this.instance) {
+            this.instance = new MacFactory();
+        }
+        return this.instance;
+    }
     createButton() {
 
         return new MacButton();
@@ -83,10 +94,13 @@ class RenderApp {
         this.checkbox.toggle();
     }
 }
-const renderAppWindow = new RenderApp(new WindowFactory);
+const renderAppWindow = new RenderApp(WindowFactory.getinstance());
 renderAppWindow.views();
 
-const renderAppMac = new RenderApp(new MacFactory);
+const renderAppWindow1 = new RenderApp(WindowFactory.getinstance());
+renderAppWindow1.views();
+
+const renderAppMac = new RenderApp(MacFactory.getinstance());
 renderAppMac.views();
 
 
@@ -156,5 +170,25 @@ constantly doing `new WindowFactory()` is a waste of memory. Implementing them
 as Singletons is a highly recommended best practice!
 
 **Status:** ✅ Completed! 
+================================================================================
+*/
+
+/*
+================================================================================
+🤖 PRACTICE REVIEWER FEEDBACK (Singleton Add-on)
+================================================================================
+**Rating:** ⭐⭐⭐⭐⭐ (5/5)
+
+**Code Review:** Excellent initiative! You successfully converted the Concrete 
+Factories into Lazy Singletons. This guarantees that no matter how many times the 
+`RenderApp` (or any other part of the UI toolkit) needs a factory, it reuses the 
+exact same memory allocation.
+
+*Minor code review tip:* Watch out for typos! You spelled `instace` instead of 
+`instance`. In JavaScript, this isn't a fatal error because it just creates a 
+new property named `instace`, but it's always good to run a quick spellcheck on 
+your variable names.
+
+Awesome work combining two different Creational patterns into a single architecture!
 ================================================================================
 */
