@@ -88,6 +88,8 @@ By doing this, the client just does `new RoadLogistics().planDelivery()` without
 --------------------------------------------------------------------------------
 🏆 FINAL EVALUATION
 --------------------------------------------------------------------------------
+**Rating:** ⭐⭐⭐⭐ (4/5)
+
 **Code Review:** Great refactor! You successfully separated the `Transport` product 
 hierarchy from the `LogisticsApp` creator hierarchy. This is the core of the 
 Factory Method pattern! 
