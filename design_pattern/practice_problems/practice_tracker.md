@@ -13,7 +13,7 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 ## Creational: Singleton
 *Status: Ready to Practice*
 - ✅ **singleton_1**: Implement a **Database Connection Pool** class asynchronously. Ensure the exact same pool instance is securely returned to 3 incoming API requests running concurrently. 
-- [ ] **singleton_2**: Implement a **Logger** class eagerly. Ensure all components in the app write to the exact same log buffer array without race conditions.
+- ✅ **singleton_2**: Implement a **Logger** class eagerly. Ensure all components in the app write to the exact same log buffer array without race conditions.
 - [ ] **singleton_3**: Implement a Singleton `FeatureToggleService` that fetches a massive remote JSON config (delay mock with setTimeout). Test what happens if multiple modules request the toggle status while the network request is still pending.
 
 ## Creational: Factory Patterns
