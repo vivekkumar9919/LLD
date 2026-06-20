@@ -27,15 +27,15 @@ class FeatureToggleService {
         }
     }
     static async getToggleInstance() {
-        if (FeatureToggleService.instance) {
-            return FeatureToggleService.instance;
+        if (this.instance) {
+            return this.instance;
         }
-        FeatureToggleService.instance = (async () => {
-            FeatureToggleService.instance = await this.getConfig();
-            return FeatureToggleService.instance;
+        this.instance = (async () => {
+            this.instance = await this.getConfig();
+            return this.instance;
         })();
 
-        return FeatureToggleService.instance;
+        return this.instance;
     }
 }
 
