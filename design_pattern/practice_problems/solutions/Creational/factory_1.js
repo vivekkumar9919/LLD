@@ -5,80 +5,55 @@
  */
 
 
-class ByRoad {
-    LogisticsVehicle() {
+class Transport {
+    deliver() {
         throw new Error("Should be implemented")
     }
 }
 
-class ByAir {
-    LogisticsVehicle() {
-        throw new Error("Should be implemented")
-    }
-}
-
-class ByWater {
-    LogisticsVehicle() {
-        throw new Error("Should be implemented")
-    }
-}
-
-class Truck extends ByRoad {
-    LogisticsVehicle() {
+class Truck extends Transport {
+    deliver() {
         console.log("LogisticsVehicle is Truck");
     }
 }
 
-class Airplane extends ByAir {
-    LogisticsVehicle() {
+class Airplane extends Transport {
+    deliver() {
         console.log("LogisticsVehicle is Airplane")
     }
 }
-class Ship extends ByWater {
-    LogisticsVehicle() {
+class Ship extends Transport {
+    deliver() {
         console.log("LogisticsVehicle is ship")
     }
 }
 
 class LogisticsApp {
-    selectByRoad(vehicle) {
+    createTransport(vehicle) {
         throw new Error("Should be Implemented");
     }
-    selectByAir(vehicle) {
-        throw new Error("Should be Implemented");
-    }
-    selectByWater(vehicle) {
-        throw new Error("Should be Implemented");
-    }
-
 }
 
-class LogisticFactory extends LogisticsApp {
-    selectByRoad(vehicle){
-        if(vehicle.toLowerCase() == 'truck'){
+class RoadLogistics extends LogisticsApp {
+    createTransport(vehicle) {
+        if (vehicle.toLowerCase() == 'truck') {
             return new Truck();
         }
     }
-    selectByAir(vehicle){
-        if(vehicle.toLowerCase() == 'airplane'){
-            return new Airplane();
-        }
-    }
-    selectByWater(vehicle){
-        if(vehicle.toLowerCase() == 'ship'){
+}
+class SeaLogistics extends LogisticsApp {
+    createTransport(vehicle) {
+        if (vehicle.toLowerCase() == 'ship') {
             return new Ship();
         }
     }
 }
 
-const logisticByRoad = new LogisticFactory().selectByRoad('truck');
-logisticByRoad.LogisticsVehicle();
+const logisticByRoad = new RoadLogistics().createTransport('truck');
+logisticByRoad.deliver();
 
-const logisticByAir = new LogisticFactory().selectByAir('airplane');
-logisticByAir.LogisticsVehicle();
-
-const logisticByWater = new LogisticFactory().selectByWater('ship');
-logisticByWater.LogisticsVehicle();
+const logisticByWater = new SeaLogistics().createTransport('ship');
+logisticByWater.deliver();
 
 
 /*
@@ -104,5 +79,27 @@ By doing this, the client just does `new RoadLogistics().planDelivery()` without
 1. **Cross-Pattern Context (OCP):** If you refactor this to the true Factory Method pattern as described above, how exactly does it satisfy the **Open-Closed Principle** if we want to add `AirLogistics` and `Airplane` later? Which existing classes would you need to modify?
 
 **Next Steps:** Refactor the code to properly separate Creators and Products using the hints above, drop your answer below, and let me know when you're ready for a re-review!
+================================================================================
+1. after changes if we want to AirLogistics new class then first we need to extends the logsticeApp class
+   we are not modify any class so no OCP voaltion here and then fro Airplace we need to extends the 
+   transpost class which is alos no voliaions of OCP then we can create factory methods easily for 
+   air transport and here i used only single factory method
+
+--------------------------------------------------------------------------------
+🏆 FINAL EVALUATION
+--------------------------------------------------------------------------------
+**Code Review:** Great refactor! You successfully separated the `Transport` product 
+hierarchy from the `LogisticsApp` creator hierarchy. This is the core of the 
+Factory Method pattern! 
+*Minor tip:* In a true Factory Method, you usually don't even need to pass the 
+`'truck'` string into `createTransport()`. Because `RoadLogistics` 
+exists *specifically* to create road vehicles, it can just return `new Truck()` directly!
+
+**Q1 (OCP):** Perfect answer! You correctly identified that adding Air Logistics means 
+creating a new `AirLogistics` class extending `LogisticsApp`, and an `Airplane` 
+class extending `Transport`. Zero existing code is modified, satisfying the 
+Open-Closed Principle completely!
+
+**Status:** ✅ Completed! 
 ================================================================================
 */

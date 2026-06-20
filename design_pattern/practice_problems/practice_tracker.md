@@ -18,7 +18,7 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 
 ## Creational: Factory Patterns
 *Status: Ready to Practice*
-- [ ] **factory_1** (Factory Method): Implement a `LogisticsApp`. Use a Factory Method to handle the creation of `Truck` (Road) and `Ship` (Sea) transport. Ensure you can add `Airplane` (Air) transport later without touching the main logic.
+- ✅ **factory_1** (Factory Method): Implement a `LogisticsApp`. Use a Factory Method to handle the creation of `Truck` (Road) and `Ship` (Sea) transport. Ensure you can add `Airplane` (Air) transport later without touching the main logic.
 - [ ] **factory_2** (Abstract Factory): Build a `CrossPlatformUI` toolkit. Create an Abstract Factory `UIFactory` that produces `Button` and `Checkbox`. Implement concrete factories `WindowsFactory` and `MacFactory` to produce OS-specific variants.
 - [ ] **factory_3** (Abstract Factory): Implement a `CloudResourceFactory` that manages families of related cloud services: `ComputeInstance` and `StorageBucket`. Provide concrete implementations for `AWSFactory` and `GCPFactory`.
 - [ ] **factory_4** (Simple Factory): Refactor an e-commerce `DiscountCalculator` that uses a messy `switch` statement for 'BLACK_FRIDAY', 'CHRISTMAS', and 'HOLI' into a clean Factory structure.
