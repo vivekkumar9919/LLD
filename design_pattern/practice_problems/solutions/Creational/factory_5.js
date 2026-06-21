@@ -68,10 +68,30 @@ class MozzarellaCheese extends Cheese {
         // console.log("Pizza with Mozzarella")
     }
 }
+
+// clams
+class Clams {
+    clamType() {
+        throw new Error("Method not implemented");
+    }
+}
+
+class FreshClams extends Clams {
+    clamType() {
+        return "Fresh";
+    }
+}
+class FrozenClams extends Clams {
+    clamType() {
+        return "Frozen";
+    }
+}
+
 // Ingredients factory for Pizza 
 class PizzaIngredientFactory {
     createDough() { throw new Error("Method not implemented"); }
     createCheese() { throw new Error("Method not implemented"); }
+    createclam() { throw new Error("Method not implemented"); }
 }
 // NY Ingredients factory
 class NYPizzaIngredientFactory extends PizzaIngredientFactory {
@@ -84,6 +104,7 @@ class NYPizzaIngredientFactory extends PizzaIngredientFactory {
     }
     createDough() { return new ThinCrustDough() }
     createCheese() { return new ReggianoCheese() }
+    createclam() { return new FreshClams() }
 }
 // Chicago Ingredients
 class ChicagoPizzaIngredientFactory extends PizzaIngredientFactory {
@@ -96,10 +117,14 @@ class ChicagoPizzaIngredientFactory extends PizzaIngredientFactory {
     }
     createDough() { return new ThickCrustDough() }
     createCheese() { return new MozzarellaCheese() }
+    createclam() { return new FrozenClams() }
 }
 
 class Pizza {
     prepare() {
+        throw new Error("Method not implemented");
+    }
+    clamPizza() {
         throw new Error("Method not implemented");
     }
 }
@@ -115,6 +140,11 @@ class CheesePizza extends Pizza {
         const doughType = dough.ingredientDough();
         const cheeseType = cheese.ingredientCheese();
         console.log("Preparing Pizza with " + doughType + " and " + cheeseType);
+    }
+    clamPizza() {
+        const clam = this.factory.createclam();
+        const clamType = clam.clamType();
+        console.log("Clamming Pizza with type ", clamType);
     }
 }
 
@@ -141,10 +171,12 @@ class ChicagoPizzaStore extends PizzaStore {
 const nyStore = new NYPizzaStore();
 const myPizza = nyStore.orderPizza();
 myPizza.prepare();
+myPizza.clamPizza();
 
 const chicStore = new ChicagoPizzaStore();
 const myPizzachic = chicStore.orderPizza();
 myPizzachic.prepare();
+myPizzachic.clamPizza();
 
 /*
 ================================================================================
@@ -171,5 +203,25 @@ class ONCE. How does the `ClamPizza` class get the right clams for New York
 and a `ChicagoClamPizza`?
 
 **Status:** ✅ Completed! Drop your answer below and bask in the glory of finishing the Creational Patterns!
+================================================================================
+*/
+
+/*
+================================================================================
+🤖 PRACTICE REVIEWER FEEDBACK (Clam Add-on)
+================================================================================
+**Rating:** ⭐⭐⭐⭐⭐ (5/5)
+
+**Code Review:** Perfect! You proved exactly why the Abstract Factory is so powerful. 
+To add clams to your pizzas, you didn't have to create a `NYClamPizza` class and a 
+`ChicagoClamPizza` class. You just created *one* pizza logic flow (`clamPizza()`), 
+and the abstract factory automatically injected the correct regional dependency 
+(Fresh vs Frozen). 
+
+You've mastered the concept of coding to an interface (the factory) rather than a 
+concrete implementation!
+
+Congratulations on officially completing the Factory patterns and the entire 
+Creational Design Patterns section! 🥳
 ================================================================================
 */
