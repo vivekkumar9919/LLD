@@ -15,6 +15,9 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 - ✅ **singleton_1**: Implement a **Database Connection Pool** class asynchronously. Ensure the exact same pool instance is securely returned to 3 incoming API requests running concurrently. 
 - ✅ **singleton_2**: Implement a **Logger** class eagerly. Ensure all components in the app write to the exact same log buffer array without race conditions.
 - ✅ **singleton_3**: Implement a Singleton `FeatureToggleService` that fetches a massive remote JSON config (delay mock with setTimeout). Test what happens if multiple modules request the toggle status while the network request is still pending.
+- [ ] **singleton_4** (State Management Store): *[Spaced Repetition]* Build a `GlobalStore` singleton (like Redux) that holds a global state tree and provides `dispatch(action)` and `getState()` methods.
+- [ ] **singleton_5** (Feature Flag Manager): *[Spaced Repetition]* Create a `FeatureFlag` singleton that loads a mock configuration object exactly once on boot and provides an `isEnabled(flagName)` method.
+- [ ] **singleton_6** (WebSocket Manager): *[Spaced Repetition]* Build a `SocketManager` singleton that prevents duplicate connections and maintains exactly one active WebSocket state across the entire application.
 
 ## Creational: Factory Patterns
 *Status: Ready to Practice*
@@ -23,6 +26,9 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 - ✅ **factory_3** (Abstract Factory): Implement a `CloudResourceFactory` that manages families of related cloud services: `ComputeInstance` and `StorageBucket`. Provide concrete implementations for `AWSFactory` and `GCPFactory`.
 - ✅ **factory_4** (Simple Factory): Refactor an e-commerce `DiscountCalculator` that uses a messy `switch` statement for 'BLACK_FRIDAY', 'CHRISTMAS', and 'HOLI' into a clean Factory structure.
 - ✅ **factory_5** (Hybrid): Create a `PizzaStore` using the Factory Method for different regions (New York, Chicago) and then use an Abstract Factory inside those stores to create "Families" of ingredients (ThinCrust, Mozzarella vs ThickCrust, Reggiano).
+- [ ] **factory_6** (Notification System - Factory Method): *[Spaced Repetition]* Create a `NotificationFactory`. Given a type ("Email", "SMS", "Push"), return the respective class. Each class must implement a `.send(message)` method.
+- [ ] **factory_7** (Payment Gateway - Registry Factory): *[Spaced Repetition]* Implement a Factory using the Registry Pattern (OCP compliant) to dynamically register `Stripe`, `PayPal`, and `Crypto` payment processors without modifying the factory class.
+- [ ] **factory_8** (Cross-Platform UI - Abstract Factory): *[Spaced Repetition]* Create a `ThemeFactory` that returns complete families of components (e.g., `DarkTheme` returns `DarkNav`, `DarkCard`; `LightTheme` returns `LightNav`, `LightCard`).
 
 ## Creational: Builder Pattern
 *Status: Ready to Practice*
@@ -31,6 +37,9 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 - ✅ **builder_3** (Stepwise Form): Build a `RegistrationFormBuilder` using the **Step Builder** pattern. Enforce the sequence: `Username -> Email -> Password -> (Optional) ProfilePic -> Build`.
 - ✅ **builder_4** (Report Generator): Implement a `ReportBuilder` for a dashboard. It should support `setHeader()`, `addTableData()`, and `setFooter()`. Ensure that `addTableData()` can be called multiple times, but `setHeader()` can only be called once.
 - ✅ **builder_5** (Game Character): Create a `CharacterBuilder` for an RPG. It should handle complex attributes like `setStats(str, dex, int)`, `setEquipments([])`, and `setAbilities([])`. Use the Builder to ensure a character cannot be built without a minimum "Health" value.
+- [ ] **builder_6** (HTTP Request Builder): *[Spaced Repetition]* Create a `RequestBuilder` to construct complex HTTP configurations (URL, Headers, Body, Method). Include a `Director` that provides standard templates like `buildAuthPostRequest()`.
+- [ ] **builder_7** (Data Visualization - Step Builder): *[Spaced Repetition]* Create a `ChartBuilder` using the Step Builder pattern. Enforce the exact strict sequence: `SetType(bar/line) -> AddData() -> SetLabels() -> Build()`.
+- [ ] **builder_8** (CSS Style Builder): *[Spaced Repetition]* Build a `StyleBuilder` that chains CSS property assignments `.addMargin()`, `.addPadding()`, `.addColor()`, and returns a perfectly formatted inline CSS string.
 
 
 
