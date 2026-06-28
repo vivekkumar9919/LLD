@@ -99,8 +99,62 @@ class CreateForm {
 
 const form1 = CreateForm.create().username("vivek").email("vns@gmail.com").password("12344").build();
 const form2 = CreateForm.create().username("vivek").email("vns@gmail.com").password("12344").profilePic("pic.img").build();
-console.log(form1);
-console.log(form2);
+// console.log(form1);
+// console.log(form2);
+
+class EfficientRegistrationBuilder {
+    constructor() {
+        this.data = {};
+    }
+
+    // Step 1: Returns an object that only has the 'email' method
+    username(name) {
+        if (!name) throw new Error("Name is required");
+        this.data.username = name;
+        
+        return {
+            email: this.email.bind(this)
+        };
+    }
+
+    // Step 2: Returns an object that only has the 'password' method
+    email(emailId) {
+        if (!emailId) throw new Error("Email is required");
+        this.data.email = emailId;
+        
+        return {
+            password: this.password.bind(this)
+        };
+    }
+
+    // Step 3: Returns an object that has 'profilePic' AND 'build'
+    password(pass) {
+        if (!pass) throw new Error("Password is required");
+        this.data.password = pass;
+        
+        return {
+            profilePic: this.profilePic.bind(this),
+            build: this.build.bind(this)
+        };
+    }
+
+    // Step 4 (Optional): Returns the same object so they can chain or build
+    profilePic(pic) {
+        if (!pic) throw new Error("Pic is required");
+        this.data.profilePic = pic;
+        
+        return {
+            build: this.build.bind(this)
+        };
+    }
+
+    build() {
+        return new Formdata(this.data);
+    }
+}
+
+const efficientForm = new EfficientRegistrationBuilder().username("vivek").email("vns@gmail.com").password("12344").build();
+console.log(efficientForm)
 
 /*
 ================================================================================
