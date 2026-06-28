@@ -27,66 +27,60 @@
  */
 
 class Report {
-  constructor(header, table, footer) {
-    this.headers = header;
-    this.table = table;
-    this.footer = footer;
-  }
+    constructor(header, table, footer) {
+        this.headers = header;
+        this.table = table;
+        this.footer = footer;
+    }
 }
 
 class ReportBuilder {
-  constructor() {
-    this.reportData = {
-      table: []
-    };
-  }
-  setHeaders(headersData) {
-    if (this.reportData?.header) {
-      throw new Error("Headers is already set");
+    constructor() {
+        this.reportData = {
+            table: []
+        };
     }
-    if (!headersData) {
-      throw new Error("Provide the headers");
+    setHeaders(headersData) {
+        if (this.reportData?.header) {
+            throw new Error("Headers is already set");
+        }
+        if (!headersData) {
+            throw new Error("Provide the headers");
+        }
+        this.reportData.header = headersData;
+        return this
     }
-    this.reportData.header = headersData;
-    return {
-      setTable: this.setTable.bind(this)
+    setTable(tableData) {
+        if (!tableData) {
+            throw new Error("Provide the table data");
+        }
+        this.reportData.table.push(tableData);
+        return this
     }
-  }
-  setTable(tableData) {
-    if (!tableData) {
-      throw new Error("Provide the table data");
+    setFooter(footersData) {
+        if (this.reportData?.footer) {
+            throw new Error("Footer is already set");
+        }
+        if (!footersData) {
+            throw new Error("Provide the footer");
+        }
+        this.reportData.footer = footersData;
+        return this
     }
-    this.reportData.table.push(tableData);
-    return {
-      setTable: this.setTable.bind(this),
-      setFooter: this.setFooter.bind(this),
+    build() {
+        return new Report(
+            this.reportData.header,
+            this.reportData.table,
+            this.reportData.footer
+        );
     }
-  }
-  setFooter(footersData) {
-    if (this.reportData?.footer) {
-      throw new Error("Footer is already set");
-    }
-    if (!footersData) {
-      throw new Error("Provide the footer");
-    }
-    this.reportData.footer = footersData;
-    return {
-      build: this.build.bind(this)
-    }
-  }
-  build() {
-    return new Report(
-      this.reportData.header,
-      this.reportData.table,
-      this.reportData.footer
-    );
-  }
 }
 
 
-const report1 = new ReportBuilder().setHeaders("Headers").setTable({"name":"vivek"}).setFooter("Footer").build();
+const report1 = new ReportBuilder().setHeaders("Headers").setTable({ "name": "vivek" }).setFooter("Footer").build();
 const report2 = new ReportBuilder().setHeaders("Header").setTable({ "name": "vivek" }).setTable({ "name": "akhil" }).setFooter("Footer").build();
-console.log(report2);
+const report3 = new ReportBuilder().setHeaders("Header").setFooter("footer1").setTable({ "name": "vivek" }).setTable({ "name": "akhil" }).build();
+console.log(report3);
 
 /*
 ================================================================================
@@ -116,5 +110,29 @@ the client to call `setFooter()` twice anyway.
 1. **The Reusability Bug:** In your current code, if a developer calls `.build()`, your builder does NOT reset `this.reportData`. If they try to reuse the same builder instance to make a second report, your state checks will instantly throw an error (because header and footer are already set from the first report). How do you fix this?
 
 **Next Steps:** Rip out the Step Builder (stop returning bound methods and just `return this`). Fix the `header` typo so your state checks actually work. Reset the state in `.build()`. Drop your answer below and ping me for a re-review!
+
+================================================================================
+🤖 PRACTICE REVIEWER FEEDBACK (Iteration 2)
+================================================================================
+**Rating:** ⭐⭐⭐⭐ (4/5)
+
+### 🚨 Code Issues & Concept Check
+Great job! The true Fluent Builder is back. You fixed the typo, and your state 
+checks now perfectly enforce the constraints (only one header and footer). 
+You also proved that the order doesn't matter by building `report3` completely 
+out of order (`Header -> Footer -> Table`)!
+
+However, you missed the one requirement from the Deep Dive! 
+You forgot to reset the state inside `.build()`. 
+
+Right now, if I write:
+```javascript
+const mySharedBuilder = new ReportBuilder();
+mySharedBuilder.setHeaders('Report 1').build();
+mySharedBuilder.setHeaders('Report 2').build(); // CRASH! "Headers is already set"
+```
+Because `this.reportData` was never wiped clean after the first `build()`, the builder is permanently ruined and cannot be reused.
+
+**Next Steps:** Inside your `build()` method, store the new `Report` in a variable, wipe `this.reportData` back to `{ table: [] }`, and then return the report. Ping me when done!
 ================================================================================
 */
