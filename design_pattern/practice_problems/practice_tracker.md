@@ -28,7 +28,7 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 *Status: Ready to Practice*
 - ✅ **builder_1** (Query Builder): Implement a `SQLQueryBuilder` that supports `select()`, `from()`, `where()`, `join()`, and `limit()`. Ensure the `build()` method returns a valid SQL string and handles multiple `where` clauses correctly.
 - ✅ **builder_2** (E-commerce Order): Create an `OrderBuilder`. Use a **Director** to provide templates like `buildGuestOrder()` and `buildPremiumMemberOrder()` which automatically apply different discounts.
-- [ ] **builder_3** (Stepwise Form): Build a `RegistrationFormBuilder` using the **Step Builder** pattern. Enforce the sequence: `Username -> Email -> Password -> (Optional) ProfilePic -> Build`.
+- ✅ **builder_3** (Stepwise Form): Build a `RegistrationFormBuilder` using the **Step Builder** pattern. Enforce the sequence: `Username -> Email -> Password -> (Optional) ProfilePic -> Build`.
 - [ ] **builder_4** (Report Generator): Implement a `ReportBuilder` for a dashboard. It should support `setHeader()`, `addTableData()`, and `setFooter()`. Ensure that `addTableData()` can be called multiple times, but `setHeader()` can only be called once.
 - [ ] **builder_5** (Game Character): Create a `CharacterBuilder` for an RPG. It should handle complex attributes like `setStats(str, dex, int)`, `setEquipments([])`, and `setAbilities([])`. Use the Builder to ensure a character cannot be built without a minimum "Health" value.
 
