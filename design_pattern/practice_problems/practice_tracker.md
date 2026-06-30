@@ -45,7 +45,7 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 
 ## Creational: Prototype Pattern
 *Status: Ready to Practice*
-- [ ] **prototype_1** (Invoice Cloning): Implement an `Invoice` object with an array of `lineItems`. Create a deep clone mechanism so that when an invoice is cloned for a recurring monthly payment, modifying the new invoice's `lineItems` doesn't affect the original invoice.
+- ✅ **prototype_1** (Invoice Cloning): Implement an `Invoice` object with an array of `lineItems`. Create a deep clone mechanism so that when an invoice is cloned for a recurring monthly payment, modifying the new invoice's `lineItems` doesn't affect the original invoice.
 - [ ] **prototype_2** (Game NPC Spawning): Create a `MonsterRegistry` (Prototype Registry). Store configured prototype instances of "Goblin" and "Dragon". Provide a `spawnMonster(type)` method that clones and returns the appropriate monster to avoid running expensive stats generation logic multiple times.
 - [ ] **prototype_3** (Document Management): Build a `Document` class with nested metadata objects (e.g., `author: {name, id}`). Implement a `clone()` method using `JSON.parse(JSON.stringify())` or `structuredClone()` to ensure true deep copying, and demonstrate the tradeoffs compared to a shallow copy.
 - [ ] **prototype_4** (HTTP Request Builder): Create a `RequestTemplate` object that holds common headers and auth tokens. Use the Prototype pattern to clone this template for specific endpoints, allowing you to append new headers without mutating the global template.
