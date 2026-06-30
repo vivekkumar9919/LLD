@@ -52,7 +52,7 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 
 ## Structural: Adapter Pattern
 *Status: Ready to Practice*
-- [ ] **adapter_1** (Payment Gateway): You have an existing system using `StripeAdapter` with a method `pay(amount)`. A new requirement forces you to integrate `PayPalAPI` which only accepts `sendPayment(currency, value)`. Create an Adapter so the client can still call `pay(amount)`.
+- ✅ **adapter_1** (Payment Gateway): You have an existing system using `StripeAdapter` with a method `pay(amount)`. A new requirement forces you to integrate `PayPalAPI` which only accepts `sendPayment(currency, value)`. Create an Adapter so the client can still call `pay(amount)`.
 - [ ] **adapter_2** (Logger Migration): Your app uses a custom `Logger` with a `logMessage(msg)`. You want to switch to a powerful third-party library `WinstonLogger` which uses `info(text)` and `error(text)`. Write an Adapter to wrap `WinstonLogger` without changing your app's codebase.
 - [ ] **adapter_3** (Legacy DB to ORM): You have a `LegacyDatabase` class with `executeSQL(query)`. You are migrating to a modern `MongoORM` that requires `insertOne(document)`. Create an Adapter that intercepts SQL-like method calls and translates them to MongoDB document inserts.
 - [ ] **adapter_4** (Multi-Format Data Reader): Your application only understands JSON. You need to read data from a legacy API that returns CSV, and another that returns XML. Create `CSVAdapter` and `XMLAdapter` classes that convert these formats into the standard JSON interface your app expects.
