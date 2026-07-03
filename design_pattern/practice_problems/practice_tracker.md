@@ -59,7 +59,7 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 
 ## Structural: Decorator Pattern
 *Status: Ready to Practice*
-- [ ] **decorator_1** (Coffee Shop): Implement a `Beverage` base class. Create decorators like `Milk`, `Mocha`, and `Whip` that dynamically calculate the `cost()` and `getDescription()` of the beverage.
+- ✅ **decorator_1** (Coffee Shop): Implement a `Beverage` base class. Create decorators like `Milk`, `Mocha`, and `Whip` that dynamically calculate the `cost()` and `getDescription()` of the beverage.
 - [ ] **decorator_2** (Notifier System): Build an `EmailNotifier`. Decorate it with `SMSNotifier` and `SlackNotifier` so that a critical system alert can be sent via Email + SMS + Slack by stacking the decorators.
 - [ ] **decorator_3** (Data Source API): Implement a basic `FileDataSource` that writes/reads string data. Create a `EncryptionDecorator` (encrypts before writing) and a `CompressionDecorator` (compresses before writing). Chain them together.
 - [ ] **decorator_4** (Web Request Logger): Build a `BaseRequestHandler`. Add decorators like `AuthenticationCheck`, `Logging`, and `RateLimiting` that wrap the core handler to add middleware-like behavior without modifying the base handler.
