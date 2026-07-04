@@ -66,7 +66,7 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 
 ## Structural: Facade Pattern
 *Status: Ready to Practice*
-- [ ] **facade_1** (Video Converter): Create a `VideoConversionFacade` that hides the complexities of `AudioMixer`, `VideoFile`, `BitrateReader`, and `CodecFactory` behind a single `convertVideo(filename, format)` method.
+- ✅ **facade_1** (Video Converter): Create a `VideoConversionFacade` that hides the complexities of `AudioMixer`, `VideoFile`, `BitrateReader`, and `CodecFactory` behind a single `convertVideo(filename, format)` method.
 - [ ] **facade_2** (E-Commerce Checkout): Build a `CheckoutFacade` that coordinates `InventoryService.checkStock()`, `PaymentGateway.process()`, and `ShippingService.schedule()`. Ensure the facade takes dependencies via constructor (DIP).
 - [ ] **facade_3** (Smart Home API): Create a `SmartHomeFacade` to easily trigger "Morning Mode" or "Night Mode", which internally coordinates `LightingSystem`, `Thermostat`, and `SecuritySystem`.
 - [ ] **facade_4** (Database Migration): Hide the complexity of a database migration behind a `MigrationFacade` that coordinates `SchemaAnalyzer`, `DataTransferAgent`, and `ConnectionPoolManager`.
