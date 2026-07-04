@@ -1,0 +1,2673 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLD Practice Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #1e1e1e;
+            --bg-sidebar: #252526;
+            --bg-content: #1e1e1e;
+            --text-main: #d4d4d4;
+            --text-muted: #858585;
+            --accent: #3794ff;
+            --accent-hover: #1f6fd0;
+            --border: #333333;
+            --code-bg: #2d2d2d;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 340px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid var(--border);
+            background-color: var(--bg-sidebar);
+        }
+
+        .sidebar-header h1 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-header h1 i {
+            color: var(--accent);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 0;
+        }
+
+        .folder-header {
+            padding: 10px 20px;
+            color: var(--text-main);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            user-select: none;
+        }
+
+        .folder-header:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .folder-chevron {
+            font-size: 0.75rem;
+            width: 14px;
+            color: var(--text-muted);
+        }
+
+        .folder-icon-color {
+            color: #eab308; /* Yellow folder */
+        }
+
+        .file-icon-color {
+            color: var(--accent); /* Blue file */
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: 8px 20px 8px 40px; /* Base padding, inline style overrides for depth */
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            word-break: break-all;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-link i {
+            width: 20px;
+            color: var(--border);
+            transition: color 0.2s ease;
+        }
+
+        .sidebar-link:hover {
+            background-color: rgba(56, 189, 248, 0.05);
+            color: var(--text-main);
+        }
+
+        .sidebar-link.active {
+            background-color: rgba(56, 189, 248, 0.1);
+            color: var(--accent);
+            border-left-color: var(--accent);
+            font-weight: 600;
+        }
+
+        .sidebar-link.active i {
+            color: var(--accent);
+        }
+
+        /* Scrollbar for sidebar */
+        .sidebar-nav::-webkit-scrollbar { width: 6px; }
+        .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+        /* Main Content Styling */
+        .main-content {
+            flex: 1;
+            height: 100%;
+            overflow-y: auto;
+            background-color: var(--bg-content);
+            position: relative;
+        }
+
+        .doc-content {
+            padding: 40px 60px 80px 60px;
+            max-width: 900px;
+            margin: 0 auto;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .breadcrumb {
+            font-size: 0.85rem;
+            color: var(--accent);
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+            font-family: monospace;
+            letter-spacing: 0.5px;
+        }
+
+        /* Typography & Markdown Styles */
+        h1, h2, h3, h4, h5 {
+            color: var(--text-main);
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+            font-weight: 600;
+        }
+
+        h1 { font-size: 2.2rem; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
+        h2 { font-size: 1.7rem; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+        h3 { font-size: 1.3rem; }
+
+        p, li {
+            line-height: 1.7;
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        a:hover {
+            color: var(--accent-hover);
+            text-decoration: underline;
+        }
+
+        code {
+            background-color: var(--code-bg);
+            color: #e2e8f0;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: 'Fira Code', Consolas, monospace;
+            font-size: 0.9em;
+            border: 1px solid var(--border);
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            margin: 20px 0;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            border: none;
+            color: #cbd5e1;
+        }
+
+        blockquote {
+            border-left: 4px solid var(--accent);
+            margin: 0;
+            padding: 10px 20px;
+            background-color: rgba(56, 189, 248, 0.05);
+            border-radius: 0 8px 8px 0;
+            color: var(--text-main);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid var(--border);
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--bg-sidebar);
+            font-weight: 600;
+        }
+
+        /* Checkboxes in markdown tasks */
+        input[type="checkbox"] {
+            accent-color: var(--accent);
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1><i class="fas fa-layer-group"></i> LLD Specs</h1>
+        </div>
+        <div class="sidebar-nav" id="sidebar-nav">
+            
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-aut24x5yo')" style="padding-left: 20px;">
+                        <i class="fas fa-chevron-down folder-chevron" id="icon-folder-aut24x5yo"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> design_pattern
+                    </div>
+                    <div class="folder-content" id="folder-aut24x5yo" style="display: block;">
+                        
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-eksgy2thb')" style="padding-left: 35px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-eksgy2thb"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> behavioral
+                    </div>
+                    <div class="folder-content" id="folder-eksgy2thb" style="display: none;">
+                        
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-fbpahsk1o')" style="padding-left: 50px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-fbpahsk1o"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> chain_of_responsibility
+                    </div>
+                    <div class="folder-content" id="folder-fbpahsk1o" style="display: none;">
+                        
+                <a href="#" class="sidebar-link active" data-target="doc-0" style="padding-left: 87px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> Summary.md
+                </a>
+            
+                    </div>
+                </div>
+            
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-yvqhj8zsw')" style="padding-left: 50px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-yvqhj8zsw"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> command
+                    </div>
+                    <div class="folder-content" id="folder-yvqhj8zsw" style="display: none;">
+                        
+                <a href="#" class="sidebar-link " data-target="doc-1" style="padding-left: 87px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> Summary.md
+                </a>
+            
+                    </div>
+                </div>
+            
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-rupajkhed')" style="padding-left: 50px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-rupajkhed"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> iterator
+                    </div>
+                    <div class="folder-content" id="folder-rupajkhed" style="display: none;">
+                        
+                <a href="#" class="sidebar-link " data-target="doc-2" style="padding-left: 87px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> Summary.md
+                </a>
+            
+                    </div>
+                </div>
+            
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-g191ue5s1')" style="padding-left: 50px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-g191ue5s1"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> mediator
+                    </div>
+                    <div class="folder-content" id="folder-g191ue5s1" style="display: none;">
+                        
+                <a href="#" class="sidebar-link " data-target="doc-3" style="padding-left: 87px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> Summary.md
+                </a>
+            
+                    </div>
+                </div>
+            
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-3p8ghmc8c')" style="padding-left: 50px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-3p8ghmc8c"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> memento
+                    </div>
+                    <div class="folder-content" id="folder-3p8ghmc8c" style="display: none;">
+                        
+                <a href="#" class="sidebar-link " data-target="doc-4" style="padding-left: 87px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> Summary.md
+                </a>
+            
+                    </div>
+                </div>
+            
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-yll9n0aw1')" style="padding-left: 50px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-yll9n0aw1"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> observer
+                    </div>
+                    <div class="folder-content" id="folder-yll9n0aw1" style="display: none;">
+                        
+                <a href="#" class="sidebar-link " data-target="doc-5" style="padding-left: 87px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> Summary.md
+                </a>
+            
+                    </div>
+                </div>
+            
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-mh29x5j91')" style="padding-left: 50px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-mh29x5j91"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> state
+                    </div>
+                    <div class="folder-content" id="folder-mh29x5j91" style="display: none;">
+                        
+                <a href="#" class="sidebar-link " data-target="doc-6" style="padding-left: 87px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> Summary.md
+                </a>
+            
+                    </div>
+                </div>
+            
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-vvzsrj2ah')" style="padding-left: 50px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-vvzsrj2ah"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> strategy
+                    </div>
+                    <div class="folder-content" id="folder-vvzsrj2ah" style="display: none;">
+                        
+                <a href="#" class="sidebar-link " data-target="doc-7" style="padding-left: 87px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> Summary.md
+                </a>
+            
+                    </div>
+                </div>
+            
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-5aceau0nh')" style="padding-left: 50px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-5aceau0nh"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> template_method
+                    </div>
+                    <div class="folder-content" id="folder-5aceau0nh" style="display: none;">
+                        
+                <a href="#" class="sidebar-link " data-target="doc-8" style="padding-left: 87px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> Summary.md
+                </a>
+            
+                    </div>
+                </div>
+            
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-c9ye4q3ll')" style="padding-left: 50px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-c9ye4q3ll"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> visitor
+                    </div>
+                    <div class="folder-content" id="folder-c9ye4q3ll" style="display: none;">
+                        
+                <a href="#" class="sidebar-link " data-target="doc-9" style="padding-left: 87px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> Summary.md
+                </a>
+            
+                    </div>
+                </div>
+            
+                    </div>
+                </div>
+            
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-q1k00e43o')" style="padding-left: 35px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-q1k00e43o"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> creational
+                    </div>
+                    <div class="folder-content" id="folder-q1k00e43o" style="display: none;">
+                        
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-pftkcp4l0')" style="padding-left: 50px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-pftkcp4l0"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> builder
+                    </div>
+                    <div class="folder-content" id="folder-pftkcp4l0" style="display: none;">
+                        
+                <a href="#" class="sidebar-link " data-target="doc-10" style="padding-left: 87px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> Summary.md
+                </a>
+            
+                    </div>
+                </div>
+            
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-wn3ogjvxv')" style="padding-left: 50px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-wn3ogjvxv"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> factory_method
+                    </div>
+                    <div class="folder-content" id="folder-wn3ogjvxv" style="display: none;">
+                        
+                <a href="#" class="sidebar-link " data-target="doc-11" style="padding-left: 87px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> Summary.md
+                </a>
+            
+                    </div>
+                </div>
+            
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-drfqfx39d')" style="padding-left: 50px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-drfqfx39d"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> prototype
+                    </div>
+                    <div class="folder-content" id="folder-drfqfx39d" style="display: none;">
+                        
+                <a href="#" class="sidebar-link " data-target="doc-12" style="padding-left: 87px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> Summary.md
+                </a>
+            
+                    </div>
+                </div>
+            
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-z0mzzzo8w')" style="padding-left: 50px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-z0mzzzo8w"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> singleton
+                    </div>
+                    <div class="folder-content" id="folder-z0mzzzo8w" style="display: none;">
+                        
+                <a href="#" class="sidebar-link " data-target="doc-13" style="padding-left: 87px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> Summary.md
+                </a>
+            
+                    </div>
+                </div>
+            
+                    </div>
+                </div>
+            
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-42ut61mxu')" style="padding-left: 35px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-42ut61mxu"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> practice_problems
+                    </div>
+                    <div class="folder-content" id="folder-42ut61mxu" style="display: none;">
+                        
+                <a href="#" class="sidebar-link " data-target="doc-14" style="padding-left: 72px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> practice_tracker.md
+                </a>
+            
+                <a href="#" class="sidebar-link " data-target="doc-15" style="padding-left: 72px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> Summary.md
+                </a>
+            
+                    </div>
+                </div>
+            
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-i4xwwi273')" style="padding-left: 35px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-i4xwwi273"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> solid_principles
+                    </div>
+                    <div class="folder-content" id="folder-i4xwwi273" style="display: none;">
+                        
+                <a href="#" class="sidebar-link " data-target="doc-16" style="padding-left: 72px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> Summary.md
+                </a>
+            
+                    </div>
+                </div>
+            
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-3w4u55rj7')" style="padding-left: 35px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-3w4u55rj7"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> structural
+                    </div>
+                    <div class="folder-content" id="folder-3w4u55rj7" style="display: none;">
+                        
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-x9gf1rq21')" style="padding-left: 50px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-x9gf1rq21"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> adapter
+                    </div>
+                    <div class="folder-content" id="folder-x9gf1rq21" style="display: none;">
+                        
+                <a href="#" class="sidebar-link " data-target="doc-17" style="padding-left: 87px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> Summary.md
+                </a>
+            
+                    </div>
+                </div>
+            
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-mcopik6rc')" style="padding-left: 50px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-mcopik6rc"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> bridge
+                    </div>
+                    <div class="folder-content" id="folder-mcopik6rc" style="display: none;">
+                        
+                <a href="#" class="sidebar-link " data-target="doc-18" style="padding-left: 87px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> Summary.md
+                </a>
+            
+                    </div>
+                </div>
+            
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-xbpdrlrj8')" style="padding-left: 50px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-xbpdrlrj8"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> composite
+                    </div>
+                    <div class="folder-content" id="folder-xbpdrlrj8" style="display: none;">
+                        
+                <a href="#" class="sidebar-link " data-target="doc-19" style="padding-left: 87px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> Summary.md
+                </a>
+            
+                    </div>
+                </div>
+            
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-e2um3exk3')" style="padding-left: 50px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-e2um3exk3"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> decorator
+                    </div>
+                    <div class="folder-content" id="folder-e2um3exk3" style="display: none;">
+                        
+                <a href="#" class="sidebar-link " data-target="doc-20" style="padding-left: 87px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> Summary.md
+                </a>
+            
+                    </div>
+                </div>
+            
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-sdni12n93')" style="padding-left: 50px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-sdni12n93"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> facade
+                    </div>
+                    <div class="folder-content" id="folder-sdni12n93" style="display: none;">
+                        
+                <a href="#" class="sidebar-link " data-target="doc-21" style="padding-left: 87px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> Summary.md
+                </a>
+            
+                    </div>
+                </div>
+            
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-xzoccrcht')" style="padding-left: 50px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-xzoccrcht"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> flyweight
+                    </div>
+                    <div class="folder-content" id="folder-xzoccrcht" style="display: none;">
+                        
+                <a href="#" class="sidebar-link " data-target="doc-22" style="padding-left: 87px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> Summary.md
+                </a>
+            
+                    </div>
+                </div>
+            
+                <div class="sidebar-folder">
+                    <div class="folder-header" onclick="toggleFolder('folder-6buwa7lof')" style="padding-left: 50px;">
+                        <i class="fas fa-chevron-right folder-chevron" id="icon-folder-6buwa7lof"></i> 
+                        <i class="fas fa-folder folder-icon-color"></i> proxy
+                    </div>
+                    <div class="folder-content" id="folder-6buwa7lof" style="display: none;">
+                        
+                <a href="#" class="sidebar-link " data-target="doc-23" style="padding-left: 87px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> Summary.md
+                </a>
+            
+                    </div>
+                </div>
+            
+                    </div>
+                </div>
+            
+                    </div>
+                </div>
+            
+                <a href="#" class="sidebar-link " data-target="doc-24" style="padding-left: 42px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> plan.md
+                </a>
+            
+                <a href="#" class="sidebar-link " data-target="doc-25" style="padding-left: 42px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> PROGRESS.md
+                </a>
+            
+                <a href="#" class="sidebar-link " data-target="doc-26" style="padding-left: 42px;">
+                    <i class="fas fa-file-alt file-icon-color"></i> README.md
+                </a>
+            
+        </div>
+    </div>
+
+    <div class="main-content">
+        
+                <div id="doc-0" class="doc-content" style="display: block;">
+                    <div class="breadcrumb">📄 design_pattern/behavioral/chain_of_responsibility/Summary.md</div>
+                    <h1>Summary</h1>
+<h2>About</h2>
+<ul>
+<li><strong>Chain of Responsibility Pattern (Behavioral)</strong>: Lets you pass requests along a chain of handlers. Upon receiving a request, each handler decides either to process it or to pass it to the next handler in the chain.</li>
+<li>It decouples the sender of a request from its receiver, giving multiple objects a chance to handle the request.</li>
+</ul>
+<h2>Resources</h2>
+<ul>
+<li><a href="https://refactoring.guru/design-patterns/chain-of-responsibility">Refactoring Guru - Chain of Responsibility</a></li>
+</ul>
+<h2>My Notes</h2>
+<ul>
+<li><strong>Variations of CoR</strong>: <ul>
+<li><em>Standard</em>: The chain stops as soon as one handler successfully processes the request (e.g., Event Bubbling in the DOM, or an Authentication Middleware).</li>
+<li><em>Filter / Accumulator</em>: The request is passed through ALL handlers, and each handler takes a &quot;piece&quot; of the request or modifies it (e.g., The ATM Dispenser taking out notes and passing the remainder down, or an Express.js middleware pipeline).</li>
+</ul>
+</li>
+<li><strong>Template Method Synergy</strong>: To avoid DRY violations when handlers share identical logic, define a Template Method in the base <code>Handler</code> class, and only pass the variables (like denomination) from the subclasses.</li>
+<li><strong>Handling Failure</strong>: If a request reaches the end of the chain unhandled, it MUST NOT fail silently. Always throw an Exception or return a definitive Error response so the client knows the chain failed.</li>
+<li><strong>Dynamic Chains</strong>: The biggest advantage over a massive <code>if-else</code> or <code>switch</code> statement is that the chain is configured at runtime. A Dispatcher can dynamically insert, remove, or reorder handlers based on the current state of the application.</li>
+</ul>
+<h3>Tradeoffs / Pros &amp; Cons</h3>
+<p><strong>Pros</strong>:</p>
+<ol>
+<li><strong>Single Responsibility Principle</strong>: You can decouple classes that invoke operations from classes that perform operations.</li>
+<li><strong>Open/Closed Principle</strong>: You can introduce new handlers into the app without breaking existing client code.</li>
+<li><strong>Control over order</strong>: You can easily control the order of request handling.</li>
+</ol>
+<p><strong>Cons</strong>:</p>
+<ol>
+<li><strong>Uncertainty</strong>: Some requests may end up unhandled if the chain is not configured properly or lacks a &quot;catch-all&quot; fallback handler at the end.</li>
+<li><strong>Debugging</strong>: It can be hard to trace the execution flow and figure out which handler processed the request or where it got dropped.</li>
+</ol>
+<h2>Examples Solved</h2>
+<ul>
+<li><strong>ATM Dispenser</strong>: Created a <code>MoneyHandler</code> base class that defines a <code>dispenseLogic</code> template method. Created concrete handlers (<code>ThousandHandler</code>, <code>FiveHundredHandler</code>, <code>TwoHundredHandler</code>) that take their respective inventory counts in the constructor. The handlers are linked via <code>setNextHandler</code>. An amount (e.g., 1700) cascades down the chain, with each handler dispensing what it can and passing the remainder to the next.</li>
+</ul>
+
+                </div>
+            
+                <div id="doc-1" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 design_pattern/behavioral/command/Summary.md</div>
+                    <h1>Summary</h1>
+<h2>About</h2>
+<ul>
+<li><strong>Command Pattern (Behavioral)</strong>: Turns a request into a stand-alone object that contains all information about the request. This transformation lets you pass requests as a method arguments, delay or queue a request&#39;s execution, and support undoable operations.</li>
+<li>It decouples the <strong>Invoker</strong> (the thing triggering the request, e.g., a GUI Button) from the <strong>Receiver</strong> (the thing performing the actual work, e.g., a Database or a Light Bulb).</li>
+</ul>
+<h2>Resources</h2>
+<ul>
+<li><a href="https://refactoring.guru/design-patterns/command">Refactoring Guru - Command</a></li>
+</ul>
+<h2>My Notes</h2>
+<ul>
+<li><strong>Command vs Callback</strong>: In JavaScript, passing a function callback <code>() =&gt; light.on()</code> accomplishes the basic decoupling of a Command. However, the true Object-Oriented Command Pattern is necessary when you need:<ol>
+<li><strong>State</strong>: The command needs to remember things (e.g., the previous state before execution).</li>
+<li><strong>Undo/Redo</strong>: A callback cannot have an <code>undo()</code> method attached to it cleanly.</li>
+</ol>
+</li>
+<li><strong>The Undo Stack</strong>: To implement a robust &quot;Global Undo&quot;, the Invoker must maintain a Stack (Array) of executed Commands. When <code>undo</code> is requested, it pops the most recent command and calls its <code>undo()</code> method.</li>
+<li><strong>Macro Commands</strong>: You can combine multiple commands into one by creating a <code>MacroCommand</code> class that implements the <code>Command</code> interface. It holds an array of sub-commands. On <code>execute()</code>, it loops through them forward. On <code>undo()</code>, it loops through them <em>backward</em>.</li>
+</ul>
+<h3>Tradeoffs / Pros &amp; Cons</h3>
+<p><strong>Pros</strong>:</p>
+<ol>
+<li><strong>Single Responsibility Principle</strong>: You can decouple classes that invoke operations from classes that perform these operations.</li>
+<li><strong>Open/Closed Principle</strong>: You can introduce new commands into the app without breaking existing client code.</li>
+<li><strong>Undo/Redo &amp; Queuing</strong>: You can implement undo/redo, delayed execution, and network request queuing.</li>
+<li><strong>Macro Commands</strong>: You can assemble simple commands into a complex one.</li>
+</ol>
+<p><strong>Cons</strong>:</p>
+<ol>
+<li><strong>Complexity</strong>: The code may become more complicated since you&#39;re introducing a whole new layer between senders and receivers.</li>
+</ol>
+<h2>Examples Solved</h2>
+<ul>
+<li><strong>Smart Home Remote</strong>: Created <code>Light</code> and <code>Fan</code> receivers, wrapped them in <code>LightCommand</code> and <code>FanCommand</code>, and triggered them via a <code>RemoteController</code> (Invoker). Implemented a <code>this.history</code> Stack inside the Remote to support Global Undo, and created a <code>MacroCommand</code> to trigger a &quot;Party Mode&quot; without modifying the remote&#39;s logic.</li>
+</ul>
+
+                </div>
+            
+                <div id="doc-2" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 design_pattern/behavioral/iterator/Summary.md</div>
+                    <h1>Summary</h1>
+<h2>About</h2>
+<ul>
+<li><strong>Iterator Pattern (Behavioral)</strong>: Lets you traverse elements of a collection without exposing its underlying representation (list, stack, tree, etc.).</li>
+<li>It extracts the traversal behavior of a collection into a separate object called an iterator.</li>
+</ul>
+<h2>Resources</h2>
+<ul>
+<li><a href="https://refactoring.guru/design-patterns/iterator">Refactoring Guru - Iterator</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols">MDN - Iteration Protocols in JS</a></li>
+</ul>
+<h2>My Notes</h2>
+<ul>
+<li><strong>Multiple Iterators</strong>: One of the biggest advantages is that you can have multiple active iterators traversing the same collection at the same time, each maintaining its own independent state (<code>current index</code>, <code>stack</code>, etc.).</li>
+<li><strong>Traversal Strategies</strong>: If a collection (like a Tree) supports multiple ways of traversal (e.g., Depth-First vs Breadth-First), you don&#39;t leak this to the client. Instead, you provide multiple factory methods on the collection like <code>createInOrderIterator()</code> and <code>createLevelOrderIterator()</code>.</li>
+<li><strong>Native JS Protocol</strong>: Instead of creating custom <code>hasNext()</code> and <code>next()</code> methods, modern JavaScript provides the <code>[Symbol.iterator]()</code> protocol. Implementing this allows your custom classes to be used in standard <code>for...of</code> loops natively!</li>
+<li><strong>Concurrent Modification</strong>: Modifying a collection while an iterator is actively traversing it can cause fatal bugs or infinite loops.<ul>
+<li><strong>Fail-Safe</strong>: The iterator clones the collection upon creation. Safe, but uses $O(N)$ extra memory.</li>
+<li><strong>Fail-Fast</strong>: The collection tracks modifications (<code>modCount</code>). The iterator compares the current <code>modCount</code> with the expected <code>modCount</code> on every <code>next()</code> call and throws an Exception if they mismatch.</li>
+</ul>
+</li>
+</ul>
+<h3>Tradeoffs / Pros &amp; Cons</h3>
+<p><strong>Pros</strong>:</p>
+<ol>
+<li><strong>Single Responsibility Principle</strong>: You can clean up the client code and the collections by extracting bulky traversal algorithms into separate classes.</li>
+<li><strong>Open/Closed Principle</strong>: You can implement new types of collections and iterators and pass them to existing code without breaking anything.</li>
+<li><strong>Uniform Interface</strong>: You can iterate over different data structures using the exact same interface, making the client code highly polymorphic.</li>
+</ol>
+<p><strong>Cons</strong>:</p>
+<ol>
+<li><strong>Overkill</strong>: Applying the pattern can be an overkill if your app only works with simple arrays or lists.</li>
+</ol>
+<h2>Examples Solved</h2>
+<ul>
+<li><strong>Polymorphic Collections</strong>: Created <code>ArrayCollection</code>, <code>LinkedList</code>, and <code>BinaryTree</code> classes that all implement a <code>createIterator()</code> method. Built a <code>printCollection(collection)</code> function that works flawlessly across all three completely different data structures by utilizing the <code>hasNext()</code> and <code>next()</code> interface. Particularly impressive was the use of a Stack to iteratively traverse the Binary Tree in-order.</li>
+</ul>
+
+                </div>
+            
+                <div id="doc-3" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 design_pattern/behavioral/mediator/Summary.md</div>
+                    <h1>Mediator Design Pattern Summary</h1>
+<h2>About</h2>
+<p>The <strong>Mediator Design Pattern</strong> is a behavioral design pattern that reduces chaotic dependencies between objects (colleagues). It restricts direct communications between the objects and forces them to collaborate only via a central mediator object.</p>
+<h2>Pros &amp; Cons</h2>
+<h3>Pros</h3>
+<ul>
+<li><strong>Reduces Coupling:</strong> Replaces many-to-many relationships with cleaner one-to-many relationships, making components highly reusable and independent.</li>
+<li><strong>Single Responsibility Principle (SRP):</strong> Centralizes communication logic and routing controls into a single coordinator class.</li>
+<li><strong>Open/Closed Principle (OCP):</strong> You can introduce new mediators or modify routing rules without changing the individual colleague classes.</li>
+<li><strong>Simplifies Component Maintenance:</strong> Colleagues do not need to keep track of other colleagues&#39; references or life cycles.</li>
+</ul>
+<h3>Cons</h3>
+<ul>
+<li><strong>God Object Risk:</strong> Over time, the mediator can easily evolve into a monolithic controller containing too much complex routing and orchestration logic, making it extremely hard to maintain.</li>
+<li><strong>Central Point of Failure:</strong> If the mediator goes down or has bugs, the entire communication network between components breaks.</li>
+</ul>
+<h2>Tradeoffs</h2>
+<ul>
+<li><strong>Complexity vs. Coupling:</strong> You trade a web of tightly-coupled, simple objects (spaghetti dependencies) for a single, complex coordinator object. If the interactions between objects are minimal, introducing a mediator adds unnecessary abstraction and overhead.</li>
+<li><strong>Maintainability vs. Performance:</strong> Decoupling objects via a mediator makes features easier to extend, but introduces indirect calls. If the mediator performs heavy-weight routing (such as searching linear arrays or filtering multiple states), it can degrade communication throughput compared to direct communication.</li>
+</ul>
+<h2>Resources</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=3lGIICzgyQQ">YouTube Video Link</a></li>
+<li><a href="https://refactoring.guru/design-patterns/mediator">Refactoring Guru - Mediator Pattern</a></li>
+</ul>
+<h2>My Notes</h2>
+<ul>
+<li>Use a <strong>Map</strong> (<code>Map&lt;string, Colleague&gt;</code>) instead of a linear array to optimize colleague lookup to $O(1)$ in the mediator.</li>
+<li>Ensure interface integrity: avoid exposing domain-specific features (like <code>mute</code> or <code>unmute</code>) directly on the concrete mediator class without exposing them through the <code>IMediator</code> interface to respect the <strong>Dependency Inversion Principle (DIP)</strong>.</li>
+<li>Colleagues should expose clean interfaces to receive messages/events without depending on how the mediator routes them.</li>
+</ul>
+<h2>Examples Solved</h2>
+<ul>
+<li><strong>Chat Room Mediator:</strong> Broadcast and private chat rooms with mute/unmute capabilities.</li>
+</ul>
+
+                </div>
+            
+                <div id="doc-4" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 design_pattern/behavioral/memento/Summary.md</div>
+                    <h1>Memento Design Pattern Summary</h1>
+<h2>About</h2>
+<p>The <strong>Memento Design Pattern</strong> is a behavioral design pattern that lets you save and restore the previous state of an object (Originator) without revealing the details of its implementation (encapsulation).</p>
+<h2>Pros &amp; Cons</h2>
+<h3>Pros</h3>
+<ul>
+<li><strong>Preserves Encapsulation:</strong> You can capture snapshots of an object&#39;s internal state without violating its encapsulation boundaries (i.e. clients or caretakers do not need direct access to internal fields).</li>
+<li><strong>Simplifies Originator Code:</strong> The caretaker manages the history stack of states, freeing the originator from tracking backup states.</li>
+<li><strong>Easy Undo/Redo:</strong> Provides a natural fit for features requiring multi-step undo, rollback, or history tracking.</li>
+</ul>
+<h3>Cons</h3>
+<ul>
+<li><strong>High Memory Footprint:</strong> If the state is large or snapshots are frequent, storing mementos can consume massive amounts of memory.</li>
+<li><strong>Garbage Collection Overhead:</strong> Creating and deleting mementos frequently puts pressure on memory management systems.</li>
+<li><strong>Extra Caretaker Complexity:</strong> The caretaker must track the originator&#39;s lifecycle to ensure dead mementos are cleaned up and do not leak memory.</li>
+</ul>
+<h2>Tradeoffs</h2>
+<ul>
+<li><strong>State Size vs. Frequency:</strong> Storing full snapshots of data on every operation is simple but expensive. You trade off memory efficiency for simplicity. To optimize, you can switch to <em>incremental changes/deltas</em> (only storing state modifications), which reduces memory usage but increases implementation complexity.</li>
+<li><strong>Tight vs. Loose Encapsulation:</strong> In JavaScript, enforcing private state encapsulation on Mementos is tricky because of the lack of packaging mechanisms. You trade off strict OOP principles (enforcing privacy using private Symbol keys or closures) for simplicity of property inspection.</li>
+</ul>
+<h2>Resources</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=p8-ile_nWnY">YouTube Video Link</a></li>
+<li><a href="https://refactoring.guru/design-patterns/memento">Refactoring Guru - Memento Pattern</a></li>
+</ul>
+<h2>My Notes</h2>
+<ul>
+<li>Secure state encapsulation in JavaScript by utilizing Symbol keys or ES6 private fields (<code>#data</code>) inside <code>DatabaseMemento</code>. Pass a module-private Symbol authentication key from the <code>Database</code> to the memento to prevent caretakers or external clients from inspecting or restoring the state.</li>
+<li>Always run automated tests or test edge case functions (<code>remove()</code>, <code>update()</code>) instead of only validating happy-path insertion code.</li>
+</ul>
+<h2>Examples Solved</h2>
+<ul>
+<li><strong>Database Transaction Backup &amp; Rollback:</strong> Simulates beginning, committing, and rolling back database state updates.</li>
+</ul>
+
+                </div>
+            
+                <div id="doc-5" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 design_pattern/behavioral/observer/Summary.md</div>
+                    <h1>Summary: Observer Design Pattern</h1>
+<h2>About</h2>
+<p>The <strong>Observer Pattern</strong> is a Behavioral Design Pattern that defines a one-to-many dependency between objects so that when one object (the <strong>Subject</strong> or <strong>Publisher</strong>) changes state, all its dependents (<strong>Observers</strong> or <strong>Subscribers</strong>) are notified and updated automatically.</p>
+<p>It is the core architectural foundation of event-driven programming, reactive frameworks, and pub-sub systems.</p>
+<hr>
+<h2>UML Diagram</h2>
+<pre><code class="language-mermaid">classDiagram
+    class IChannels {
+        &lt;&lt;interface&gt;&gt;
+        +subscribe(subscriber)
+        +unsubscribe(subscriber)
+        +notifySubscriber()
+    }
+    
+    class ISubscriber {
+        &lt;&lt;interface&gt;&gt;
+        +update(channel)
+    }
+    
+    class Channels {
+        -subscribers: List~ISubscriber~
+        -latestVideo: String
+        +subscribe(subscriber)
+        +unsubscribe(subscriber)
+        +notifySubscriber()
+        +uploadVideo(title)
+        +getVideoData() String
+    }
+    
+    class Subscriber {
+        -name: String
+        +update(channel)
+    }
+    
+    IChannels &lt;|-- Channels
+    ISubscriber &lt;|-- Subscriber
+    Channels o--&gt; ISubscriber : aggregates
+    Subscriber --&gt; Channels : pulls state from
+</code></pre>
+<hr>
+<h2>Tradeoffs: Pros and Cons</h2>
+<h3>Pros:</h3>
+<ul>
+<li><strong>Loose Coupling:</strong> The publisher does not need to know the concrete classes of the subscribers. It only interacts with them via a common <code>ISubscriber</code> interface.</li>
+<li><strong>Open/Closed Principle:</strong> You can introduce new subscriber types (e.g., email notification, push notification, analytics tracking) without modifying the publisher code.</li>
+<li><strong>Dynamic Relations:</strong> Subscriptions can be established, modified, or canceled dynamically at runtime.</li>
+</ul>
+<h3>Cons:</h3>
+<ul>
+<li><strong>Memory Leaks (Lapsed Listener Problem):</strong> In languages with garbage collection like JS (V8), if a subscriber is no longer needed but fails to <code>unsubscribe()</code>, the publisher will maintain a reference to it. This prevents the subscriber from being garbage-collected, leading to memory leaks.</li>
+<li><strong>Random Notification Order:</strong> Subscribers are notified in subscription order (typically), which can create race conditions if subscribers make state changes that depend on each other.</li>
+<li><strong>Event Loop Blocking (Node.js specific):</strong> If a subject has 10,000 subscribers, calling a state change will synchronously trigger 10,000 <code>update()</code> invocations, blocking the single-threaded Node.js event loop.</li>
+</ul>
+<hr>
+<h2>Push vs. Pull Model Tradeoffs</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Feature</th>
+<th align="left">Push Model</th>
+<th align="left">Pull Model</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Concept</strong></td>
+<td align="left">Subject sends raw data payload to observer: <code>update(data)</code></td>
+<td align="left">Subject sends reference to itself: <code>update(this)</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Decoupling</strong></td>
+<td align="left"><strong>High.</strong> Observer doesn&#39;t need to know the subject&#39;s structure or methods.</td>
+<td align="left"><strong>Low.</strong> Observer must know the subject&#39;s API methods to query state.</td>
+</tr>
+<tr>
+<td align="left"><strong>Flexibility</strong></td>
+<td align="left"><strong>Low.</strong> Observers are restricted to whatever parameters the subject decides to push.</td>
+<td align="left"><strong>High.</strong> Observers can fetch precisely what they need from the subject.</td>
+</tr>
+<tr>
+<td align="left"><strong>Reuse</strong></td>
+<td align="left">Easier to reuse observer classes across different publishers.</td>
+<td align="left">Observer is tied to a specific subject interface.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>My Notes</h2>
+<ol>
+<li><strong>Node.js Native Implementation:</strong> Node&#39;s native <code>EventEmitter</code> is an implementation of the Observer pattern. For example:<pre><code class="language-javascript">const EventEmitter = require(&#39;events&#39;);
+class MyEmitter extends EventEmitter {}
+</code></pre>
+</li>
+<li><strong>Automatic Encapsulation:</strong> Always trigger notifications internally within state-mutating methods (like <code>uploadVideo</code>) rather than relying on the client to call <code>notifySubscriber()</code> manually.</li>
+<li><strong>Prevent Event Loop Jams:</strong> In high-throughput Node.js microservices, consider deferring heavy notification processing using <code>setImmediate()</code> or <code>process.nextTick()</code> to avoid blocking the event loop:<pre><code class="language-javascript">notifySubscriber() {
+    for (const sub of this.subscribers) {
+        setImmediate(() =&gt; sub.update(this));
+    }
+}
+</code></pre>
+</li>
+</ol>
+<hr>
+<h2>Resources</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=vNSRcegCO8E">YouTube Video Link</a></li>
+<li><a href="https://refactoring.guru/design-patterns/observer">Refactoring.guru: Observer Design Pattern</a></li>
+</ul>
+<h2>Examples Solved</h2>
+<ul>
+<li><code>index.js</code>: YouTube channel subscription system refactored to support dynamic multi-channel subscriptions using the Pull model and self-notifying state transitions.</li>
+</ul>
+
+                </div>
+            
+                <div id="doc-6" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 design_pattern/behavioral/state/Summary.md</div>
+                    <h1>Summary: State Design Pattern</h1>
+<h2>About</h2>
+<p>The <strong>State Pattern</strong> is a Behavioral Design Pattern that allows an object to alter its behavior when its internal state changes. The object will appear to change its class.</p>
+<p>Rather than cluttering the Context class with massive conditional trees (e.g., <code>switch</code> statements checking status flags), behaviors are encapsulated into standalone state objects. The Context delegates state-specific operations to the current state object.</p>
+<hr>
+<h2>UML Diagram</h2>
+<pre><code class="language-mermaid">classDiagram
+    class VendingMachine {
+        -currentState: VendingState
+        -itemCount: int
+        -itemPrice: int
+        -insertedCoins: int
+        +_transitionTo(nextState)
+        +insertCoin(coin)
+        +selectItem()
+        +dispense()
+        +returnCoin()
+        +refill(qty)
+    }
+
+    class VendingState {
+        &lt;&lt;abstract&gt;&gt;
+        +insertCoin(machine, coin)
+        +selectItem(machine)
+        +dispense(machine)
+        +returnCoin(machine)
+        +refill(machine, qty)
+        +getStateName()
+    }
+
+    class NoCoinState {
+        +insertCoin()
+        +selectItem()
+        +dispense()
+        +returnCoin()
+        +refill()
+    }
+
+    class HasCoinState {
+        +insertCoin()
+        +selectItem()
+        +dispense()
+        +returnCoin()
+        +refill()
+    }
+
+    class DispenseState {
+        +insertCoin()
+        +selectItem()
+        +dispense()
+        +returnCoin()
+        +refill()
+    }
+
+    class SoldOutState {
+        +insertCoin()
+        +selectItem()
+        +dispense()
+        +returnCoin()
+        +refill()
+    }
+
+    VendingMachine --&gt; VendingState : delegates to currentState
+    VendingState &lt;|-- NoCoinState
+    VendingState &lt;|-- HasCoinState
+    VendingState &lt;|-- DispenseState
+    VendingState &lt;|-- SoldOutState
+</code></pre>
+<hr>
+<h2>Tradeoffs: Pros and Cons</h2>
+<h3>Pros:</h3>
+<ul>
+<li><strong>Single Responsibility Principle:</strong> Organizes all code related to a particular state into a single, cohesive class.</li>
+<li><strong>Open/Closed Principle:</strong> New states (e.g., <code>MaintenanceState</code>, <code>OutOfOrderState</code>) can be introduced without modifying existing state classes or context code.</li>
+<li><strong>Simplifies Context Code:</strong> Eliminates complex, sprawling conditional branches (like checking <code>state</code> variables inside every action method).</li>
+<li><strong>Explicit Transitions:</strong> Clarifies state transitions by turning abstract state statuses into concrete object instances.</li>
+</ul>
+<h3>Cons:</h3>
+<ul>
+<li><strong>Class Explosion:</strong> Can be excessive overhead for simple state machines with few states or limited transitions, creating unnecessary boilerplate.</li>
+<li><strong>Inter-State Coupling:</strong> Concrete state subclasses must frequently refer to other state subclasses to trigger transitions, creating a tight structural dependency between state implementations.</li>
+<li><strong>Debugging Complexity:</strong> Following the execution flow can be harder as actions dynamically switch objects at runtime.</li>
+</ul>
+<hr>
+<h2>State vs. Strategy Pattern</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Feature</th>
+<th align="left">State Pattern</th>
+<th align="left">Strategy Pattern</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Primary Goal</strong></td>
+<td align="left">Manage behavior dynamically depending on internal status changes.</td>
+<td align="left">Configure an object&#39;s behavior by injecting interchangeable algorithms.</td>
+</tr>
+<tr>
+<td align="left"><strong>Object Awareness</strong></td>
+<td align="left">States know about other states and actively trigger transitions.</td>
+<td align="left">Strategies are independent, isolated, and unaware of other strategies.</td>
+</tr>
+<tr>
+<td align="left"><strong>Client Control</strong></td>
+<td align="left">Transitions occur automatically within the State/Context lifecycle.</td>
+<td align="left">The client explicitly chooses and injects the desired strategy at startup.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>My Notes</h2>
+<ol>
+<li><strong>Encapsulation &amp; Auto-Transitions:</strong> In high-quality LLD, avoid exposing internal intermediate states to the client. For example, instead of forcing the client to manually invoke <code>machine.dispense()</code> after <code>selectItem()</code>, the context (<code>VendingMachine</code>) should detect the transition to <code>DispenseState</code> and automatically execute <code>dispense()</code> internally.</li>
+<li><strong>Transition Guards:</strong> JS/Node is dynamically typed, so missing return statements in states will evaluate to <code>undefined</code>, breaking the state machine. Enforce robustness by routing all state updates through an internal transition validation method:<pre><code class="language-javascript">_transitionTo(nextState) {
+    if (!nextState || !(nextState instanceof VendingState)) {
+        console.error(&quot;Transition Error: Invalid state. Staying in current state.&quot;);
+        return;
+    }
+    this.currentState = nextState;
+}
+</code></pre>
+</li>
+</ol>
+<hr>
+<h2>Resources</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=bJPmvie_p4w">YouTube Video Link</a></li>
+<li><a href="https://refactoring.guru/design-patterns/state">Refactoring.guru: State Design Pattern</a></li>
+</ul>
+<h2>Examples Solved</h2>
+<ul>
+<li><code>index.js</code>: Vending machine simulation displaying transition handling across <code>NO_COIN</code>, <code>HAS_COIN</code>, <code>DISPENSING</code>, and <code>SOLD_OUT</code> states.</li>
+</ul>
+
+                </div>
+            
+                <div id="doc-7" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 design_pattern/behavioral/strategy/Summary.md</div>
+                    <h1>Summary: Strategy Design Pattern</h1>
+<h2>About</h2>
+<p>The <strong>Strategy Pattern</strong> is a Behavioral Design Pattern that defines a family of algorithms, encapsulates each one, and makes them interchangeable. Strategy lets the algorithm vary independently from clients that use it.</p>
+<p>Rather than implementing multiple versions of an algorithm within a single class (often resulting in sprawling conditional branches), or relying on inheritance (which leads to subclass explosion), the Strategy pattern delegates algorithmic behaviors to separate, composed objects.</p>
+<hr>
+<h2>UML Diagram</h2>
+<pre><code class="language-mermaid">classDiagram
+    class Robot {
+        -walkable: Walkable
+        -flyable: Flyable
+        +setWalkStrategy(walkable)
+        +setFlyStrategy(flyable)
+        +walk()
+        +fly()
+    }
+    
+    class Walkable {
+        &lt;&lt;interface&gt;&gt;
+        +walk()
+    }
+    class NormalWalk {
+        +walk()
+    }
+    class NoWalk {
+        +walk()
+    }
+    
+    class Flyable {
+        &lt;&lt;interface&gt;&gt;
+        +fly()
+    }
+    class NormalFly {
+        +fly()
+    }
+    class NoFly {
+        +fly()
+    }
+    
+    Robot --&gt; Walkable : delegates walk
+    Robot --&gt; Flyable : delegates fly
+    Walkable &lt;|-- NormalWalk
+    Walkable &lt;|-- NoWalk
+    Flyable &lt;|-- NormalFly
+    Flyable &lt;|-- NoFly
+</code></pre>
+<hr>
+<h2>Tradeoffs: Pros and Cons</h2>
+<h3>Pros:</h3>
+<ul>
+<li><strong>Runtime Swappability:</strong> Algorithms can be dynamically swapped at runtime via setter methods (e.g., swapping a robot&#39;s walk strategy to <code>NoWalk</code> when its battery level is depleted).</li>
+<li><strong>Open/Closed Principle:</strong> You can introduce new strategies (e.g., <code>FastRun</code>, <code>Teleport</code>) without modifying the <code>Robot</code> context or other existing strategies.</li>
+<li><strong>Elimination of Conditionals:</strong> Replaces complex, branching conditional statements (like <code>if-else</code> or <code>switch</code> selectors) with clean polymorphism.</li>
+<li><strong>Composition over Inheritance:</strong> Decouples behaviors, avoiding rigid subclass structures (e.g., avoiding classes like <code>WalkingNonFlyingRobot</code> vs. <code>WalkingFlyingRobot</code>).</li>
+</ul>
+<h3>Cons:</h3>
+<ul>
+<li><strong>Increased Class Count:</strong> Increases the overall number of classes/files, adding code boilerplate for simple algorithms.</li>
+<li><strong>Client Complexity:</strong> Clients must be aware of the differences between strategies to select and configure the correct one.</li>
+<li><strong>Memory Overhead:</strong> Instantiating strategies for every context can increase memory usage (though stateless strategies can be optimized using the Flyweight pattern).</li>
+</ul>
+<hr>
+<h2>Strategy vs. State Pattern</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Feature</th>
+<th align="left">Strategy Pattern</th>
+<th align="left">State Pattern</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Intent</strong></td>
+<td align="left">Configure an object&#39;s behavior by injecting interchangeable algorithms.</td>
+<td align="left">Change an object&#39;s behavior dynamically based on its internal state.</td>
+</tr>
+<tr>
+<td align="left"><strong>Awareness</strong></td>
+<td align="left">Strategies are independent and generally unaware of other strategies.</td>
+<td align="left">Concrete States are usually aware of other states and trigger transitions between them.</td>
+</tr>
+<tr>
+<td align="left"><strong>Control</strong></td>
+<td align="left">Typically, the client selects and injects the desired strategy.</td>
+<td align="left">Transitions are handled automatically by the Context or the State objects.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>My Notes</h2>
+<ol>
+<li><strong>The Comma Operator Gotcha:</strong> Inside JS constructors, ensure statements are separated by semicolons (<code>;</code>) or newlines. Separating them with commas is valid (evaluated as a single comma-operator expression) but acts as a syntax code smell that can disrupt parsing.</li>
+<li><strong>Context Passing:</strong> If a strategy needs contextual data to calculate its algorithm, you can either pass parameters directly to the strategy method (e.g., <code>walk(speed)</code>) or pass the entire context object (e.g., <code>walk(this)</code> / Pull model).</li>
+</ol>
+<hr>
+<h2>Resources</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=PpKvPrl_gRg">YouTube Video Link</a></li>
+<li><a href="https://refactoring.guru/design-patterns/strategy">Refactoring.guru: Strategy Design Pattern</a></li>
+</ul>
+<h2>Examples Solved</h2>
+<ul>
+<li><code>index.js</code>: Simulates a robot with configurable and runtime-swappable walking and flying behaviors.</li>
+</ul>
+
+                </div>
+            
+                <div id="doc-8" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 design_pattern/behavioral/template_method/Summary.md</div>
+                    <h1>Template Method Pattern Summary</h1>
+<h2>About</h2>
+<p>The <strong>Template Method Design Pattern</strong> is a behavioral design pattern that defines the skeleton of an algorithm in a base class, letting subclasses override specific steps of the algorithm without changing its overall structure. 
+It operates on the &quot;Hollywood Principle&quot;: &quot;Don&#39;t call us, we&#39;ll call you.&quot;</p>
+<h2>Resources</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=8-vE_bmEt18">YouTube Video Link</a></li>
+<li><a href="">Doc Link</a></li>
+</ul>
+<h2>My Notes</h2>
+<ul>
+<li>The base class contains the <code>template method</code> which orchestrates the flow of operations. This method is usually set up so it cannot or should not be overridden by subclasses.</li>
+<li>Subclasses implement or override the individual &quot;step&quot; methods.</li>
+<li><strong>Hooks</strong>: Hooks are methods in the base class with empty or default implementations. Subclasses <em>can</em> override hooks to tap into the algorithm at specific points or to skip optional steps entirely.</li>
+<li>By utilizing this pattern, you enforce an algorithm&#39;s overall sequence and logic in one place, minimizing code duplication and enforcing structure.</li>
+</ul>
+<h3>Pros</h3>
+<ul>
+<li><strong>Deduplication:</strong> Pulls common boilerplate out of subclasses and into a single base class.</li>
+<li><strong>Control:</strong> The base class has strict control over the execution order, which is essential for workflows like authentication flows or data pipelines.</li>
+<li><strong>Extensibility:</strong> Subclasses can easily plug into the defined slots.</li>
+</ul>
+<h3>Cons</h3>
+<ul>
+<li><strong>Rigidity:</strong> The skeleton can become too rigid. If you suddenly need an entirely different execution order for a subclass, the pattern breaks down.</li>
+<li><strong>LSP Violations:</strong> If a subclass implements a step in a way that violates the expectations of the base class pipeline, it can cause hard-to-trace bugs.</li>
+<li><strong>Complexity:</strong> Adding many steps and hooks can make the base class very bloated.</li>
+</ul>
+<h2>Tradeoffs</h2>
+<ul>
+<li>You trade <strong>flexibility of sequence</strong> for <strong>safety and consistency of sequence</strong>.</li>
+</ul>
+<h2>Examples Solved</h2>
+<ul>
+<li>Implemented a <code>ModelTrainer</code> base class with a <code>trainPipeline</code> template method to train algorithms like Neural Networks and Decision Trees.</li>
+</ul>
+
+                </div>
+            
+                <div id="doc-9" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 design_pattern/behavioral/visitor/Summary.md</div>
+                    <h1>Visitor Pattern Summary</h1>
+<h2>About</h2>
+<p>The <strong>Visitor Design Pattern</strong> is a behavioral design pattern that lets you separate algorithms from the objects on which they operate. It relies heavily on a mechanism called <strong>Double Dispatch</strong> to execute the correct method based on both the runtime type of the visitor and the runtime type of the element.</p>
+<h2>Resources</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=DnmsxnlCyl0">YouTube Video Link</a></li>
+<li><a href="">Doc Link</a></li>
+</ul>
+<h2>My Notes</h2>
+<ul>
+<li><strong>Elements vs Visitors:</strong> Elements must implement an <code>accept(visitor)</code> method. Visitors must implement a <code>visit(element)</code> method for <em>each</em> specific element type.</li>
+<li><strong>Double Dispatch:</strong> In Javascript, because we lack static parameter-type overloading, double dispatch is explicitly simulated. <code>element.accept(visitor)</code> dynamically binds to the correct element instance, and inside <code>accept</code>, <code>visitor.visitSpecificElement(this)</code> dynamically binds to the specific visitor, routing execution correctly without messy <code>if (element instanceof Type)</code> checks.</li>
+<li><strong>State Accumulation:</strong> A major benefit of Visitors is that they can contain internal state (e.g. <code>this.totalSize = 0</code>). As the visitor gets passed sequentially to different elements (like iterating over an array of elements), it can accumulate results or state without polluting the elements themselves.</li>
+</ul>
+<h3>Pros</h3>
+<ul>
+<li><strong>Open-Closed Principle (for Operations):</strong> You can easily introduce a new operation over an entire object structure (like adding <code>EncryptionVisitor</code>) without modifying the element classes at all.</li>
+<li><strong>Separation of Concerns:</strong> Business logic (size calculation, exporting, formatting) is cleanly extracted out of the data classes.</li>
+<li><strong>State Gathering:</strong> A visitor can accumulate state as it traverses various objects, which is harder if the operations are scattered across the elements.</li>
+</ul>
+<h3>Cons</h3>
+<ul>
+<li><strong>Open-Closed Principle Violation (for Elements):</strong> If you need to add a <em>new element class</em> to the hierarchy (like <code>AudioFile</code>), you must update <em>every single existing Visitor</em> to support <code>visitAudioFile()</code>.</li>
+<li><strong>Encapsulation Risk:</strong> Visitors often require elements to expose internal state via getters, which can weaken encapsulation.</li>
+</ul>
+<h2>Tradeoffs</h2>
+<ul>
+<li>The Visitor Pattern is extremely beneficial when the <strong>Element hierarchy is stable</strong>, but you frequently need to add <strong>new operations</strong>. If the Element hierarchy is frequently changing, the Visitor pattern becomes an anti-pattern.</li>
+</ul>
+<h2>Examples Solved</h2>
+<ul>
+<li>Implemented a <code>FileSystemVisitor</code> to perform <code>SizeCalculation</code>, <code>Compression</code>, and <code>VirusScanning</code> over different types of <code>FileSystemItem</code> (<code>TextFile</code>, <code>ImgFile</code>, <code>VideoFile</code>).</li>
+</ul>
+
+                </div>
+            
+                <div id="doc-10" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 design_pattern/creational/builder/Summary.md</div>
+                    <h1>Summary: Builder Pattern</h1>
+<h2>About</h2>
+<p>The Builder pattern is a creational design pattern that lets you construct complex objects step by step. The pattern allows you to produce different types and representations of an object using the same construction code.</p>
+<h3>Key Components</h3>
+<ol>
+<li><strong>Builder</strong>: Interface/Base class defining the steps to build the product.</li>
+<li><strong>Concrete Builder</strong>: Implements the steps and keeps track of the resulting product.</li>
+<li><strong>Product</strong>: The complex object being built.</li>
+<li><strong>Director</strong>: (Optional) Orchestrates the builder to create standard &quot;templates&quot; or pre-configured products.</li>
+<li><strong>Step Builder</strong>: (Advanced) Enforces a strict sequence of construction steps through interface/object chaining.</li>
+</ol>
+<h2>Tradeoffs</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Feature</th>
+<th align="left">Pros</th>
+<th align="left">Cons</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Basic Builder</strong></td>
+<td align="left">Clean code, fluent interface, easy to add optional params.</td>
+<td align="left">Can lead to &quot;incomplete&quot; objects if mandatory params aren&#39;t checked.</td>
+</tr>
+<tr>
+<td align="left"><strong>Director</strong></td>
+<td align="left">Encapsulates common configurations; hides building complexity from the client.</td>
+<td align="left">Adds another layer; can become bloated if too many templates exist.</td>
+</tr>
+<tr>
+<td align="left"><strong>Step Builder</strong></td>
+<td align="left"><strong>Type-safe</strong> construction; enforces mandatory fields in a specific order.</td>
+<td align="left">Very rigid; difficult to handle branching logic or skip optional steps.</td>
+</tr>
+</tbody></table>
+<h2>Resources</h2>
+<ul>
+<li><a href="https://refactoring.guru/design-patterns/builder">Refactoring Guru - Builder</a></li>
+<li><a href="https://sourcemaking.com/design_patterns/builder">SourceMaking - Builder</a></li>
+<li><a href="https://www.youtube.com/watch?v=G4Ntl9KzIxY">Youtube - Design Patterns Builder</a></li>
+</ul>
+<h2>My Notes</h2>
+<ul>
+<li>Use a <strong>Fluent Interface</strong> (<code>return this</code>) for better readability.</li>
+<li>Perform <strong>Validation</strong> in the <code>build()</code> method to ensure the product is in a consistent state.</li>
+<li><strong>Director vs Step Builder</strong>: Use a Director for <em>pre-set configurations</em>; use a Step Builder for <em>guaranteed construction order</em>.</li>
+<li>Prefer collecting attributes in the builder and instantiating the product at the end to avoid state leakage (State Contamination).</li>
+</ul>
+<h2>Examples Solved</h2>
+<ul>
+<li><code>HttpRequestBuilder</code>: Constructing a network request with optional parameters.</li>
+<li><code>HttpBuilderDirector</code>: Orchestrating GET/POST templates.</li>
+<li><code>StepwiseHttpRequestBuilder</code>: Enforcing <code>URL -&gt; Method -&gt; Body</code> sequence.</li>
+</ul>
+
+                </div>
+            
+                <div id="doc-11" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 design_pattern/creational/factory_method/Summary.md</div>
+                    <h1>Summary: Factory Patterns</h1>
+<h2>About</h2>
+<p>Factory patterns are creational patterns that provide an interface for creating objects in a superclass, but allow subclasses to alter the type of objects that will be created.</p>
+<h3>1. Simple Factory</h3>
+<p>A simple class that handles the creation logic for multiple types of objects based on a parameter. </p>
+<ul>
+<li><strong>Pros</strong>: Encapsulates creation logic.</li>
+<li><strong>Cons</strong>: Violates Open/Closed Principle (OCP) because the factory must be modified for every new product type.</li>
+</ul>
+<h3>2. Factory Method</h3>
+<p>Defines an interface for creating an object, but lets subclasses decide which class to instantiate.</p>
+<ul>
+<li><strong>Pros</strong>: Follows OCP. Decouples creator from concrete products.</li>
+<li><strong>Cons</strong>: Can lead to many subclasses for each product type (Class Explosion).</li>
+</ul>
+<h3>3. Abstract Factory</h3>
+<p>Provides an interface for creating families of related or dependent objects without specifying their concrete classes.</p>
+<ul>
+<li><strong>Pros</strong>: Ensures product consistency (families work together). Decouples client code from concrete implementations.</li>
+<li><strong>Cons</strong>: Adding a new product type to the family requires changing the interface and all concrete factories.</li>
+</ul>
+<h2>Tradeoffs</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Pattern</th>
+<th align="left">Use Case</th>
+<th align="left">Flexibility</th>
+<th align="left">Complexity</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Simple Factory</strong></td>
+<td align="left">Small apps with few, stable types.</td>
+<td align="left">Low</td>
+<td align="left">Low</td>
+</tr>
+<tr>
+<td align="left"><strong>Factory Method</strong></td>
+<td align="left">When you want to delegate product creation to subclasses.</td>
+<td align="left">Medium</td>
+<td align="left">Medium</td>
+</tr>
+<tr>
+<td align="left"><strong>Abstract Factory</strong></td>
+<td align="left">When you have &quot;families&quot; of products that must be used together.</td>
+<td align="left">High</td>
+<td align="left">High</td>
+</tr>
+</tbody></table>
+<h2>Resources</h2>
+<ul>
+<li><a href="https://refactoring.guru/design-patterns/factory-method">Refactoring Guru - Factory Method</a></li>
+<li><a href="https://refactoring.guru/design-patterns/abstract-factory">Refactoring Guru - Abstract Factory</a></li>
+</ul>
+<h2>Examples Solved</h2>
+<ul>
+<li>Burger Shop (Progression from Simple -&gt; Method -&gt; Abstract)</li>
+</ul>
+
+                </div>
+            
+                <div id="doc-12" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 design_pattern/creational/prototype/Summary.md</div>
+                    <h1>Summary</h1>
+<p>Instead of creating objects from scratch,
+create new objects by copying/cloning existing objects.</p>
+<h2>About</h2>
+<ul>
+<li></li>
+</ul>
+<h2>Resources</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=KMQFNV8LFec">YouTube Video Link</a></li>
+<li><a href="">Doc Link</a></li>
+</ul>
+<h2>My Notes</h2>
+<ul>
+<li>Object data is created new every time, but methods are shared via the constructor&#39;s <code>prototype</code>.</li>
+<li>A true Prototype pattern relies on a <code>clone()</code> method rather than instantiating via <code>new ClassName(...)</code> with full initialization logic.</li>
+<li><code>structuredClone()</code> is the modern native JS way to deep clone.</li>
+</ul>
+<h2>Examples Solved</h2>
+<ul>
+<li>Cloning a <code>Resume</code> object with an array of skills.</li>
+</ul>
+<h2>Pros</h2>
+<ul>
+<li><strong>Performance</strong>: Avoids costly initialization (e.g., DB queries, heavy computations) by duplicating an existing state.</li>
+<li><strong>Flexibility</strong>: You can dynamically add/remove properties from the cloned object without affecting the original blueprint.</li>
+</ul>
+<h2>Cons</h2>
+<ul>
+<li><strong>Cloning Complexity</strong>: Deep cloning objects with circular references or complex nested structures is inherently difficult.</li>
+<li><strong>Hidden State</strong>: Cloned objects might carry over hidden state or dependencies that shouldn&#39;t be duplicated.</li>
+</ul>
+<h2>Tradeoffs</h2>
+<ul>
+<li><strong>Shallow vs Deep Copy</strong>: A shallow copy is fast but shares references for nested objects (mutating one mutates the other). A deep copy is safe but computationally expensive.</li>
+<li><strong>Resource Management</strong>: Cloning objects with network sockets or DB connections is dangerous; you must explicitly decide whether to share or recreate them.</li>
+</ul>
+<h2>Code Example</h2>
+<pre><code class="language-javascript">class Resume {
+    constructor(name, skills) {
+        this.name = name;
+        this.skills = skills;
+    }
+
+    print() {
+        console.log(this.name, this.skills);
+    }
+
+    clone() {
+        return new Resume(
+            this.name,
+            [...this.skills]
+        );
+    }
+}
+
+const original = new Resume(&quot;Vivek&quot;, [&quot;NodeJS&quot;]);
+const copy = original.clone();
+</code></pre>
+<h3>What Happens Here</h3>
+<ol>
+<li><code>new Resume(...)</code>: Creates a completely NEW object. <code>original !== copy</code> because both have different memory references.</li>
+<li><code>[...this.skills]</code>: Creates a NEW array. Without spread, both objects would share the same array (changing one affects the other).</li>
+<li><code>print()</code> and <code>clone()</code> are NOT recreated: They are stored once in <code>Resume.prototype</code> and shared by all objects.</li>
+</ol>
+<h3>Why Prototype Is Efficient</h3>
+<ul>
+<li><strong>Without prototype</strong>: Every object gets new function copies.</li>
+<li><strong>With prototype</strong>: All objects share same functions.</li>
+<li><strong>Result</strong>: Less memory usage, faster object creation, cleaner inheritance.</li>
+</ul>
+<h3>Final Mental Model</h3>
+<ul>
+<li><strong>Object data</strong> → new every time</li>
+<li><strong>Methods</strong> → shared via prototype</li>
+</ul>
+
+                </div>
+            
+                <div id="doc-13" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 design_pattern/creational/singleton/Summary.md</div>
+                    <h1>Singleton Pattern Summary</h1>
+<h2>About</h2>
+<p><strong>Singleton</strong> is a Creational Design Pattern that guarantees a class has exactly one instance and provides a global point of access to it.</p>
+<p>In Node.js backend development, this is most commonly used for:</p>
+<ul>
+<li>Database connection pools</li>
+<li>Caching services (like a Redis client)</li>
+<li>Global application configuration loaders</li>
+</ul>
+<h3>3 Ways to Create a Singleton in Node.js</h3>
+<h4>1. Basic Approach (Lazy)</h4>
+<p>Manually protect against the <code>new</code> keyword by throwing an Error in the constructor if the instance already exists. Rely exclusively on a <code>getInstance()</code> public static method.</p>
+<ul>
+<li><strong>Pros:</strong> Does not consume memory or boot time until the object is explicitly called for the first time.</li>
+<li><strong>Cons:</strong> Requires manual boilerplate to protect the constructor. Not natively safe if expanded to async operations without Promise-locking.</li>
+</ul>
+<h4>2. Async &quot;Thread&quot; Safe (Lazy)</h4>
+<p>Create the DB connection asynchronously only when requested. Use an <code>initializing</code> Promise to literally freeze simultaneous concurrent requests ensuring the database isn&#39;t instantiated twice by the Node event loop.</p>
+<ul>
+<li><strong>Pros:</strong> Perfectly tailored for real-world backend applications (like DB/Redis connections). Strictly prevents async double-instantiation race conditions.</li>
+<li><strong>Cons:</strong> Slightly more complex codebase. Introduces minor <code>Promise</code> overhead on the first few ticks.</li>
+</ul>
+<h4>3. Eager Loading</h4>
+<p>Heavily relies on Node&#39;s native module caching. You just initialize the object inside the file and <code>export default instance</code>.</p>
+<ul>
+<li><strong>Pros:</strong> Zero boilerplate logic (no <code>getInstance()</code> needed). Incredibly fast, clean, and 100% protected by Node&#39;s native <code>require</code>/<code>import</code> caching system.</li>
+<li><strong>Cons:</strong> Instantiates the object synchronously during app boot, consuming memory immediately even if it&#39;s never used. <strong>Fatal</strong> if the class requires asynchronous environment variables (e.g. AWS Secret fetched over network) before booting.</li>
+</ul>
+<h2>UML Diagram</h2>
+<pre><code class="language-mermaid">classDiagram
+    class Singleton {
+        -_instance: Singleton$
+        -constructor()
+        +getInstance()$ Singleton
+    }
+    
+    Client --&gt; Singleton : calls getInstance()
+</code></pre>
+<p><em>(Note: In UML, <code>$</code> denotes static fields/methods. A typical Singleton makes its constructor private and exposes a static accessor).</em></p>
+<h2>Resources</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=CD3meit-WDc">YouTube Video Link</a></li>
+<li><a href="https://refactoring.guru/design-patterns/singleton">Refactoring.guru Documentation</a></li>
+</ul>
+<h2>My Notes</h2>
+<ul>
+<li><strong>Fatal Typos:</strong> Need to be extremely careful with variable naming (<code>_instance</code> vs <code>__instance</code>). If the constructor sets a different property than what <code>getInstance()</code> protects, the Singleton breaks and multiple objects spawn natively bypassing checks.</li>
+<li><strong>Eager vs Lazy Tradeoff:</strong> <ul>
+<li><strong>Eager</strong> loads synchronously. If you need to asynchronously fetch environment variables (like a DB password), Eager will crash or pass <code>undefined</code>. </li>
+<li><strong>Lazy Loading</strong> via Promises is much safer for backends doing heavy async initialization.</li>
+</ul>
+</li>
+</ul>
+<h2>Examples Solved</h2>
+<ul>
+<li><code>index.js</code>: We successfully implemented all 3 forms of Singleton: Basic (with <code>throw new Error</code> protection), Async Race-Safe (using frozen Promises), and Eager (Node module export).</li>
+</ul>
+
+                </div>
+            
+                <div id="doc-14" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 design_pattern/practice_problems/practice_tracker.md</div>
+                    <h1>LLD Practice Tracker</h1>
+<p>This document tracks coding practice problems. Whenever a topic is formally reviewed and completed, the LLD Reviewer Agent places 4 to 5 specific, e-commerce or backend-focused challenges here. You can tackle these whenever you have free time to reinforce your learning.</p>
+<h2>SOLID Principles</h2>
+<p><em>Status: Ready to Practice</em></p>
+<ul>
+<li>✅ <strong>solid_1</strong> (SRP): Refactor a monolithic <code>OrderProcessor</code> class that currently calculates tax, applies discounts, generates a PDF receipt, and saves to the DB into strictly separate classes.</li>
+<li>✅ <strong>solid_2</strong> (OCP): Build an <code>AuthenticationService</code> that can support <code>OAuthLogin</code>, <code>EmailLogin</code>, and <code>SSOLogin</code> without ever modifying the core orchestrator.</li>
+<li>✅ <strong>solid_3</strong> (LSP): Implement a generic <code>PaymentMethod</code> interface. Ensure that a subclass <code>WalletPayment</code> and <code>CryptoPayment</code> never unexpectedly crash or require the client code to write explicit <code>instanceof</code> checks if a specific feature (like &quot;refund&quot;) is requested.</li>
+<li>✅ <strong>solid_4</strong> (ISP): Segregate an interface/base class called <code>UserOperations</code> (which holds methods like <code>login</code>, <code>logout</code>, <code>banUser</code>, <code>grantPermissions</code>) so that normal <code>Customer</code> objects aren&#39;t forced to inherit admin methods they shouldn&#39;t trigger.</li>
+<li>✅ <strong>solid_5</strong> (DIP): Build a <code>NotificationManager</code>. Instead of hardcoding <code>new SMSService()</code>, inject an abstract messaging dependency through the constructor so you can swap it for an <code>EmailService</code> instantly.</li>
+</ul>
+<h2>Creational: Singleton</h2>
+<p><em>Status: Ready to Practice</em></p>
+<ul>
+<li>✅ <strong>singleton_1</strong>: Implement a <strong>Database Connection Pool</strong> class asynchronously. Ensure the exact same pool instance is securely returned to 3 incoming API requests running concurrently. </li>
+<li>✅ <strong>singleton_2</strong>: Implement a <strong>Logger</strong> class eagerly. Ensure all components in the app write to the exact same log buffer array without race conditions.</li>
+<li>✅ <strong>singleton_3</strong>: Implement a Singleton <code>FeatureToggleService</code> that fetches a massive remote JSON config (delay mock with setTimeout). Test what happens if multiple modules request the toggle status while the network request is still pending.</li>
+<li><input disabled="" type="checkbox"> <strong>singleton_4</strong> (State Management Store): <em>[Spaced Repetition]</em> Build a <code>GlobalStore</code> singleton (like Redux) that holds a global state tree and provides <code>dispatch(action)</code> and <code>getState()</code> methods.</li>
+<li><input disabled="" type="checkbox"> <strong>singleton_5</strong> (Feature Flag Manager): <em>[Spaced Repetition]</em> Create a <code>FeatureFlag</code> singleton that loads a mock configuration object exactly once on boot and provides an <code>isEnabled(flagName)</code> method.</li>
+<li><input disabled="" type="checkbox"> <strong>singleton_6</strong> (WebSocket Manager): <em>[Spaced Repetition]</em> Build a <code>SocketManager</code> singleton that prevents duplicate connections and maintains exactly one active WebSocket state across the entire application.</li>
+</ul>
+<h2>Creational: Factory Patterns</h2>
+<p><em>Status: Ready to Practice</em></p>
+<ul>
+<li>✅ <strong>factory_1</strong> (Factory Method): Implement a <code>LogisticsApp</code>. Use a Factory Method to handle the creation of <code>Truck</code> (Road) and <code>Ship</code> (Sea) transport. Ensure you can add <code>Airplane</code> (Air) transport later without touching the main logic.</li>
+<li>✅ <strong>factory_2</strong> (Abstract Factory): Build a <code>CrossPlatformUI</code> toolkit. Create an Abstract Factory <code>UIFactory</code> that produces <code>Button</code> and <code>Checkbox</code>. Implement concrete factories <code>WindowsFactory</code> and <code>MacFactory</code> to produce OS-specific variants.</li>
+<li>✅ <strong>factory_3</strong> (Abstract Factory): Implement a <code>CloudResourceFactory</code> that manages families of related cloud services: <code>ComputeInstance</code> and <code>StorageBucket</code>. Provide concrete implementations for <code>AWSFactory</code> and <code>GCPFactory</code>.</li>
+<li>✅ <strong>factory_4</strong> (Simple Factory): Refactor an e-commerce <code>DiscountCalculator</code> that uses a messy <code>switch</code> statement for &#39;BLACK_FRIDAY&#39;, &#39;CHRISTMAS&#39;, and &#39;HOLI&#39; into a clean Factory structure.</li>
+<li>✅ <strong>factory_5</strong> (Hybrid): Create a <code>PizzaStore</code> using the Factory Method for different regions (New York, Chicago) and then use an Abstract Factory inside those stores to create &quot;Families&quot; of ingredients (ThinCrust, Mozzarella vs ThickCrust, Reggiano).</li>
+<li><input disabled="" type="checkbox"> <strong>factory_6</strong> (Notification System - Factory Method): <em>[Spaced Repetition]</em> Create a <code>NotificationFactory</code>. Given a type (&quot;Email&quot;, &quot;SMS&quot;, &quot;Push&quot;), return the respective class. Each class must implement a <code>.send(message)</code> method.</li>
+<li><input disabled="" type="checkbox"> <strong>factory_7</strong> (Payment Gateway - Registry Factory): <em>[Spaced Repetition]</em> Implement a Factory using the Registry Pattern (OCP compliant) to dynamically register <code>Stripe</code>, <code>PayPal</code>, and <code>Crypto</code> payment processors without modifying the factory class.</li>
+<li><input disabled="" type="checkbox"> <strong>factory_8</strong> (Cross-Platform UI - Abstract Factory): <em>[Spaced Repetition]</em> Create a <code>ThemeFactory</code> that returns complete families of components (e.g., <code>DarkTheme</code> returns <code>DarkNav</code>, <code>DarkCard</code>; <code>LightTheme</code> returns <code>LightNav</code>, <code>LightCard</code>).</li>
+</ul>
+<h2>Creational: Builder Pattern</h2>
+<p><em>Status: Ready to Practice</em></p>
+<ul>
+<li>✅ <strong>builder_1</strong> (Query Builder): Implement a <code>SQLQueryBuilder</code> that supports <code>select()</code>, <code>from()</code>, <code>where()</code>, <code>join()</code>, and <code>limit()</code>. Ensure the <code>build()</code> method returns a valid SQL string and handles multiple <code>where</code> clauses correctly.</li>
+<li>✅ <strong>builder_2</strong> (E-commerce Order): Create an <code>OrderBuilder</code>. Use a <strong>Director</strong> to provide templates like <code>buildGuestOrder()</code> and <code>buildPremiumMemberOrder()</code> which automatically apply different discounts.</li>
+<li>✅ <strong>builder_3</strong> (Stepwise Form): Build a <code>RegistrationFormBuilder</code> using the <strong>Step Builder</strong> pattern. Enforce the sequence: <code>Username -&gt; Email -&gt; Password -&gt; (Optional) ProfilePic -&gt; Build</code>.</li>
+<li>✅ <strong>builder_4</strong> (Report Generator): Implement a <code>ReportBuilder</code> for a dashboard. It should support <code>setHeader()</code>, <code>addTableData()</code>, and <code>setFooter()</code>. Ensure that <code>addTableData()</code> can be called multiple times, but <code>setHeader()</code> can only be called once.</li>
+<li>✅ <strong>builder_5</strong> (Game Character): Create a <code>CharacterBuilder</code> for an RPG. It should handle complex attributes like <code>setStats(str, dex, int)</code>, <code>setEquipments([])</code>, and <code>setAbilities([])</code>. Use the Builder to ensure a character cannot be built without a minimum &quot;Health&quot; value.</li>
+<li><input disabled="" type="checkbox"> <strong>builder_6</strong> (HTTP Request Builder): <em>[Spaced Repetition]</em> Create a <code>RequestBuilder</code> to construct complex HTTP configurations (URL, Headers, Body, Method). Include a <code>Director</code> that provides standard templates like <code>buildAuthPostRequest()</code>.</li>
+<li><input disabled="" type="checkbox"> <strong>builder_7</strong> (Data Visualization - Step Builder): <em>[Spaced Repetition]</em> Create a <code>ChartBuilder</code> using the Step Builder pattern. Enforce the exact strict sequence: <code>SetType(bar/line) -&gt; AddData() -&gt; SetLabels() -&gt; Build()</code>.</li>
+<li><input disabled="" type="checkbox"> <strong>builder_8</strong> (CSS Style Builder): <em>[Spaced Repetition]</em> Build a <code>StyleBuilder</code> that chains CSS property assignments <code>.addMargin()</code>, <code>.addPadding()</code>, <code>.addColor()</code>, and returns a perfectly formatted inline CSS string.</li>
+</ul>
+<h2>Creational: Prototype Pattern</h2>
+<p><em>Status: Ready to Practice</em></p>
+<ul>
+<li>✅ <strong>prototype_1</strong> (Invoice Cloning): Implement an <code>Invoice</code> object with an array of <code>lineItems</code>. Create a deep clone mechanism so that when an invoice is cloned for a recurring monthly payment, modifying the new invoice&#39;s <code>lineItems</code> doesn&#39;t affect the original invoice.</li>
+<li><input disabled="" type="checkbox"> <strong>prototype_2</strong> (Game NPC Spawning): Create a <code>MonsterRegistry</code> (Prototype Registry). Store configured prototype instances of &quot;Goblin&quot; and &quot;Dragon&quot;. Provide a <code>spawnMonster(type)</code> method that clones and returns the appropriate monster to avoid running expensive stats generation logic multiple times.</li>
+<li><input disabled="" type="checkbox"> <strong>prototype_3</strong> (Document Management): Build a <code>Document</code> class with nested metadata objects (e.g., <code>author: {name, id}</code>). Implement a <code>clone()</code> method using <code>JSON.parse(JSON.stringify())</code> or <code>structuredClone()</code> to ensure true deep copying, and demonstrate the tradeoffs compared to a shallow copy.</li>
+<li><input disabled="" type="checkbox"> <strong>prototype_4</strong> (HTTP Request Builder): Create a <code>RequestTemplate</code> object that holds common headers and auth tokens. Use the Prototype pattern to clone this template for specific endpoints, allowing you to append new headers without mutating the global template.</li>
+</ul>
+<h2>Structural: Adapter Pattern</h2>
+<p><em>Status: Ready to Practice</em></p>
+<ul>
+<li>✅ <strong>adapter_1</strong> (Payment Gateway): You have an existing system using <code>StripeAdapter</code> with a method <code>pay(amount)</code>. A new requirement forces you to integrate <code>PayPalAPI</code> which only accepts <code>sendPayment(currency, value)</code>. Create an Adapter so the client can still call <code>pay(amount)</code>.</li>
+<li><input disabled="" type="checkbox"> <strong>adapter_2</strong> (Logger Migration): Your app uses a custom <code>Logger</code> with a <code>logMessage(msg)</code>. You want to switch to a powerful third-party library <code>WinstonLogger</code> which uses <code>info(text)</code> and <code>error(text)</code>. Write an Adapter to wrap <code>WinstonLogger</code> without changing your app&#39;s codebase.</li>
+<li><input disabled="" type="checkbox"> <strong>adapter_3</strong> (Legacy DB to ORM): You have a <code>LegacyDatabase</code> class with <code>executeSQL(query)</code>. You are migrating to a modern <code>MongoORM</code> that requires <code>insertOne(document)</code>. Create an Adapter that intercepts SQL-like method calls and translates them to MongoDB document inserts.</li>
+<li><input disabled="" type="checkbox"> <strong>adapter_4</strong> (Multi-Format Data Reader): Your application only understands JSON. You need to read data from a legacy API that returns CSV, and another that returns XML. Create <code>CSVAdapter</code> and <code>XMLAdapter</code> classes that convert these formats into the standard JSON interface your app expects.</li>
+</ul>
+<h2>Structural: Decorator Pattern</h2>
+<p><em>Status: Ready to Practice</em></p>
+<ul>
+<li>✅ <strong>decorator_1</strong> (Coffee Shop): Implement a <code>Beverage</code> base class. Create decorators like <code>Milk</code>, <code>Mocha</code>, and <code>Whip</code> that dynamically calculate the <code>cost()</code> and <code>getDescription()</code> of the beverage.</li>
+<li><input disabled="" type="checkbox"> <strong>decorator_2</strong> (Notifier System): Build an <code>EmailNotifier</code>. Decorate it with <code>SMSNotifier</code> and <code>SlackNotifier</code> so that a critical system alert can be sent via Email + SMS + Slack by stacking the decorators.</li>
+<li><input disabled="" type="checkbox"> <strong>decorator_3</strong> (Data Source API): Implement a basic <code>FileDataSource</code> that writes/reads string data. Create a <code>EncryptionDecorator</code> (encrypts before writing) and a <code>CompressionDecorator</code> (compresses before writing). Chain them together.</li>
+<li><input disabled="" type="checkbox"> <strong>decorator_4</strong> (Web Request Logger): Build a <code>BaseRequestHandler</code>. Add decorators like <code>AuthenticationCheck</code>, <code>Logging</code>, and <code>RateLimiting</code> that wrap the core handler to add middleware-like behavior without modifying the base handler.</li>
+</ul>
+<h2>Structural: Facade Pattern</h2>
+<p><em>Status: Ready to Practice</em></p>
+<ul>
+<li>✅ <strong>facade_1</strong> (Video Converter): Create a <code>VideoConversionFacade</code> that hides the complexities of <code>AudioMixer</code>, <code>VideoFile</code>, <code>BitrateReader</code>, and <code>CodecFactory</code> behind a single <code>convertVideo(filename, format)</code> method.</li>
+<li><input disabled="" type="checkbox"> <strong>facade_2</strong> (E-Commerce Checkout): Build a <code>CheckoutFacade</code> that coordinates <code>InventoryService.checkStock()</code>, <code>PaymentGateway.process()</code>, and <code>ShippingService.schedule()</code>. Ensure the facade takes dependencies via constructor (DIP).</li>
+<li><input disabled="" type="checkbox"> <strong>facade_3</strong> (Smart Home API): Create a <code>SmartHomeFacade</code> to easily trigger &quot;Morning Mode&quot; or &quot;Night Mode&quot;, which internally coordinates <code>LightingSystem</code>, <code>Thermostat</code>, and <code>SecuritySystem</code>.</li>
+<li><input disabled="" type="checkbox"> <strong>facade_4</strong> (Database Migration): Hide the complexity of a database migration behind a <code>MigrationFacade</code> that coordinates <code>SchemaAnalyzer</code>, <code>DataTransferAgent</code>, and <code>ConnectionPoolManager</code>.</li>
+</ul>
+<h2>Structural: Proxy Pattern</h2>
+<p><em>Status: Ready to Practice</em></p>
+<ul>
+<li>✅ <strong>proxy_1</strong> (Virtual Proxy - Heavy Document): Build a <code>DocumentProxy</code> that only loads a massive 100MB <code>RealDocument</code> from disk when the <code>render()</code> method is called, but can return the document&#39;s <code>metadata</code> instantly without loading the file.</li>
+<li><input disabled="" type="checkbox"> <strong>proxy_2</strong> (Protection Proxy - Admin API): Implement a <code>DatabaseProxy</code> that intercepts <code>deleteRow()</code> calls and throws an Error if the <code>currentUser.role</code> is not &#39;SUPER_ADMIN&#39;. Allow <code>getRow()</code> calls for everyone.</li>
+<li><input disabled="" type="checkbox"> <strong>proxy_3</strong> (Cache Proxy - API Fetcher): Create a <code>WeatherAPIProxy</code> that wraps a <code>RealWeatherAPI</code>. If <code>getWeather(city)</code> is called, the proxy should return a cached response if it was fetched within the last 5 minutes. Otherwise, it delegates to the real API and updates the cache.</li>
+<li><input disabled="" type="checkbox"> <strong>proxy_4</strong> (Smart Reference Proxy): Build a <code>ConnectionProxy</code> that wraps a <code>DBConnection</code>. The proxy should keep track of the number of active clients using the connection. If the active clients drop to 0, it automatically calls <code>realConnection.close()</code>.</li>
+</ul>
+<h2>Structural: Composite Pattern</h2>
+<p><em>Status: Ready to Practice</em></p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>composite_1</strong> (UI Components): Implement a UI hierarchy with a <code>UIComponent</code> interface. Create Leaf nodes (<code>Button</code>, <code>Input</code>) and Composite nodes (<code>Panel</code>, <code>Window</code>). Ensure calling <code>render()</code> on the Window recursively renders all children.</li>
+<li><input disabled="" type="checkbox"> <strong>composite_2</strong> (Organization Chart): Model a company structure with <code>Employee</code> (Leaf) and <code>Manager</code> (Composite). Implement a <code>getSalary()</code> method that calculates the total salary of a manager and all their direct/indirect subordinates.</li>
+<li><input disabled="" type="checkbox"> <strong>composite_3</strong> (HTML DOM Builder): Create an object-oriented DOM builder. An <code>HTMLElement</code> can contain text (Leaf) or other <code>HTMLElement</code>s (Composite). Implement a <code>toHTML()</code> method that outputs the properly nested HTML string (e.g., <code>&lt;div&gt;&lt;p&gt;Hello&lt;/p&gt;&lt;/div&gt;</code>).</li>
+<li><input disabled="" type="checkbox"> <strong>composite_4</strong> (Math Expression Tree): Build an expression evaluator where <code>Operand</code> (Leaf, e.g., 5) and <code>Operator</code> (Composite, e.g., Add, Multiply) share an <code>evaluate()</code> interface. Construct the tree for <code>(5 + 3) * 2</code> and call <code>evaluate()</code> on the root.</li>
+</ul>
+<h2>Structural: Bridge Pattern</h2>
+<p><em>Status: Ready to Practice</em></p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>bridge_1</strong> (Device &amp; Remote): Create a <code>Device</code> interface (<code>TV</code>, <code>Radio</code>) and a <code>RemoteControl</code> abstraction (<code>BasicRemote</code>, <code>AdvancedRemote</code>). The remotes should take a device in their constructor. The advanced remote adds a <code>mute()</code> method.</li>
+<li><input disabled="" type="checkbox"> <strong>bridge_2</strong> (Message Sender): Create a <code>MessageSender</code> abstraction (<code>TextMessage</code>, <code>HtmlMessage</code>) and a <code>MessagePlatform</code> implementor (<code>EmailPlatform</code>, <code>SMSPlatform</code>, <code>WhatsAppPlatform</code>). Send formatted messages across different platforms without class explosion.</li>
+<li><input disabled="" type="checkbox"> <strong>bridge_3</strong> (Theme System): Build a UI framework with <code>UIElement</code> abstraction (<code>Button</code>, <code>Dropdown</code>) and a <code>Theme</code> implementor (<code>DarkTheme</code>, <code>LightTheme</code>). A <code>Button</code> injected with a <code>DarkTheme</code> renders differently than one with a <code>LightTheme</code>.</li>
+<li><input disabled="" type="checkbox"> <strong>bridge_4</strong> (Payment Gateway Provider): Separate the abstraction <code>PaymentMethod</code> (<code>Subscription</code>, <code>OneTimePurchase</code>) from the implementor <code>PaymentGateway</code> (<code>Stripe</code>, <code>PayPal</code>). Process a recurring subscription using Stripe, and a one-time purchase using PayPal.</li>
+</ul>
+<h2>Structural: Flyweight Pattern</h2>
+<p><em>Status: Ready to Practice</em></p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>flyweight_1</strong> (E-commerce Product Catalog): Build a <code>ProductCatalog</code> where multiple instances of the same Product ID share the same <code>ProductFlyweight</code> (Name, Category, ImageURL, Brand, Specifications) but have unique <code>ProductItem</code> contexts (SKU, Price, StockCount, WarehouseLocation).</li>
+<li><input disabled="" type="checkbox"> <strong>flyweight_2</strong> (Chat System Memory Optimization): Create a <code>ChatApp</code> where millions of messages share a <code>MessageFlyweight</code> (SenderName, AvatarURL, ThemeSettings) but have unique <code>MessageContext</code> (MessageText, Timestamp, MessageID, DeliveryStatus).</li>
+<li><input disabled="" type="checkbox"> <strong>flyweight_3</strong> (Text Editor Formatting): Implement a text editor where each character in a document of 100,000 letters shares a <code>CharacterFlyweight</code> (FontFamily, FontSize, Color, Style) to avoid storing styling parameters for every single letter, while the position and the character code are stored in the context.</li>
+<li><input disabled="" type="checkbox"> <strong>flyweight_4</strong> (E-commerce Order History Tracker): Implement an <code>OrderHistoryTracker</code>. Millions of orders share an <code>OrderStatusFlyweight</code> (StatusName, IconURL, EmailNotificationTemplate, SLAHours) while each individual order contains unique <code>OrderContext</code> (OrderID, CustomerID, UpdateTime, Comments).</li>
+</ul>
+<h2>Behavioral: Observer Pattern</h2>
+<p><em>Status: Ready to Practice</em></p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>observer_1</strong> (Stock Market Ticker): Build a <code>StockMarket</code> subject that updates stock prices. Implement <code>MobileAppObserver</code> and <code>WebDashboardObserver</code> that subscribe to price updates. Ensure observers can specify which specific stocks (e.g., &quot;AAPL&quot;, &quot;GOOG&quot;) they want to listen to.</li>
+<li><input disabled="" type="checkbox"> <strong>observer_2</strong> (E-commerce Order Status Notification): Implement an <code>OrderTracker</code> (Subject). Whenever an order&#39;s status changes (e.g., PLACED -&gt; SHIPPED -&gt; DELIVERED), trigger notifications. Observers like <code>SMSNotificationService</code>, <code>EmailNotificationService</code>, and <code>InventorySystem</code> should update accordingly.</li>
+<li><input disabled="" type="checkbox"> <strong>observer_3</strong> (Bid Auction System): Build a <code>RealTimeAuction</code> platform where the <code>AuctionProduct</code> acts as the Subject. When a bidder places a higher bid, all other registered bidders (Observers) must be immediately notified of the new high bid amount.</li>
+<li><input disabled="" type="checkbox"> <strong>observer_4</strong> (Multi-channel Newsletter): Create a <code>NewsletterPublisher</code> (Subject) that pushes monthly articles. Introduce <code>PushNotificationClient</code> and <code>EmailClient</code>. Demonstrate unsubscribe logic cleanly.</li>
+</ul>
+<h2>Behavioral: Strategy Pattern</h2>
+<p><em>Status: Ready to Practice</em></p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>strategy_1</strong> (E-commerce Payment Gateway): Implement an <code>OrderCheckout</code> context that calculates order totals. Create interchangeable payment strategies: <code>CreditCardPayment</code>, <code>PayPalPayment</code>, and <code>CryptoPayment</code>. Support runtime selection of payment methods.</li>
+<li><input disabled="" type="checkbox"> <strong>strategy_2</strong> (E-commerce Shipping Calculator): Build a <code>ShippingCostCalculator</code> context. Implement different shipping rate calculation strategies: <code>StandardShipping</code>, <code>ExpressShipping</code>, and <code>InternationalShipping</code> based on package weight and destination.</li>
+<li><input disabled="" type="checkbox"> <strong>strategy_3</strong> (Discount &amp; Pricing Engine): Create a <code>PricingEngine</code> context for a store checkout system. Define strategies for applying discounts: <code>FlatDiscountStrategy</code> ($10 off), <code>PercentageDiscountStrategy</code> (15% off), and <code>NoDiscountStrategy</code>. Ensure strategies can be swapped dynamically.</li>
+<li><input disabled="" type="checkbox"> <strong>strategy_4</strong> (Image Compression Tool): Build an <code>ImageProcessor</code> context. Define interchangeable compression strategies: <code>JPEGCompression</code>, <code>PNGCompression</code>, and <code>WebPCompression</code>. Demonstrate runtime switching depending on desired quality/speed requirements.</li>
+</ul>
+<h2>Behavioral: State Pattern</h2>
+<p><em>Status: Ready to Practice</em></p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>state_1</strong> (TCP Connection Simulator): Build a <code>TCPConnection</code> context that changes behavior depending on its current state: <code>ClosedState</code>, <code>ListenState</code>, <code>EstablishedState</code>. Operations like <code>open()</code>, <code>close()</code>, and <code>sendData()</code> must exhibit different behaviors and transitions based on the current state.</li>
+<li><input disabled="" type="checkbox"> <strong>state_2</strong> (Document Approval Workflow): Create a <code>Document</code> context representing a corporate editing flow. Implement states: <code>DraftState</code>, <code>ModerationState</code>, <code>PublishedState</code>. Ensure actions like <code>edit()</code>, <code>review()</code>, and <code>publish()</code> exhibit proper validation and state transition restrictions (e.g., only admins can transition from Moderation to Published).</li>
+<li><input disabled="" type="checkbox"> <strong>state_3</strong> (E-commerce Order Lifecycle): Build an <code>Order</code> context tracking shipping. Implement states: <code>PaymentPendingState</code>, <code>PaidState</code>, <code>ShippedState</code>, <code>DeliveredState</code>, <code>CancelledState</code>. Implement operations like <code>cancelOrder()</code>, <code>shipOrder()</code>, and <code>deliverOrder()</code> ensuring that orders cannot be cancelled once shipped.</li>
+<li><input disabled="" type="checkbox"> <strong>state_4</strong> (Audio Player Controller): Implement an <code>AudioPlayer</code> context. Define states: <code>ReadyState</code>, <code>PlayingState</code>, <code>PausedState</code>. Operations like <code>clickPlay()</code>, <code>clickNext()</code>, and <code>clickLock()</code> should behave differently according to the current state.</li>
+</ul>
+<h2>Behavioral: Command Pattern</h2>
+<p><em>Status: Ready to Practice</em></p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>command_1</strong> (Text Editor Undo): Implement a <code>TextEditor</code> (Receiver) with methods <code>insert(text)</code> and <code>delete(count)</code>. Create <code>InsertCommand</code> and <code>DeleteCommand</code>. The Invoker should maintain a history stack to support multiple <code>undo()</code> operations.</li>
+<li><input disabled="" type="checkbox"> <strong>command_2</strong> (Banking Transactions): Create a <code>BankAccount</code> (Receiver). Implement <code>DepositCommand</code> and <code>WithdrawCommand</code>. Add a <code>TransactionManager</code> (Invoker) that can execute, undo, and log all transactions to a file.</li>
+<li><input disabled="" type="checkbox"> <strong>command_3</strong> (Smart Home Macros): Extend the Smart Home remote. Create a <code>MacroCommand</code> that accepts an array of Commands. Build a &quot;Morning Routine&quot; macro that turns on the lights, starts the coffee maker, and opens the blinds.</li>
+<li><input disabled="" type="checkbox"> <strong>command_4</strong> (Job Queue System): Build a <code>Queue</code> that holds <code>Command</code> objects. A background worker loop should pop commands off the queue and call <code>execute()</code>. Implement <code>SendEmailCommand</code> and <code>ProcessImageCommand</code>.</li>
+</ul>
+<h2>Behavioral: Chain of Responsibility Pattern</h2>
+<p><em>Status: Ready to Practice</em></p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>cor_1</strong> (Logger System): Build a <code>Logger</code> hierarchy (<code>DebugLogger</code>, <code>InfoLogger</code>, <code>ErrorLogger</code>). A message with severity <code>ERROR</code> should bubble past Debug/Info and only be handled by the <code>ErrorLogger</code>. </li>
+<li><input disabled="" type="checkbox"> <strong>cor_2</strong> (Express Middleware Simulator): Create an HTTP <code>Request</code> object and pass it through a chain of middlewares: <code>AuthMiddleware</code> (checks token), <code>LoggingMiddleware</code> (logs IP), and <code>ValidationMiddleware</code> (checks payload). If any middleware fails, it should abort the chain and throw an Error.</li>
+<li><input disabled="" type="checkbox"> <strong>cor_3</strong> (Customer Support System): Build a ticketing system. A <code>Ticket</code> has an <code>issueType</code> and <code>difficulty</code>. Pass it through <code>Level1Support</code>, <code>Level2Support</code>, and <code>ManagerSupport</code>. If Level 1 can&#39;t handle the difficulty, they pass it up the chain.</li>
+<li><input disabled="" type="checkbox"> <strong>cor_4</strong> (E-commerce Discount Pipeline): Create a chain of discount appliers (<code>CouponDiscount</code>, <code>LoyaltyDiscount</code>, <code>SeasonalSale</code>). Pass a <code>Cart</code> object through the chain where each handler reduces the <code>cart.totalPrice</code> sequentially before checkout.</li>
+</ul>
+<h2>Behavioral: Iterator Pattern</h2>
+<p><em>Status: Ready to Practice</em></p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>iterator_1</strong> (Native JS Iterable): Build a custom <code>PaginationCollection</code> that holds 100 items. Implement the native <code>[Symbol.iterator]()</code> so that a client can do <code>for (const page of pagination) { ... }</code> and it yields exactly 10 items at a time.</li>
+<li><input disabled="" type="checkbox"> <strong>iterator_2</strong> (Graph Traversal): Create a <code>GraphCollection</code> (nodes and edges). Implement two iterators: <code>BFSGraphIterator</code> and <code>DFSGraphIterator</code>. The collection should expose <code>createBFSIterator()</code> and <code>createDFSIterator()</code>.</li>
+<li><input disabled="" type="checkbox"> <strong>iterator_3</strong> (Filtering Iterator): Create an <code>EmployeeCollection</code>. Build a <code>HighSalaryIterator</code> that wraps the standard array iterator but automatically skips any employee whose salary is under $100k during the <code>next()</code> call.</li>
+<li><input disabled="" type="checkbox"> <strong>iterator_4</strong> (Fail-Fast Collection): Re-implement the <code>ArrayCollection</code> to include a <code>modCount</code> property. Create a <code>FailFastIterator</code> that caches the <code>modCount</code> on creation, and throws a <code>ConcurrentModificationException</code> inside <code>next()</code> if the collection&#39;s <code>modCount</code> has changed.</li>
+</ul>
+<h2>Behavioral: Mediator Pattern</h2>
+<p><em>Status: Ready to Practice</em></p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>mediator_1</strong> (E-commerce Order Fulfillment): Build a workflow orchestrator where a <code>FulfillmentMediator</code> coordinates interaction between <code>InventoryService</code>, <code>PaymentService</code>, and <code>ShippingService</code>. The services should not know about each other; they only report events (e.g. <code>orderPlaced</code>, <code>paymentSuccess</code>) to the mediator, which decides the next step.</li>
+<li><input disabled="" type="checkbox"> <strong>mediator_2</strong> (Air Traffic Control): Implement a flight control system with an <code>ATCMediator</code> and <code>Aircraft</code> objects. Aircraft must communicate with the ATC to request permission to land or take off. They cannot coordinate directly with other aircraft.</li>
+<li><input disabled="" type="checkbox"> <strong>mediator_3</strong> (Stock Brokerage System): Create a <code>BrokerMediator</code> that connects <code>Buyer</code> and <code>Seller</code> participants. When a Buyer submits a buy order, the mediator matches it with a compatible sell order from a Seller, preventing buyers and sellers from knowing or negotiating with each other directly.</li>
+<li><input disabled="" type="checkbox"> <strong>mediator_4</strong> (Forms Wizard Interface): Build a wizard form UI system with a <code>WizardMediator</code> orchestrating communication between different components: <code>EmailInput</code>, <code>PasswordInput</code>, and <code>SubmitButton</code>. The <code>SubmitButton</code> state (enabled/disabled) and password strength warning visibility are updated dynamically by the mediator as the inputs trigger change events.</li>
+</ul>
+<h2>Behavioral: Memento Pattern</h2>
+<p><em>Status: Ready to Practice</em></p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>memento_1</strong> (E-commerce Shopping Cart Undo): Implement a <code>ShoppingCart</code> (Originator) that stores items. Build a <code>CartMemento</code> to capture the state of items and quantities. Use a <code>CartHistory</code> (Caretaker) caret-taking stack to allow the user to undo and redo operations (adding, updating, or removing items) during checkout preparation.</li>
+<li><input disabled="" type="checkbox"> <strong>memento_2</strong> (Draft Document Autosave): Create a <code>DocumentEditor</code> that holds rich text content and metadata (e.g. cursor position, font size). Build an automated Caretaker that takes snapshots every 5 seconds (autosaves) and allows restoring back to any specific checkpoint if the editor crashes.</li>
+<li><input disabled="" type="checkbox"> <strong>memento_3</strong> (Database Migration Rollback Tool): Build a <code>SchemaManager</code> representing a database schema (tables and columns). Use Mementos to take snapshots of the schema before applying migrations. If a migration step fails, automatically restore the schema to its previous version.</li>
+<li><input disabled="" type="checkbox"> <strong>memento_4</strong> (Multi-Step Wizard State Manager): Implement a multi-step user registration wizard (<code>WizardManager</code>). As the user moves forward or backward through pages (Personal Info -&gt; Address -&gt; Payment -&gt; Review), capture the wizard&#39;s state using Mementos so the user can freely go back and forth without losing inputted values.</li>
+</ul>
+<h2>Behavioral: Template Method Pattern</h2>
+<p><em>Status: Ready to Practice</em></p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>template_method_1</strong> (Data ETL Pipeline): Build an <code>ETLPipeline</code> base class. Implement the template method <code>executePipeline()</code> which orchestrates <code>extract()</code>, <code>transform()</code>, and <code>load()</code>. Create subclasses like <code>CSVToSQLPipeline</code> and <code>APItoMongoPipeline</code> that override these steps without changing the execution sequence.</li>
+<li><input disabled="" type="checkbox"> <strong>template_method_2</strong> (OAuth Provider Flow): Create an <code>OAuthFlow</code> base class with an <code>authenticate()</code> template method representing steps like <code>validateToken()</code>, <code>fetchUserProfile()</code>, and <code>createSession()</code>. Use hook methods like <code>requiresMFA()</code> so that the <code>BankOAuthFlow</code> subclass can force multi-factor auth, while <code>SocialMediaOAuthFlow</code> bypasses it.</li>
+<li><input disabled="" type="checkbox"> <strong>template_method_3</strong> (Report Generation): Implement a <code>ReportGenerator</code> base class that dictates the sequence: <code>fetchData()</code>, <code>formatHeader()</code>, <code>formatBody()</code>, and <code>formatFooter()</code>. Allow subclasses like <code>PDFReportGenerator</code> and <code>HTMLReportGenerator</code> to define the specific formatting logic while keeping the exact same generation steps.</li>
+<li><input disabled="" type="checkbox"> <strong>template_method_4</strong> (Build Automation Tool): Build a <code>SoftwareBuilder</code> base class with a template method <code>buildProject()</code>. Define steps like <code>lintCode()</code>, <code>compile()</code>, <code>runUnitTests()</code>, and <code>package()</code>. Add a hook method <code>skipTests()</code> that a <code>FastBuilder</code> subclass can override to quickly build locally, bypassing the <code>runUnitTests()</code> step.</li>
+</ul>
+<h2>Behavioral: Visitor Pattern</h2>
+<p><em>Status: Ready to Practice</em></p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>visitor_1</strong> (DOM Tree Exporter): Build an object structure representing an HTML DOM (<code>DivElement</code>, <code>SpanElement</code>, <code>TextNode</code>). Create an <code>HtmlExportVisitor</code> that recursively builds an HTML string, and a <code>MarkdownExportVisitor</code> that converts the same tree into Markdown.</li>
+<li><input disabled="" type="checkbox"> <strong>visitor_2</strong> (Organization Salary Calculator): Create a corporate structure hierarchy with <code>Engineer</code>, <code>Manager</code>, and <code>Director</code> classes. Implement a <code>BonusCalculatorVisitor</code> that gives 10% bonus to Engineers, 20% to Managers, and 30% to Directors, accumulating the total bonus budget needed.</li>
+<li><input disabled="" type="checkbox"> <strong>visitor_3</strong> (E-commerce Tax Calculator): Build a shopping cart containing different item types: <code>Groceries</code>, <code>Electronics</code>, and <code>Liquor</code>. Create a <code>TaxVisitor</code> that applies 0% tax to groceries, 10% to electronics, and 25% to liquor, accumulating the final cart tax.</li>
+<li><input disabled="" type="checkbox"> <strong>visitor_4</strong> (AST Code Formatter): Model an Abstract Syntax Tree with <code>VariableDeclaration</code>, <code>FunctionDeclaration</code>, and <code>IfStatement</code> nodes. Implement a <code>CodeFormattingVisitor</code> that iterates over the nodes and prints them back out as beautifully formatted source code, with proper indentation based on the AST depth.</li>
+</ul>
+
+                </div>
+            
+                <div id="doc-15" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 design_pattern/practice_problems/Summary.md</div>
+                    <h1>Summary</h1>
+<h2>About</h2>
+<ul>
+<li></li>
+</ul>
+<h2>Resources</h2>
+<ul>
+<li><a href="">YouTube Video Link</a></li>
+<li><a href="">Doc Link</a></li>
+</ul>
+<h2>My Notes</h2>
+<ul>
+<li></li>
+</ul>
+<h2>Examples Solved</h2>
+<ul>
+<li></li>
+</ul>
+
+                </div>
+            
+                <div id="doc-16" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 design_pattern/solid_principles/Summary.md</div>
+                    <h1>SOLID Principles Summary</h1>
+<p>SOLID is an acronym for the first five object-oriented design (OOD) principles by Robert C. Martin (also known as Uncle Bob). These principles help make software architectures more understandable, flexible, and maintainable.</p>
+<hr>
+<h2>1. Single-responsibility Principle (SRP)</h2>
+<p><strong>Theory:</strong> A class should have one, and only one, reason to change. It should encapsulate a single responsibility or a single piece of business logic. If a class has multiple responsibilities, they become coupled, meaning a change in one responsibility might break the others.</p>
+<p><strong>Example from our Code (<code>SRP.js</code>):</strong>
+Instead of the <code>ShoppingCart</code> holding the items, calculating the total, printing the invoice, and saving to the database, we split it into three separate classes:</p>
+<ul>
+<li><code>ShoppingCart</code>: Manages items and totals.</li>
+<li><code>Invoice</code>: Prints the data.</li>
+<li><code>DB</code>: Handles persistence.</li>
+</ul>
+<p><strong>UML Diagram:</strong></p>
+<pre><code class="language-mermaid">classDiagram
+    class ShoppingCart {
+        +items: Array
+        +addItem(item)
+        +calculateTotal()
+    }
+    class Invoice {
+        +printInvoice(cart)
+    }
+    class DB {
+        +saveToDB(cart)
+    }
+    
+    Invoice --&gt; ShoppingCart : depends on
+    DB --&gt; ShoppingCart : depends on
+</code></pre>
+<hr>
+<h2>2. Open-closed Principle (OCP)</h2>
+<p><strong>Theory:</strong> Software entities (classes, modules, functions, etc.) should be open for extension, but closed for modification. You should be able to add new functionality without touching existing code structure.</p>
+<p><strong>Example from our Code (<code>OCP.js</code>):</strong>
+Instead of writing an <code>if/else</code> block inside a <code>saveToDB(type)</code> method to check for &quot;mongo&quot;, &quot;sql&quot;, etc., we created a base class <code>CartSaver</code>. We extend it to <code>SaveToMongo</code> and <code>SaveToSQL</code>. If we need Redis later, we just create <code>SaveToRedis</code> without modifying existing classes.</p>
+<p><strong>UML Diagram:</strong></p>
+<pre><code class="language-mermaid">classDiagram
+    class CartSaver {
+        &lt;&lt;abstract&gt;&gt;
+        +save(cart)
+    }
+    class SaveToMongo {
+        +save(cart)
+    }
+    class SaveToSQL {
+        +save(cart)
+    }
+    CartSaver &lt;|-- SaveToMongo : extends
+    CartSaver &lt;|-- SaveToSQL : extends
+</code></pre>
+<hr>
+<h2>3. Liskov Substitution Principle (LSP)</h2>
+<p><strong>Theory:</strong> Objects of a superclass should be replaceable with objects of a subclass without affecting the correctness of the program. A subclass must not break the expectations set by its parent.</p>
+<ol>
+<li><strong>Signature Rule:</strong> Methods arguments and return types should be consistent.
+1.1. <strong>Exception Rule:</strong> Subclasses should not throw new, unexpected exceptions.</li>
+<li><strong>Property Rule:</strong> Subclasses should not implicitly break properties of the superclass.</li>
+<li><strong>Method Rule:</strong> Pre-conditions cannot be strengthened, and post-conditions cannot be weakened.</li>
+</ol>
+<p><strong>Example from our Code (<code>LSP.js</code>):</strong>
+A Fixed Deposit (<code>FDAccount</code>) cannot be withdrawn from. If it inherits a <code>withdrawal()</code> method from <code>BankAccount</code> and throws an error, it violates LSP. We fixed this by creating <code>NonWithdrawableAccount</code> and a subclass <code>WithdrawalAccount</code> which added the withdrawal context cleanly.</p>
+<p><strong>UML Diagram:</strong></p>
+<pre><code class="language-mermaid">classDiagram
+    class NonWithdrawableAccount {
+        +amount: Number
+        +deposite(amount)
+    }
+    class WithdrawalAccount {
+        +withdrawal(amount)
+    }
+    class FDAccount {
+    }
+    class SavingAccount {
+    }
+    
+    NonWithdrawableAccount &lt;|-- WithdrawalAccount : extends
+    NonWithdrawableAccount &lt;|-- FDAccount : extends
+    WithdrawalAccount &lt;|-- SavingAccount : extends
+</code></pre>
+<hr>
+<h2>4. Interface Segregation Principle (ISP)</h2>
+<p><strong>Theory:</strong> Clients should not be forced to depend upon interfaces that they do not use. Fat interfaces should be broken down into smaller, highly cohesive interfaces.</p>
+<p><strong>Example from our Code (<code>ISP.js</code>):</strong>
+Instead of a single <code>AreaAndVolumes</code> class forcing a 2D <code>Square</code> to implement a <code>volumes()</code> method that it doesn&#39;t need, we split it into <code>Shape2D</code> and <code>Shape3D</code>. A <code>Cube</code> naturally extends <code>Shape3D</code> (which inherits <code>Shape2D</code>), ensuring every class only gets the methods it explicitly can use.</p>
+<p><strong>UML Diagram:</strong></p>
+<pre><code class="language-mermaid">classDiagram
+    class Shape2D {
+        +area(l, b)
+    }
+    class Shape3D {
+        +volumes(l, b, h)
+    }
+    class Rectangle {
+    }
+    class Cube {
+    }
+
+    Shape2D &lt;|-- Shape3D : extends
+    Shape2D &lt;|-- Rectangle : extends
+    Shape3D &lt;|-- Cube : extends
+</code></pre>
+<hr>
+<h2>5. Dependency Inversion Principle (DIP)</h2>
+<p><strong>Theory:</strong> </p>
+<ol>
+<li>High-level modules should not depend on low-level modules. Both should depend on abstractions.</li>
+<li>Abstractions should not depend on details. Details should depend on abstractions.</li>
+</ol>
+<p><strong>Example from our Code (<code>DIP.js</code>):</strong>
+Our high-level <code>ShoppingCart</code> shouldn&#39;t instantiate <code>new SaveToMongo()</code> directly inside its constructor. That welds them together. By passing the saver via <code>constructor(saver)</code>, we injected the dependency. Both <code>ShoppingCart</code> and the database class now depend on the shared <code>CartSaver</code> abstraction.</p>
+<p><strong>UML Diagram:</strong></p>
+<pre><code class="language-mermaid">classDiagram
+    class CartSaver {
+        &lt;&lt;abstract&gt;&gt;
+        +save(cart)
+    }
+    class ShoppingCart {
+        -saver: CartSaver
+        +constructor(saver)
+        +checkout()
+    }
+    class SaveToMongo {
+        +save(cart)
+    }
+    
+    ShoppingCart &quot;1&quot; *-- &quot;1&quot; CartSaver : Injects Dependency
+    CartSaver &lt;|-- SaveToMongo : implements
+</code></pre>
+<hr>
+<h2>Resources</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=UsNl8kcU4UA&t=248s">SOLID Principles Video</a></li>
+<li><a href="https://www.digitalocean.com/community/conceptual-articles/s-o-l-i-d-the-first-five-principles-of-object-oriented-design">DigitalOcean Conceptual Guide</a></li>
+</ul>
+<h2>Examples Solved</h2>
+<ul>
+<li><code>SRP.js</code>: Shopping Cart separated from Invoice and DB.</li>
+<li><code>OCP.js</code>: <code>CartSaver</code> extended to avoid <code>if/else</code> checks for DB types.</li>
+<li><code>LSP.js</code>: Prevented <code>FDAccount</code> from inheriting <code>withdrawal()</code> logic and throwing errors.</li>
+<li><code>ISP.js</code>: Segregated 2D Area logic from 3D Volume logic.</li>
+<li><code>DIP.js</code>: Constructor Dependency Injection (<code>CartSaver</code>) into <code>ShoppingCart</code>.</li>
+</ul>
+
+                </div>
+            
+                <div id="doc-17" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 design_pattern/structural/adapter/Summary.md</div>
+                    <h1>Summary</h1>
+<h2>About</h2>
+<ul>
+<li>The <strong>Adapter Design Pattern</strong> is a Structural pattern that allows objects with incompatible interfaces to collaborate. It acts as a wrapper between two objects: it catches calls for one object and transforms them to format and interface recognizable by the second object.</li>
+</ul>
+<h2>Resources</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=FV3x69rpwm0">YouTube Video Link</a></li>
+<li><a href="">Doc Link</a></li>
+</ul>
+<h2>My Notes</h2>
+<ul>
+<li>The Adapter pattern allows incompatible interfaces to work together.</li>
+<li>In JavaScript, <strong>Object Adapter</strong> (using composition) is heavily preferred over <strong>Class Adapter</strong> (which requires multiple inheritance, something JS doesn&#39;t support natively).</li>
+<li>Thanks to JS&#39;s &quot;duck typing&quot;, a formal <code>extends</code> is not strictly necessary for an adapter to work, but it is highly recommended for clarity and documentation.</li>
+</ul>
+<h2>Examples Solved</h2>
+<ul>
+<li>Converting an <code>XMLDataProvider</code> into a <code>Report</code> interface that expects JSON data.</li>
+</ul>
+<h2>Pros</h2>
+<ul>
+<li><strong>Single Responsibility Principle</strong>: You separate the interface or data conversion code from the primary business logic.</li>
+<li><strong>Open/Closed Principle</strong>: You can introduce new types of adapters into the program without breaking the existing client code.</li>
+</ul>
+<h2>Cons</h2>
+<ul>
+<li><strong>Complexity</strong>: The overall complexity of the code increases because you need to introduce a set of new interfaces and classes. Sometimes it&#39;s simpler to just change the service class so that it matches the rest of your code.</li>
+</ul>
+<h2>Tradeoffs</h2>
+<ul>
+<li><strong>Adapter vs Refactoring</strong>: Writing an adapter is fast and safe for legacy or third-party code. However, if you own the source code of both the client and the service, it might be cleaner to just refactor them to match, rather than adding an adapter layer.</li>
+<li><strong>Object vs Class Adapter</strong>: Object Adapter (composition) is more flexible and can wrap subclasses, whereas Class Adapter (inheritance) can only wrap a specific class.</li>
+</ul>
+
+                </div>
+            
+                <div id="doc-18" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 design_pattern/structural/bridge/Summary.md</div>
+                    <h1>Summary</h1>
+<h2>About</h2>
+<ul>
+<li><strong>Bridge Pattern (Structural)</strong>: Decouples an abstraction from its implementation so that the two can vary independently. </li>
+<li>It prevents a <strong>Cartesian Product</strong> class explosion (e.g., $N$ abstractions $\times$ $M$ implementations) by transforming inheritance into composition.</li>
+</ul>
+<h2>Resources</h2>
+<ul>
+<li><a href="https://refactoring.guru/design-patterns/bridge">Refactoring Guru - Bridge</a></li>
+</ul>
+<h2>My Notes</h2>
+<ul>
+<li><strong>Bridge vs Strategy</strong>: They look structurally identical (injecting an interface into a class via constructor). However, their <em>intent</em> is different.<ul>
+<li><em>Strategy</em> (Behavioral): Swapping different algorithms to solve the <em>same</em> problem (e.g., CreditCard vs PayPal).</li>
+<li><em>Bridge</em> (Structural): Decoupling two completely different, independently evolving <em>domain concepts</em> (e.g., A GUI Window vs an OS-specific Window implementation, or a Car vs an Engine).</li>
+</ul>
+</li>
+</ul>
+<h3>Tradeoffs / Pros &amp; Cons</h3>
+<p><strong>Pros</strong>:</p>
+<ol>
+<li><strong>Avoids Class Explosion</strong>: Prevents the exponential growth of classes when two independent dimensions of an object need to be extended.</li>
+<li><strong>Open/Closed Principle</strong>: You can introduce new abstractions and implementations independently from each other.</li>
+<li><strong>Single Responsibility Principle</strong>: You can focus on high-level logic in the abstraction and on platform details in the implementation.</li>
+</ol>
+<p><strong>Cons</strong>:</p>
+<ol>
+<li><strong>Complexity</strong>: Might make the code more complicated than simply using inheritance if the application is small and highly cohesive.</li>
+</ol>
+<h2>Examples Solved</h2>
+<ul>
+<li><strong>Car &amp; Engine System</strong>: Created an <code>Engine</code> interface (Implementor) with <code>DieselEngine</code>, <code>PetrolEngine</code>, and <code>ElectricEngine</code>. Created a <code>Car</code> base class (Abstraction) with <code>Sedan</code> and <code>SUV</code>. By injecting the <code>Engine</code> into the <code>Car</code>, we avoided creating classes like <code>SedanDiesel</code>, <code>SUVElectric</code>, reducing the total class count from $N \times M$ to $N + M$.</li>
+</ul>
+
+                </div>
+            
+                <div id="doc-19" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 design_pattern/structural/composite/Summary.md</div>
+                    <h1>Summary</h1>
+<h2>About</h2>
+<ul>
+<li><strong>Composite Pattern (Structural)</strong>: Lets you compose objects into tree structures to represent part-whole hierarchies. It allows clients to treat individual objects and compositions of objects uniformly.</li>
+<li>It relies on a common interface (Component) shared by both the simple elements (Leaves) and the complex elements (Composites/Containers).</li>
+</ul>
+<h2>Resources</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=xaaiMGmyDJk">YouTube Video Link</a></li>
+<li><a href="https://refactoring.guru/design-patterns/composite">Refactoring Guru - Composite</a></li>
+</ul>
+<h2>My Notes</h2>
+<ul>
+<li><strong>Transparency vs Safety</strong>: <ul>
+<li><em>Transparency</em>: Placing <code>add()</code>/<code>remove()</code> in the base Component interface. Gives perfect Liskov Substitution Principle (LSP) because clients treat all nodes identically, but violates the Interface Segregation Principle (ISP) because Leaf nodes are forced to implement useless methods.</li>
+<li><em>Safety</em>: Placing <code>add()</code>/<code>remove()</code> only in the Composite class. Respects ISP but slightly weakens LSP because clients must check <code>isFolder()</code> before adding children.</li>
+</ul>
+</li>
+<li><strong>Performance</strong>: Deeply nested composite trees can cause main-thread blocking when computing aggregate data (like <code>getSize()</code>). Use caching at the Composite level to achieve $O(1)$ lookups.</li>
+<li><strong>Infinite Loops</strong>: Trees must remain Directed Acyclic Graphs (DAGs). Always implement checks to prevent adding a node to itself or creating circular dependencies (<code>item.contains(this)</code>).</li>
+</ul>
+<h3>Tradeoffs / Pros &amp; Cons</h3>
+<p><strong>Pros</strong>:</p>
+<ol>
+<li><strong>Uniformity</strong>: Clients can treat complex trees and simple leaves identically, drastically simplifying client code.</li>
+<li><strong>Open/Closed Principle</strong>: You can introduce new element types into the app without breaking existing code, which now works with the object tree.</li>
+</ol>
+<p><strong>Cons</strong>:</p>
+<ol>
+<li><strong>Over-generalization</strong>: Providing a common interface for classes whose functionality differs drastically can make the component interface bloated and hard to comprehend.</li>
+<li><strong>Performance Constraints</strong>: Recursive tree traversal can be extremely expensive computationally.</li>
+</ol>
+<h2>Examples Solved</h2>
+<ul>
+<li><strong>File System</strong>: Implemented a <code>FileSystem</code> hierarchy with <code>File</code> (Leaf) and <code>Folder</code> (Composite). The <code>Folder</code> delegates operations like <code>ls()</code>, <code>openAll()</code>, and <code>getSize()</code> recursively to its children, allowing the client to call <code>root.getSize()</code> without knowing how deeply nested the files are.</li>
+</ul>
+
+                </div>
+            
+                <div id="doc-20" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 design_pattern/structural/decorator/Summary.md</div>
+                    <h1>Summary</h1>
+<h2>About</h2>
+<ul>
+<li><strong>Decorator Pattern (Structural)</strong>: Attaches additional responsibilities to an object dynamically. Decorators provide a flexible alternative to subclassing for extending functionality.</li>
+<li>It uses object composition instead of inheritance to wrap the original object in a &quot;Decorator&quot; class that shares the same interface.</li>
+</ul>
+<h2>Resources</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=Z9rFlZClYNI">YouTube Video Link</a></li>
+<li><a href="https://refactoring.guru/design-patterns/decorator">Refactoring Guru - Decorator</a></li>
+</ul>
+<h2>My Notes</h2>
+<ul>
+<li><strong>Liskov Substitution Principle (LSP)</strong>: The Decorator MUST implement the same interface or extend the same base class as the decorated object. This ensures the client doesn&#39;t know it&#39;s talking to a decorated object.</li>
+<li><strong>Base Decorator</strong>: It&#39;s crucial to have an abstract Base Decorator class that holds the reference to the wrapped object and delegates calls to it. Concrete decorators extend this base class.</li>
+<li><strong>Composition over Inheritance</strong>: Prevents class explosion (e.g., instead of <code>MarioWithGun</code>, <code>MarioWithHeight</code>, <code>MarioWithGunAndHeight</code>, you just compose them at runtime).</li>
+</ul>
+<h3>Tradeoffs / Pros &amp; Cons</h3>
+<p><strong>Pros</strong>:</p>
+<ol>
+<li><strong>Dynamic Extension</strong>: Add or remove responsibilities from an object at runtime without affecting other objects.</li>
+<li><strong>SRP Compliant</strong>: Divide monolithic classes into several smaller classes, each representing a specific behavior.</li>
+<li><strong>Alternative to Subclassing</strong>: Avoids &quot;Inheritance Hell&quot; / Class explosion.</li>
+</ol>
+<p><strong>Cons</strong>:</p>
+<ol>
+<li><strong>Complexity</strong>: Can result in a system with many small, similar-looking objects that are hard to debug.</li>
+<li><strong>Instantiation Boilerplate</strong>: Creating the deeply nested wrapped object (e.g., <code>new GunPower(new HeightUp(new Mario()))</code>) can look ugly (often mitigated by using a Builder or Factory).</li>
+<li><strong>LSP Traps</strong>: If clients rely heavily on concrete types (using <code>instanceof</code>), decorators can break the logic if not implemented perfectly.</li>
+</ol>
+<h2>Examples Solved</h2>
+<ul>
+<li><strong>Character Power-Ups</strong>: Implemented a <code>Character</code> base class, a concrete <code>Mario</code>, and an abstract <code>CharacterDecorator</code>. Created <code>HeightUp</code> and <code>GunPower</code> decorators to dynamically add abilities to the character.</li>
+</ul>
+
+                </div>
+            
+                <div id="doc-21" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 design_pattern/structural/facade/Summary.md</div>
+                    <h1>Summary</h1>
+<h2>About</h2>
+<ul>
+<li><strong>Facade Pattern (Structural)</strong>: Provides a simplified, unified interface to a complex subsystem. It hides the underlying complexity and dependencies of the system from the client code.</li>
+<li>Instead of making your code interact directly with dozens of classes, you create a &quot;Facade&quot; class that provides a simple method (like <code>startComputer()</code>) which orchestrates the complex logic internally.</li>
+</ul>
+<h2>Resources</h2>
+<ul>
+<li><a href="https://refactoring.guru/design-patterns/facade">Refactoring Guru - Facade</a></li>
+<li><a href="https://www.youtube.com/watch?v=0KlnSdvsojc">YouTube Link - Facade</a></li>
+</ul>
+<h2>My Notes</h2>
+<ul>
+<li><strong>Not a God Object</strong>: A Facade is not a God Object because it doesn&#39;t <em>implement</em> the business logic; it merely <em>delegates</em> and <em>orchestrates</em> it. The subsystems still do the actual work.</li>
+<li><strong>Dependency Injection (DIP)</strong>: A robust Facade shouldn&#39;t hardcode <code>new Subsystem()</code> in its constructor. Passing subsystems into the constructor allows the Facade to be tested in isolation using mocks (e.g., Mocking a DB connection or a File System).</li>
+<li><strong>Multiple Facades</strong>: A complex system might have multiple Facades for different client needs, rather than one massive Facade for everything.</li>
+</ul>
+<h3>Tradeoffs / Pros &amp; Cons</h3>
+<p><strong>Pros</strong>:</p>
+<ol>
+<li><strong>Isolation</strong>: Isolates clients from the complexity of subsystem components.</li>
+<li><strong>Reduced Coupling</strong>: Promotes weak coupling between the subsystem and its clients.</li>
+<li><strong>Better Structuring</strong>: Helps layer the subsystems and provides a clear entry point to each layer.</li>
+</ol>
+<p><strong>Cons</strong>:</p>
+<ol>
+<li><strong>The God Object Risk</strong>: If poorly designed (i.e., if you start putting business logic <em>inside</em> the Facade instead of delegating), it can quickly become a God Object tightly coupled to every class of an app.</li>
+<li><strong>Limited Access</strong>: Power users might find the Facade too restrictive if they need to access advanced subsystem features (though they can usually bypass the Facade and use the subsystem directly).</li>
+</ol>
+<h2>Examples Solved</h2>
+<ul>
+<li><strong>Computer Boot Sequence</strong>: Created a <code>ComputerFacade</code> that hides the complex interactions between <code>CPU</code>, <code>Memory</code>, <code>HardDrive</code>, <code>PowerSupply</code>, and <code>BIOS</code> behind a single <code>startComputer()</code> method. Refactored to use Dependency Injection to prevent tight coupling and allow for mocking.</li>
+</ul>
+
+                </div>
+            
+                <div id="doc-22" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 design_pattern/structural/flyweight/Summary.md</div>
+                    <h1>Summary</h1>
+<h2>About</h2>
+<ul>
+<li></li>
+</ul>
+<h2>Resources</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=vNSRcegCO8E">YouTube Video Link</a></li>
+<li><a href="">Doc Link</a></li>
+</ul>
+<h2>My Notes</h2>
+<ul>
+<li></li>
+</ul>
+<h2>Examples Solved</h2>
+<ul>
+<li></li>
+</ul>
+
+                </div>
+            
+                <div id="doc-23" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 design_pattern/structural/proxy/Summary.md</div>
+                    <h1>Summary</h1>
+<h2>About</h2>
+<ul>
+<li><strong>Proxy Pattern (Structural)</strong>: A proxy acts like a middleman or surrogate between a client and a real object. It controls access to the original object, allowing you to perform something either before or after the request gets through to the original object.</li>
+<li>Unlike Decorator (which augments behavior), the intent of Proxy is strictly <strong>control</strong>.</li>
+</ul>
+<h2>Core Types of Proxies</h2>
+<ol>
+<li><strong>Virtual Proxy</strong>: Defers the creation and initialization of a resource-intensive object until it is absolutely needed (Lazy Loading).</li>
+<li><strong>Protection Proxy</strong>: Controls access to the original object based on access rights or authentication rules.</li>
+<li><strong>Remote Proxy</strong>: Represents an object that is located remotely (e.g., in a different address space or server), managing network communication (like gRPC or REST stubs).</li>
+<li><strong>Cache Proxy</strong>: Caches results of expensive operations from the real subject to improve performance for subsequent identical requests.</li>
+</ol>
+<h2>Resources</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=xuT6OOYVJTQ">YouTube Video Link</a></li>
+<li><a href="https://refactoring.guru/design-patterns/proxy">Refactoring Guru - Proxy</a></li>
+</ul>
+<h2>My Notes</h2>
+<ul>
+<li><strong>LSP Considerations</strong>: Ideally, both the Proxy and the Real Subject should implement the same interface. This ensures the client can treat them interchangeably without knowing they are talking to a proxy.</li>
+<li><strong>Proxy vs Decorator</strong>: <ul>
+<li><em>Decorator</em>: Focuses on adding responsibilities dynamically.</li>
+<li><em>Proxy</em>: Focuses on controlling access to an object.</li>
+</ul>
+</li>
+</ul>
+<h3>Tradeoffs / Pros &amp; Cons</h3>
+<p><strong>Pros</strong>:</p>
+<ol>
+<li><strong>Separation of Concerns</strong>: You can manage the lifecycle, security, or caching of an object without polluting the object&#39;s actual business logic.</li>
+<li><strong>Performance Optimization</strong>: Virtual and Cache proxies drastically improve startup times and reduce redundant processing.</li>
+<li><strong>Security</strong>: Protection proxies ensure strict access control at the object level.</li>
+</ol>
+<p><strong>Cons</strong>:</p>
+<ol>
+<li><strong>Code Complexity</strong>: Introduces new classes and layers of abstraction.</li>
+<li><strong>Latency</strong>: The proxy adds an extra layer of indirection, which might introduce slight delays, especially in Remote or Cache proxies doing heavy lookups.</li>
+</ol>
+<h2>Examples Solved</h2>
+<ul>
+<li><strong>Virtual Proxy</strong>: Implemented <code>ImageProxy</code> that delays the heavy processing of a <code>HighResolutionImage</code> until the <code>display()</code> method is actually called.</li>
+<li><strong>Protection Proxy</strong>: Implemented <code>BankAccountProxy</code> that intercepts the <code>viewAccount()</code> call and verifies if the user object has the <code>admin</code> role before delegating to the real <code>BankAccount</code>.</li>
+</ul>
+
+                </div>
+            
+                <div id="doc-24" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 plan.md</div>
+                    <h1>Low Level Design (LLD) Roadmap in Node.js / JavaScript</h1>
+<p>This document serves as the learning plan for mastering LLD from beginner to advanced. The curriculum is tailored for JavaScript and Node.js backend development, considering your e-commerce background.</p>
+<h2>0. The Fundamentals (SOLID Principles)</h2>
+<p>Before diving into patterns, you must internalize these:</p>
+<ul>
+<li>✅ Single Responsibility Principle (SRP)</li>
+<li>✅ Open/Closed Principle (OCP)</li>
+<li>✅ Liskov Substitution Principle (LSP)</li>
+<li>✅ Interface Segregation Principle (ISP)</li>
+<li>✅ Dependency Inversion Principle (DIP)</li>
+</ul>
+<h2>1. Creational Design Patterns</h2>
+<p><em>Focus: Object creation mechanisms.</em></p>
+<ul>
+<li>✅ <strong>Singleton</strong>: Global instances (e.g., Database Connection).</li>
+<li>✅ <strong>Factory Method</strong>: Creating instances without specifying the exact class.</li>
+<li>✅ <strong>Builder</strong>: Step-by-step object construction (e.g., complex queries).</li>
+<li>✅ <strong>Prototype</strong>: Object cloning.</li>
+</ul>
+<h2>2. Structural Design Patterns</h2>
+<p><em>Focus: Assembling objects and classes into larger structures.</em></p>
+<ul>
+<li>✅ <strong>Adapter</strong>: Making incompatible interfaces collaborate.</li>
+<li>✅ <strong>Decorator</strong>: Dynamically adding behaviors.</li>
+<li>✅ <strong>Facade</strong>: Simplified interface to a complex system.</li>
+<li>✅ <strong>Proxy</strong>: Controlling access to an object.</li>
+<li>✅ <strong>Composite</strong>: Tree structures (e.g., file systems).</li>
+<li>✅ <strong>Bridge</strong>: Separating abstraction from implementation.</li>
+<li>✅ <strong>Flyweight</strong>: Efficiently sharing large numbers of objects.</li>
+</ul>
+<h2>3. Behavioral Design Patterns</h2>
+<p><em>Focus: Algorithms and the assignment of responsibilities between objects.</em></p>
+<ul>
+<li>✅ <strong>Observer</strong>: Subscribing to events (Crucial in JS/Node).</li>
+<li>✅ <strong>Strategy</strong>: Creating a family of interchangeable algorithms.</li>
+<li>✅ <strong>State</strong>: Changing object behavior when internal state changes.</li>
+<li>✅ <strong>Command</strong>: Encapsulating a request as an object.</li>
+<li>✅ <strong>Chain of Responsibility</strong>: Passing requests along a chain of handlers.</li>
+<li>✅ <strong>Iterator</strong>: Traversing elements of a collection.</li>
+<li>✅ <strong>Mediator</strong>: Centralizing complex communications.</li>
+<li>✅ <strong>Memento</strong>: Saving and restoring state.</li>
+<li>✅ <strong>Template Method</strong>: Defining the skeleton of an algorithm.</li>
+<li>✅ <strong>Visitor</strong>: Adding new operations without modifying existing classes.</li>
+</ul>
+<h2>4. Advanced Practice Problems</h2>
+<p><em>Focus: Real-world interview scenarios.</em></p>
+<ul>
+<li><input disabled="" type="checkbox"> Design a Rate Limiter</li>
+<li><input disabled="" type="checkbox"> Design a Vending Machine</li>
+<li><input disabled="" type="checkbox"> Design a Parking Lot</li>
+<li><input disabled="" type="checkbox"> Design an E-commerce Cart Checkout System</li>
+<li><input disabled="" type="checkbox"> Design a Notification System</li>
+<li><input disabled="" type="checkbox"> Design a Snake and Ladder Game</li>
+</ul>
+<hr>
+<h3>Workflow instructions for Vivek:</h3>
+<ol>
+<li>Go to the <code>design_pattern</code> directory and write your code in the respective topic folder.</li>
+<li>When you finish a pattern or system, notify me (your AI Reviewer).</li>
+<li>I will review it strictly applying the <code>lld_reviewer</code> rubric and post feedback.</li>
+<li>I will record the outcome in <code>PROGRESS.md</code>.</li>
+</ol>
+
+                </div>
+            
+                <div id="doc-25" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 PROGRESS.md</div>
+                    <h1>LLD Learning Progress</h1>
+<p>This document serves as the tracker for Vivek&#39;s backend LLD interview preparation. Following the <code>lld_reviewer</code> persona, I will append my review feedback directly into this document.</p>
+<table>
+<thead>
+<tr>
+<th align="left">Date</th>
+<th align="left">Topic</th>
+<th align="left">Key Strengths</th>
+<th align="left">Areas for Improvement</th>
+<th align="left">Score (1-10)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">2026-04-19</td>
+<td align="left">SRP (SOLID)</td>
+<td align="left">Perfect strict SRP separation. Extracted Invoice &amp; DB cleanly.</td>
+<td align="left">Avoid exposing properties (<code>cart.item</code>). Pluralize array names (<code>this.items</code>).</td>
+<td align="left">9/10</td>
+</tr>
+<tr>
+<td align="left">2026-04-19</td>
+<td align="left">OCP (SOLID)</td>
+<td align="left">Flawless OCP via abstract class extension. Pluralized <code>this.items</code>.</td>
+<td align="left">None. Just note this naturally transitions into the Strategy Pattern.</td>
+<td align="left">10/10</td>
+</tr>
+<tr>
+<td align="left">2026-04-20</td>
+<td align="left">LSP (SOLID)</td>
+<td align="left">Perfect inheritance structure. Avoided duplicated withdrawal logic.</td>
+<td align="left">None. Flawless LSP execution.</td>
+<td align="left">10/10</td>
+</tr>
+<tr>
+<td align="left">2026-04-22</td>
+<td align="left">ISP (SOLID)</td>
+<td align="left">Great segregation of 2D and 3D shapes. Good use of inheritance tree solving the fat interface.</td>
+<td align="left">Just note that JS leans heavily toward Object Composition instead of deep inheritance for ISP later on.</td>
+<td align="left">9.5/10</td>
+</tr>
+<tr>
+<td align="left">2026-04-23</td>
+<td align="left">DIP (SOLID)</td>
+<td align="left">Flawless Dependency Injection. Tightly coupled constructor fixed. Great use of encapsulation with <code>getItems()</code>.</td>
+<td align="left">None. Perfect final piece to SOLID.</td>
+<td align="left">10/10</td>
+</tr>
+<tr>
+<td align="left">2026-04-27</td>
+<td align="left">Singleton (Creational)</td>
+<td align="left">Handled JS async race conditions perfectly. Used Node&#39;s module caching native Eager Singleton correctly.</td>
+<td align="left">Basic implementation has a fatal logical bug (<code>__instance</code> vs <code>_instance</code> typo).</td>
+<td align="left">8.5/10</td>
+</tr>
+<tr>
+<td align="left">2026-04-28</td>
+<td align="left">Factory Patterns (Simple, Method, Abstract)</td>
+<td align="left">Clear understanding of product family grouping and delegation.</td>
+<td align="left">FATAL typos (<code>UnHealthyFactoryHealthyFactory</code>). Instantiating base &quot;Abstract&quot; classes.</td>
+<td align="left">7.5/10</td>
+</tr>
+<tr>
+<td align="left">2026-04-28</td>
+<td align="left">Factory Patterns (Follow-up)</td>
+<td align="left">Excellent recovery. Correctly simulated abstract classes via Error throwing.</td>
+<td align="left">Minor breakage in commented code (missing <code>factory</code> init). Consider Registry pattern for factory logic.</td>
+<td align="left">9.5/10</td>
+</tr>
+<tr>
+<td align="left">2026-04-29</td>
+<td align="left">Builder Pattern (Basic)</td>
+<td align="left">Fluent interface implemented correctly. Good validation in <code>build()</code>.</td>
+<td align="left">Direct state mutation in builder (State Contamination). Lacks encapsulation in the target class.</td>
+<td align="left">8/10</td>
+</tr>
+<tr>
+<td align="left">2026-05-01</td>
+<td align="left">Builder Pattern (Advanced)</td>
+<td align="left">Excellent implementation of Step Builder (Type-safe simulation). Director logic included.</td>
+<td align="left">Logical bug in Director (GET instead of POST). Step Builder is too rigid (forces body on GETs).</td>
+<td align="left">9/10</td>
+</tr>
+<tr>
+<td align="left">2026-05-01</td>
+<td align="left">Practice: solid_1 (SRP)</td>
+<td align="left">Clean extraction of responsibilities. Strong conceptual defense of SRP vs. Orchestration.</td>
+<td align="left">Tightly coupled constructor (needs DI). Needs to clarify Static vs. Instance tradeoffs.</td>
+<td align="left">9/10</td>
+</tr>
+<tr>
+<td align="left">2026-05-09</td>
+<td align="left">Prototype Pattern (Initial)</td>
+<td align="left">Demonstrated JS language feature (<code>prototype</code>) correctly.</td>
+<td align="left">Confused JS language feature (Prototypal Inheritance) with GoF Prototype Design Pattern. Needs <code>clone()</code>.</td>
+<td align="left">4/10</td>
+</tr>
+<tr>
+<td align="left">2026-05-09</td>
+<td align="left">Prototype Pattern (Final)</td>
+<td align="left">Excellent correction. Proper <code>clone()</code> method using <code>[...this.skills]</code> to prevent array mutation.</td>
+<td align="left">Need to explicitly consider deep cloning tradeoffs if objects have deeply nested properties.</td>
+<td align="left">9/10</td>
+</tr>
+<tr>
+<td align="left">2026-05-10</td>
+<td align="left">Adapter Pattern (Initial)</td>
+<td align="left">Solid Object Adapter via composition. Good adherence to SRP and OCP.</td>
+<td align="left">Class name <code>XMLDataProviderAdapter</code> is slightly verbose.</td>
+<td align="left">9/10</td>
+</tr>
+<tr>
+<td align="left">2026-05-11</td>
+<td align="left">Practice: solid_2 (OCP)</td>
+<td align="left">Perfect Strategy pattern implementation. Embraced Duck Typing correctly.</td>
+<td align="left">Parameter shadowing confusion (<code>data</code> vs <code>this.data</code>). Answers to interrogation missing.</td>
+<td align="left">9/10</td>
+</tr>
+<tr>
+<td align="left">2026-05-12</td>
+<td align="left">Practice: solid_3 (LSP)</td>
+<td align="left">Brilliant demonstration of splitting hierarchy to avoid contract violations.</td>
+<td align="left">Need to address how this works in &quot;batch&quot; processing scenarios.</td>
+<td align="left">9.5/10</td>
+</tr>
+<tr>
+<td align="left">2026-05-17</td>
+<td align="left">Decorator Pattern (Initial)</td>
+<td align="left">Good foundational understanding of object composition for dynamic behavior.</td>
+<td align="left">Decorators do not extend the base Component (LSP violation). Tight coupling in naming (<code>mario</code> vs <code>character</code>).</td>
+<td align="left">6.5/10</td>
+</tr>
+<tr>
+<td align="left">2026-05-17</td>
+<td align="left">Decorator Pattern (Final)</td>
+<td align="left">Perfect Base Class Decorator implementation. Avoided LSP violations.</td>
+<td align="left">Excellent abstraction, zero complaints.</td>
+<td align="left">10/10</td>
+</tr>
+<tr>
+<td align="left">2026-05-17</td>
+<td align="left">Facade Pattern (Final)</td>
+<td align="left">Strong defense of SRP. Correctly identified DI as the solution to tight coupling.</td>
+<td align="left">Excellent architectural maturity shown during interrogation.</td>
+<td align="left">10/10</td>
+</tr>
+<tr>
+<td align="left">2026-05-17</td>
+<td align="left">Proxy Pattern (Final)</td>
+<td align="left">Perfectly articulated the difference vs Decorator. Flawless Protection Proxy implementation.</td>
+<td align="left">Dodged the Cache implementation question.</td>
+<td align="left">10/10</td>
+</tr>
+<tr>
+<td align="left">2026-05-23</td>
+<td align="left">Composite Pattern (Final)</td>
+<td align="left">Brilliant connection between ISP and the &quot;Safety&quot; approach. Correctly identified circular dependency fixes.</td>
+<td align="left">None. Exceptional architectural defense.</td>
+<td align="left">10/10</td>
+</tr>
+<tr>
+<td align="left">2026-05-23</td>
+<td align="left">Bridge Pattern (Initial)</td>
+<td align="left">Perfectly demonstrated decoupling abstraction (Car) from implementation (Engine) to avoid class explosion.</td>
+<td align="left">Minor OOP bug in subclass constructors (<code>super()</code> without args).</td>
+<td align="left">9/10</td>
+</tr>
+<tr>
+<td align="left">2026-05-24</td>
+<td align="left">Flyweight Pattern (Initial)</td>
+<td align="left">Correct isolation of Intrinsic/Extrinsic state. Excellent Factory caching logic.</td>
+<td align="left">Memory calculation bug (serializes the nested flyweight inside each context, distorting stats).</td>
+<td align="left">8/10</td>
+</tr>
+<tr>
+<td align="left">2026-05-24</td>
+<td align="left">Flyweight Pattern (Final)</td>
+<td align="left">Strong defense of Flyweight mutability using Object.freeze. Accurate e-commerce scenario analysis.</td>
+<td align="left">Missing the final memory calculation refactor in code.</td>
+<td align="left">9.5/10</td>
+</tr>
+<tr>
+<td align="left">2026-05-24</td>
+<td align="left">Observer Pattern (Initial)</td>
+<td align="left">Good interface segregation (<code>ISubscriber</code>, <code>IChannels</code>). Functional subscribe/unsubscribe.</td>
+<td align="left">Tightly coupled observer to single subject; manual notify trigger; console print typo; dead code in constructor.</td>
+<td align="left">7/10</td>
+</tr>
+<tr>
+<td align="left">2026-05-24</td>
+<td align="left">Observer Pattern (Final)</td>
+<td align="left">Excellent refactor to dynamic Pull Model. Proper encapsulation inside the <code>uploadVideo</code> state changes.</td>
+<td align="left">Redundant constructor args remained in client script <code>new Subscriber(&quot;Name&quot;, channels)</code>.</td>
+<td align="left">10/10</td>
+</tr>
+<tr>
+<td align="left">2026-05-28</td>
+<td align="left">Practice: solid_4 (ISP)</td>
+<td align="left">Clean segregation of Admin vs Normal operations using class inheritance.</td>
+<td align="left">Lacks composition alternatives (could lead to deep inheritance tree if roles expand).</td>
+<td align="left">9/10</td>
+</tr>
+<tr>
+<td align="left">2026-05-28</td>
+<td align="left">Practice: solid_5 (DIP)</td>
+<td align="left">Clear application of Dependency Inversion using constructor dependency injection.</td>
+<td align="left">Basic mock implementation, didn&#39;t account for dynamic multi-channel payloads.</td>
+<td align="left">9/10</td>
+</tr>
+<tr>
+<td align="left">2026-05-30</td>
+<td align="left">Strategy Pattern (Initial)</td>
+<td align="left">Good composition of Walk/Fly strategy families. Clear delegation in the Robot context.</td>
+<td align="left">Comma syntax smell in constructor; lacks runtime strategy setters.</td>
+<td align="left">9/10</td>
+</tr>
+<tr>
+<td align="left">2026-05-30</td>
+<td align="left">Strategy Pattern (Final)</td>
+<td align="left">Excellent defense of Context encapsulation. Fully resolved constructor syntax smell and implemented dynamic strategy setters.</td>
+<td align="left">None. Excellent composition-based design.</td>
+<td align="left">10/10</td>
+</tr>
+<tr>
+<td align="left">2026-05-30</td>
+<td align="left">State Pattern (Initial)</td>
+<td align="left">Highly complete Vending Machine implementation with distinct state transitions.</td>
+<td align="left">Encapsulation leak (client forced to call <code>dispense()</code> manually); potential crash risk if states return undefined.</td>
+<td align="left">9/10</td>
+</tr>
+<tr>
+<td align="left">2026-05-30</td>
+<td align="left">State Pattern (Final)</td>
+<td align="left">Refactored context to auto-trigger dispensing, maintaining clean client encapsulation. Added transition safety guards.</td>
+<td align="left">None. Robust state management design.</td>
+<td align="left">10/10</td>
+</tr>
+<tr>
+<td align="left">2026-06-01</td>
+<td align="left">Command Pattern (Initial)</td>
+<td align="left">Good decoupling of Invoker (Remote) and Receiver (Light/Fan).</td>
+<td align="left">Flawed implementation of <code>undo</code> in the Invoker (used a boolean toggle instead of a history stack).</td>
+<td align="left">8.5/10</td>
+</tr>
+<tr>
+<td align="left">2026-06-01</td>
+<td align="left">Command Pattern (Final)</td>
+<td align="left">Understood the need for a Stack for Global Undo.</td>
+<td align="left">Missed the OCP violation and failed to implement a MacroCommand class initially (fixed via AI refactor).</td>
+<td align="left">8/10</td>
+</tr>
+<tr>
+<td align="left">2026-06-06</td>
+<td align="left">Chain of Responsibility (Initial)</td>
+<td align="left">Successfully passed remaining request amounts down the chain. Handled local state (notes available) well.</td>
+<td align="left">Massive DRY violation (copy-pasted <code>dispense</code> logic across all handlers).</td>
+<td align="left">8.5/10</td>
+</tr>
+<tr>
+<td align="left">2026-06-06</td>
+<td align="left">Chain of Responsibility (Final)</td>
+<td align="left">Strong conceptual understanding of dynamic chains and safe failure handling.</td>
+<td align="left">Attempted to fix DRY but introduced a JS <code>this</code> scoping bug by using a standalone helper function.</td>
+<td align="left">9/10</td>
+</tr>
+<tr>
+<td align="left">2026-06-06</td>
+<td align="left">Iterator Pattern (Initial)</td>
+<td align="left">Flawless execution. Implemented Array, LinkedList, and an impressive In-Order Binary Tree iterator using a stack.</td>
+<td align="left">None. Architecturally perfect.</td>
+<td align="left">10/10</td>
+</tr>
+<tr>
+<td align="left">2026-06-10</td>
+<td align="left">Mediator Pattern (Initial)</td>
+<td align="left">Clean implementation of broadcast and private messaging with mute functionality.</td>
+<td align="left">Spelling error (resisterColleague); O(N) array search in sendPrivate; interface leaks (mute/unmute called on concrete mediator).</td>
+<td align="left">8.5/10</td>
+</tr>
+<tr>
+<td align="left">2026-06-10</td>
+<td align="left">Memento Pattern (Initial)</td>
+<td align="left">Decoupled transaction management from database. Simple state capture and restore.</td>
+<td align="left">FATAL bug in remove() method (broken logic/undefined properties); leaks Memento encapsulation; O(N) database-wide copying.</td>
+<td align="left">7.5/10</td>
+</tr>
+<tr>
+<td align="left">2026-06-10</td>
+<td align="left">Memento Pattern (Final)</td>
+<td align="left">Fully resolved encapsulation leak via Symbol keys &amp; ES6 private fields. Perfect recovery on Database.remove() bug.</td>
+<td align="left">None. Secure and complete implementation.</td>
+<td align="left">10/10</td>
+</tr>
+<tr>
+<td align="left">2026-06-14</td>
+<td align="left">Template Method Pattern (Initial)</td>
+<td align="left">Good foundational understanding of defining a skeleton pipeline and allowing subclasses to extend specific steps.</td>
+<td align="left">Bug in pipeline (double call); Hollywood Principle violation (calling steps directly); spelling errors.</td>
+<td align="left">8/10</td>
+</tr>
+<tr>
+<td align="left">2026-06-14</td>
+<td align="left">Template Method Pattern (Final)</td>
+<td align="left">Understood the concept of overriding default hook methods.</td>
+<td align="left">Missed the &quot;Hook&quot; terminology and didn&#39;t realize hooks are used to optionally skip steps.</td>
+<td align="left">8.5/10</td>
+</tr>
+<tr>
+<td align="left">2026-06-14</td>
+<td align="left">Visitor Pattern (Initial)</td>
+<td align="left">Solid implementation of double dispatch in Javascript; successfully decoupled operations from the element hierarchy.</td>
+<td align="left">Visitors currently only print to console instead of accumulating state.</td>
+<td align="left">9/10</td>
+</tr>
+<tr>
+<td align="left">2026-06-14</td>
+<td align="left">Visitor Pattern (Final)</td>
+<td align="left">Deep understanding of OCP violations and double dispatch vs instanceof checks.</td>
+<td align="left">Missed the implementation detail of how Visitors accumulate internal state over multiple accept calls.</td>
+<td align="left">8/10</td>
+</tr>
+</tbody></table>
+
+                </div>
+            
+                <div id="doc-26" class="doc-content" style="display: none;">
+                    <div class="breadcrumb">📄 README.md</div>
+                    <h1>Low Level Design (LLD) Mastery 🚀</h1>
+<p>Welcome to the LLD practice repository! This repo is dedicated to mastering Object-Oriented Design, SOLID principles, and Software Design Patterns through hands-on practice and AI-assisted code reviews.</p>
+<h2>🎯 Repository Goal</h2>
+<p>The primary goal of this repository is to bridge the gap between theoretical design patterns and practical, real-world implementation. By refactoring messy code and building robust architectures from scratch, this repository serves as a comprehensive guide to writing clean, maintainable, and scalable software.</p>
+<h2>📁 Structure</h2>
+<ul>
+<li><strong>/design_pattern</strong>: Contains all the core material.<ul>
+<li><strong>/practice_problems</strong>: The heart of the repository. Contains problem statements, the <code>practice_tracker.md</code> to track progress, and solutions.<ul>
+<li><strong>/solutions</strong>: Contains the implemented code for various patterns (e.g., Singleton, Factory Method, Abstract Factory, etc.).</li>
+</ul>
+</li>
+<li><strong>/creational</strong>: Summaries and theoretical breakdowns of Creational patterns.</li>
+<li><strong>/structural</strong>: Summaries and theoretical breakdowns of Structural patterns (coming soon).</li>
+<li><strong>/behavioral</strong>: Summaries and theoretical breakdowns of Behavioral patterns (coming soon).</li>
+</ul>
+</li>
+<li><strong>/.agent</strong>: Contains the custom personas (<code>practice_reviewer</code>, <code>advanced_lld_interviewer</code>, <code>lld_reviewer</code>) used by the AI assistant to provide tailored feedback and &quot;gamified&quot; star ratings.</li>
+</ul>
+<h2>🧠 How to Use This Repository</h2>
+<p>This repository is designed to be a self-guided practice environment. </p>
+<ol>
+<li><strong>Pick a Topic:</strong> Navigate to the <code>/design_pattern</code> directory and review the markdown summaries for the pattern you wish to study.</li>
+<li><strong>Select a Problem:</strong> Open <code>/design_pattern/practice_problems/practice_tracker.md</code> to find a list of problem statements categorized by pattern.</li>
+<li><strong>Implement:</strong> Create your solution in the <code>/solutions</code> directory. Try to apply the SOLID principles and the specific rules of the pattern.</li>
+<li><strong>Use the AI Personas:</strong> If you are using an AI assistant (like Claude, ChatGPT, or Gemini), point them to the <code>/.agent/skills</code> folder. The repository includes custom personas (<code>practice_reviewer</code>, <code>advanced_lld_interviewer</code>) designed to review your code, ask deep-dive cross-pattern questions, and give you a star rating (out of 5) on your implementation.</li>
+<li><strong>Refactor &amp; Master:</strong> Refactor your code based on the AI&#39;s feedback until you achieve a 5/5 rating.</li>
+</ol>
+<h2>🤝 Contributing</h2>
+<p>Contributions are welcome! If you have a great real-world scenario that can be turned into a design pattern practice problem, feel free to open a PR and add it to the <code>practice_tracker.md</code>.</p>
+<hr>
+<p><em>Happy Coding! Let&#39;s build scalable systems.</em></p>
+
+                </div>
+            
+    </div>
+
+    <script>
+        // Toggle Folders in Sidebar
+        function toggleFolder(id) {
+            const el = document.getElementById(id);
+            const icon = document.getElementById('icon-' + id);
+            if (el.style.display === 'none') {
+                el.style.display = 'block';
+                icon.classList.remove('fa-chevron-right');
+                icon.classList.add('fa-chevron-down');
+            } else {
+                el.style.display = 'none';
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-right');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const links = document.querySelectorAll('.sidebar-link');
+            const contents = document.querySelectorAll('.doc-content');
+
+            links.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    // Remove active class from all links
+                    links.forEach(l => l.classList.remove('active'));
+                    
+                    // Add active class to clicked link
+                    link.classList.add('active');
+
+                    // Hide all content
+                    contents.forEach(c => c.style.display = 'none');
+
+                    // Show target content
+                    const targetId = link.getAttribute('data-target');
+                    document.getElementById(targetId).style.display = 'block';
+                    
+                    // Scroll to top
+                    document.querySelector('.main-content').scrollTop = 0;
+                });
+            });
+        });
+    </script>
+</body>
+</html>
