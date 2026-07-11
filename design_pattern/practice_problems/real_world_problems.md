@@ -13,7 +13,7 @@ In these problems, you will not be told which Design Pattern to use. Just like i
 
 ## The Problems
 
-- [ ] **Problem 1: The Multi-Channel Notification System**
+- ✅ **Problem 1: The Multi-Channel Notification System**
   - **Scenario:** Our SaaS platform needs to send alerts. Currently, we support Email and SMS. Users can opt-in to multiple types (e.g., they want Email AND SMS for critical alerts). Next month we are adding Slack and WhatsApp.
   - **Challenge:** Architect a system that allows stacking multiple notification types dynamically without creating a massive class explosion (e.g., you should not have to write a `EmailAndSMSAndSlackNotifier` class).
 
