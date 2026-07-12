@@ -87,7 +87,7 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 
 ## Structural: Bridge Pattern
 *Status: Ready to Practice*
-- [ ] **bridge_1** (Device & Remote): Create a `Device` interface (`TV`, `Radio`) and a `RemoteControl` abstraction (`BasicRemote`, `AdvancedRemote`). The remotes should take a device in their constructor. The advanced remote adds a `mute()` method.
+- ✅ **bridge_1** (Device & Remote): Create a `Device` interface (`TV`, `Radio`) and a `RemoteControl` abstraction (`BasicRemote`, `AdvancedRemote`). The remotes should take a device in their constructor. The advanced remote adds a `mute()` method.
 - [ ] **bridge_2** (Message Sender): Create a `MessageSender` abstraction (`TextMessage`, `HtmlMessage`) and a `MessagePlatform` implementor (`EmailPlatform`, `SMSPlatform`, `WhatsAppPlatform`). Send formatted messages across different platforms without class explosion.
 - [ ] **bridge_3** (Theme System): Build a UI framework with `UIElement` abstraction (`Button`, `Dropdown`) and a `Theme` implementor (`DarkTheme`, `LightTheme`). A `Button` injected with a `DarkTheme` renders differently than one with a `LightTheme`.
 - [ ] **bridge_4** (Payment Gateway Provider): Separate the abstraction `PaymentMethod` (`Subscription`, `OneTimePurchase`) from the implementor `PaymentGateway` (`Stripe`, `PayPal`). Process a recurring subscription using Stripe, and a one-time purchase using PayPal.
