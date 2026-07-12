@@ -80,7 +80,7 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 
 ## Structural: Composite Pattern
 *Status: Ready to Practice*
-- [ ] **composite_1** (UI Components): Implement a UI hierarchy with a `UIComponent` interface. Create Leaf nodes (`Button`, `Input`) and Composite nodes (`Panel`, `Window`). Ensure calling `render()` on the Window recursively renders all children.
+- ✅ **composite_1** (UI Components): Implement a UI hierarchy with a `UIComponent` interface. Create Leaf nodes (`Button`, `Input`) and Composite nodes (`Panel`, `Window`). Ensure calling `render()` on the Window recursively renders all children.
 - [ ] **composite_2** (Organization Chart): Model a company structure with `Employee` (Leaf) and `Manager` (Composite). Implement a `getSalary()` method that calculates the total salary of a manager and all their direct/indirect subordinates.
 - [ ] **composite_3** (HTML DOM Builder): Create an object-oriented DOM builder. An `HTMLElement` can contain text (Leaf) or other `HTMLElement`s (Composite). Implement a `toHTML()` method that outputs the properly nested HTML string (e.g., `<div><p>Hello</p></div>`).
 - [ ] **composite_4** (Math Expression Tree): Build an expression evaluator where `Operand` (Leaf, e.g., 5) and `Operator` (Composite, e.g., Add, Multiply) share an `evaluate()` interface. Construct the tree for `(5 + 3) * 2` and call `evaluate()` on the root.

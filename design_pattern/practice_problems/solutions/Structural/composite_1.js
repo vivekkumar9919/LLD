@@ -36,3 +36,91 @@
  Finally, call `.render()` ONCE on the Window. It should recursively print out the 
  rendering logs for all 5 components!
  */
+
+class UILibrary {
+   constructor(name) {
+      this.name = name;
+   }
+   render() {
+      throw new Error("Methods should be implemented");
+   }
+}
+class UILibrarySimple extends UILibrary {
+   constructor(name) {
+      super();
+      this.name = name;
+   }
+   render() {
+      console.log("Rendering Simple UI ...", this.name);
+   }
+}
+class UILibraryComplex extends UILibrary {
+   constructor(name) {
+      super();
+      this.name = name;
+      this.children = [];
+   }
+   add(childClass) {
+      this.children.push(childClass);
+   }
+   render() {
+      console.log("Rendering Complex UI for ...", this.name);
+      for (const child of this.children) {
+         child.render()
+      }
+   }
+}
+
+const login = new UILibrarySimple("login");
+const username = new UILibrarySimple("username");
+const password = new UILibrarySimple("password");
+
+const window = new UILibraryComplex("Login Window");
+const panels = new UILibraryComplex("Form Panel")
+
+window.add(panels);
+panels.add(login);
+panels.add(username);
+panels.add(password);
+
+window.render();
+
+/*
+ [Review] ⭐⭐⭐⭐ 4/5
+ 
+ **Reviewer Feedback:**
+ - Excellent implementation of the core Composite Pattern! You correctly built a Component interface (`UILibrary`), a Leaf (`UILibrarySimple`), and a Composite (`UILibraryComplex`).
+ - The execution works flawlessly. When `window.render()` is called, it correctly trickles down to all children.
+ - *Minor note:* The prompt asked for specific class names (`Button`, `Input`, `Panel`, `Window`), but generalizing them into `Simple` and `Complex` is architecturally valid! Just be careful in real interviews to follow explicit naming requests.
+ 
+ **Cross-Pattern Question:**
+ If we wanted to add an `onClick()` method to a `Button` Leaf that executes a 
+ completely different algorithm depending on the context (e.g., a `Login` 
+ algorithm vs a `Signup` algorithm), which Behavioral Design Pattern would you 
+ combine with this Composite to handle that click behavior dynamically without 
+ hardcoding it?
+ */
+
+/**
+ ---------------------My answer--------------------------
+ Here wr can use a factory design pattern and name the class onlcick if clients 
+ pass as login then invoke the login class else we can invoke the signup class 
+ and both the class have common methods name , so infuture we requried a more 
+ onclick event we need one more class and its factory upadate only which follow 
+ the SOLID too 
+
+ **Reviewer Response:**
+ You are thinking in the right direction regarding decoupling! A Factory would 
+ definitely be useful to *create* the correct object. 
+ However, the Factory pattern is a *Creational* pattern. The question 
+ specifically asked for a **Behavioral** pattern. 
+ 
+ In UI libraries, this is canonically solved using the **Strategy Pattern** 
+ (or the **Command Pattern**). 
+ You would inject a `ClickStrategy` (or a `Command`) into the `Button` 
+ constructor. When the button is clicked, it simply calls 
+ `this.strategy.execute()`. This way, the Button never has to run a 
+ Factory or know about strings like "login". It just blindly executes whatever 
+ behavior was handed to it!
+ */
+
