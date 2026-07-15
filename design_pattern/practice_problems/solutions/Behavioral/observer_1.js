@@ -70,17 +70,15 @@ class StockMarket extends IStockMarket {
         super();
         this.price = price;
     }
-    update(price) {
+    update(price, stockName) {
         this.price = price;
-        this.notifyObservers();
+        this.notifyObservers(stockName);
     }
-    notifyObservers() {
-        for (const [stock, observers] of StockMarket.observerList) {
-            let stockSubscriber = observers;
-            for (const observer of stockSubscriber) {
+    notifyObservers(stockName) {
+        let stockSubscriber = StockMarket.observerList.get(stockName);
+        for (const observer of stockSubscriber) {
 
-                observer.update(this.price, stock);
-            }
+            observer.update(this.price, stockName);
         }
 
     }
@@ -107,8 +105,8 @@ const webDashboard = new StockObserver("WebDashboard");
 stockMarket.addObserver(mobileApp, "AAPL");
 stockMarket.addObserver(webDashboard, "SAP");
 stockMarket.addObserver(webDashboard, "AAPL");
-stockMarket.update(101);
-// stockMarket.update(102);
+stockMarket.update(101, "AAPL");
+stockMarket.update(102, 'SAP');
 
 /*
  [Review] ⭐⭐⭐ 3/5
@@ -154,4 +152,14 @@ stockMarket.update(101);
  2. Change `notifyObservers(stockName, newPrice)` so it *doesn't* loop over the entire Map. It should ONLY pull the specific array of observers for that specific stockName, and only loop over that one array!
  
  Once you fix that routing logic, you'll have a perfect Pub/Sub Engine!
+ */
+ 
+/*
+ [Review] ⭐⭐⭐⭐⭐ 5/5
+ 
+ **Final Reviewer Feedback:**
+ - Perfect execution! You have successfully upgraded a standard Observer Pattern into a full **Event Bus (Pub/Sub Engine)**. 
+ - By extracting the `stockName` into the `update()` call, and looking up that specific key in the Map, you guarantee `O(1)` routing! The AAPL subscribers get AAPL, the SAP subscribers get SAP, and you don't waste CPU cycles notifying people who don't care.
+ 
+ Phenomenal job. This completes the Observer Pattern!
  */

@@ -101,7 +101,7 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 
 ## Behavioral: Observer Pattern
 *Status: Ready to Practice*
-- [ ] **observer_1** (Stock Market Ticker): Build a `StockMarket` subject that updates stock prices. Implement `MobileAppObserver` and `WebDashboardObserver` that subscribe to price updates. Ensure observers can specify which specific stocks (e.g., "AAPL", "GOOG") they want to listen to.
+- ✅ **observer_1** (Stock Market Ticker): Build a `StockMarket` subject that updates stock prices. Implement `MobileAppObserver` and `WebDashboardObserver` that subscribe to price updates. Ensure observers can specify which specific stocks (e.g., "AAPL", "GOOG") they want to listen to.
 - [ ] **observer_2** (E-commerce Order Status Notification): Implement an `OrderTracker` (Subject). Whenever an order's status changes (e.g., PLACED -> SHIPPED -> DELIVERED), trigger notifications. Observers like `SMSNotificationService`, `EmailNotificationService`, and `InventorySystem` should update accordingly.
 - [ ] **observer_3** (Bid Auction System): Build a `RealTimeAuction` platform where the `AuctionProduct` acts as the Subject. When a bidder places a higher bid, all other registered bidders (Observers) must be immediately notified of the new high bid amount.
 - [ ] **observer_4** (Multi-channel Newsletter): Create a `NewsletterPublisher` (Subject) that pushes monthly articles. Introduce `PushNotificationClient` and `EmailClient`. Demonstrate unsubscribe logic cleanly.
