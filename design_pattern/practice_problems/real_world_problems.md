@@ -21,7 +21,7 @@ In these problems, you will not be told which Design Pattern to use. Just like i
   - **Scenario:** You are building a checkout system. Currently, the `CheckoutProcessor` has a massive `if/else` block inside it to switch between Stripe, PayPal, and Apple Pay processing logic. 
   - **Challenge:** Architect the checkout flow so that the core `CheckoutProcessor` is entirely decoupled from the payment methods. You should be able to add 10 new payment methods tomorrow without ever touching the `CheckoutProcessor` class again.
 
-- [ ] **Problem 3: The Global App Configuration**
+- ✅ **Problem 3: The Global App Configuration**
   - **Scenario:** Your backend Node.js application has a `ConfigManager` that reads settings from a heavy `.env` file (like Database URLs, API keys). Right now, every service in the app (AuthService, ProductService, BillingService) creates `new ConfigManager()` when it needs a setting, meaning it reads the file from the hard drive dozens of times per request.
   - **Challenge:** Architect this so the `ConfigManager` is only created exactly once, and every file shares the exact same instance in memory, guaranteeing the file is only read from the disk one time.
 
