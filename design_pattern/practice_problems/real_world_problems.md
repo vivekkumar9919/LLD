@@ -17,7 +17,7 @@ In these problems, you will not be told which Design Pattern to use. Just like i
   - **Scenario:** Our SaaS platform needs to send alerts. Currently, we support Email and SMS. Users can opt-in to multiple types (e.g., they want Email AND SMS for critical alerts). Next month we are adding Slack and WhatsApp.
   - **Challenge:** Architect a system that allows stacking multiple notification types dynamically without creating a massive class explosion (e.g., you should not have to write a `EmailAndSMSAndSlackNotifier` class).
 
-- [ ] **Problem 2: The E-Commerce Payment Switcher**
+- ✅ **Problem 2: The E-Commerce Payment Switcher**
   - **Scenario:** You are building a checkout system. Currently, the `CheckoutProcessor` has a massive `if/else` block inside it to switch between Stripe, PayPal, and Apple Pay processing logic. 
   - **Challenge:** Architect the checkout flow so that the core `CheckoutProcessor` is entirely decoupled from the payment methods. You should be able to add 10 new payment methods tomorrow without ever touching the `CheckoutProcessor` class again.
 
