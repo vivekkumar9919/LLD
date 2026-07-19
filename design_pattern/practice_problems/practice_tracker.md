@@ -115,7 +115,7 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 
 ## Behavioral: State Pattern
 *Status: Ready to Practice*
-- [ ] **state_1** (TCP Connection Simulator): Build a `TCPConnection` context that changes behavior depending on its current state: `ClosedState`, `ListenState`, `EstablishedState`. Operations like `open()`, `close()`, and `sendData()` must exhibit different behaviors and transitions based on the current state.
+- ✅ **state_1** (TCP Connection Simulator): Build a `TCPConnection` context that changes behavior depending on its current state: `ClosedState`, `ListenState`, `EstablishedState`. Operations like `open()`, `close()`, and `sendData()` must exhibit different behaviors and transitions based on the current state.
 - [ ] **state_2** (Document Approval Workflow): Create a `Document` context representing a corporate editing flow. Implement states: `DraftState`, `ModerationState`, `PublishedState`. Ensure actions like `edit()`, `review()`, and `publish()` exhibit proper validation and state transition restrictions (e.g., only admins can transition from Moderation to Published).
 - [ ] **state_3** (E-commerce Order Lifecycle): Build an `Order` context tracking shipping. Implement states: `PaymentPendingState`, `PaidState`, `ShippedState`, `DeliveredState`, `CancelledState`. Implement operations like `cancelOrder()`, `shipOrder()`, and `deliverOrder()` ensuring that orders cannot be cancelled once shipped.
 - [ ] **state_4** (Audio Player Controller): Implement an `AudioPlayer` context. Define states: `ReadyState`, `PlayingState`, `PausedState`. Operations like `clickPlay()`, `clickNext()`, and `clickLock()` should behave differently according to the current state.
