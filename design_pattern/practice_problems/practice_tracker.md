@@ -108,7 +108,7 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 
 ## Behavioral: Strategy Pattern
 *Status: Ready to Practice*
-- [ ] **strategy_1** (E-commerce Payment Gateway): Implement an `OrderCheckout` context that calculates order totals. Create interchangeable payment strategies: `CreditCardPayment`, `PayPalPayment`, and `CryptoPayment`. Support runtime selection of payment methods.
+- ✅ **strategy_1** (E-commerce Payment Gateway): Implement an `OrderCheckout` context that calculates order totals. Create interchangeable payment strategies: `CreditCardPayment`, `PayPalPayment`, and `CryptoPayment`. Support runtime selection of payment methods.
 - [ ] **strategy_2** (E-commerce Shipping Calculator): Build a `ShippingCostCalculator` context. Implement different shipping rate calculation strategies: `StandardShipping`, `ExpressShipping`, and `InternationalShipping` based on package weight and destination.
 - [ ] **strategy_3** (Discount & Pricing Engine): Create a `PricingEngine` context for a store checkout system. Define strategies for applying discounts: `FlatDiscountStrategy` ($10 off), `PercentageDiscountStrategy` (15% off), and `NoDiscountStrategy`. Ensure strategies can be swapped dynamically.
 - [ ] **strategy_4** (Image Compression Tool): Build an `ImageProcessor` context. Define interchangeable compression strategies: `JPEGCompression`, `PNGCompression`, and `WebPCompression`. Demonstrate runtime switching depending on desired quality/speed requirements.
