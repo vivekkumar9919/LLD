@@ -44,13 +44,13 @@ class ConfigManager {
 
     constructor(config) {
 
-        if (ConfigManager.instance) {
+        if (this.instance) {
             throw new Error("Singleton violation");
         }
 
         this.config = config;
 
-        ConfigManager.instance = this;
+        this.instance = this;
     }
 
     static async getConfig() {
@@ -71,8 +71,8 @@ class ConfigManager {
 
     static async getInstance() {
 
-        if (ConfigManager.instance) {
-            return ConfigManager.instance;
+        if (this.instance) {
+            return this.instance;
         }
 
         const config =
