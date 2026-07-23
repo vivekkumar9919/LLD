@@ -31,7 +31,11 @@ In these problems, you will not be told which Design Pattern to use. Just like i
 
 - [ ] **Problem 5: The Incompatible Analytics API**
   - **Scenario:** Your company has been tracking user clicks using an internal class called `LegacyAnalytics` that has a method `sendData(xmlString)`. You just signed a contract with a fancy new vendor, "Mixpanel". But the `MixpanelAPI` only accepts JSON via a method called `trackEvent(jsonObj)`.
-  - **Challenge:** You have 500 files in your codebase calling `LegacyAnalytics.sendData()`. You cannot rewrite all 500 files. Architect a solution that intercepts these old XML calls and safely translates them into the JSON format expected by Mixpanel, so the rest of the codebase doesn't even know the vendor changed.
+  - **Challenge:** Architect a layer so that your existing application code (which calls `sendData(xmlString)`) can remain completely untouched, while successfully routing the data into the new Mixpanel API.
+
+- ✅ **Problem 6: The Parking Lot Management System**
+  - **Scenario:** You are tasked with designing a fully functional Parking Lot system. The parking lot has multiple floors and different types of parking spots (Compact, Large, Motorcycle, Handicapped). Different vehicles (Car, Truck, Motorcycle) have different requirements. There are entry terminals and exit terminals. The system must issue a ticket at entry and calculate the fee at exit.
+  - **Challenge:** Architect the classes and relationships for this system. Apply appropriate Design Patterns (e.g. Strategy for fee calculation, Observer for full-capacity display boards). Your design must be scalable and adhere to SOLID principles.
 
 ---
 
