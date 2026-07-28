@@ -37,6 +37,26 @@ In these problems, you will not be told which Design Pattern to use. Just like i
   - **Scenario:** You are tasked with designing a fully functional Parking Lot system. The parking lot has multiple floors and different types of parking spots (Compact, Large, Motorcycle, Handicapped). Different vehicles (Car, Truck, Motorcycle) have different requirements. There are entry terminals and exit terminals. The system must issue a ticket at entry and calculate the fee at exit.
   - **Challenge:** Architect the classes and relationships for this system. Apply appropriate Design Patterns (e.g. Strategy for fee calculation, Observer for full-capacity display boards). Your design must be scalable and adhere to SOLID principles.
 
+- [ ] **Problem 7: The Meeting Room Scheduler (Calendar)**
+  - **Scenario:** You have multiple meeting rooms in an office. Users can book a room for specific time slots (e.g., 2:00 PM to 3:00 PM). 
+  - **Challenge:** Design the `MeetingRoom` and `Calendar` classes to maintain their own schedule. You must implement the logic to check for overlaps and reject conflicting bookings without using a database query.
+
+- [ ] **Problem 8: The Movie Theater Booking System**
+  - **Scenario:** Users want to book specific seats (e.g., A1, A2) for a specific movie showing. When a user selects a seat, it is "Held" for 5 minutes. If they don't pay in 5 minutes, it becomes available again.
+  - **Challenge:** Manage the state of hundreds of `Seat` objects entirely in memory. Implement the "Hold" logic using pure OOP state management, ensuring two users cannot double-book the same seat.
+
+- [ ] **Problem 9: The LRU Cache**
+  - **Scenario:** Your web server is too slow, so you need to build an In-Memory Cache that holds a maximum of 100 items. When the cache is full, you must evict the Least Recently Used item.
+  - **Challenge:** This is the ultimate "No Databases Allowed" problem. You must combine a Hash Map and a Doubly Linked List of Node objects to manage state and eviction logic in $O(1)$ time.
+
+- [ ] **Problem 10: The E-Commerce Inventory Manager**
+  - **Scenario:** You are selling a limited-edition sneaker. You only have 100 pairs. Thousands of users are trying to buy them. When a user adds the sneaker to their cart, that specific pair is reserved for 15 minutes.
+  - **Challenge:** Design the `Inventory` and `Cart` classes to manage these temporary reservations in memory. If the user doesn't checkout in 15 minutes, the stock must be returned to the global pool.
+
+- [ ] **Problem 11: The Ride-Sharing Dispatcher (Uber)**
+  - **Scenario:** You need to match riders with drivers. Drivers constantly report their location (X,Y coordinates) and status (Available, En Route, On Trip). 
+  - **Challenge:** Design the `Driver` objects to maintain their own state. Build a `Dispatcher` that can iterate through in-memory objects to find the nearest *Available* driver and transition their state to *En Route*.
+
 ---
 
 ### How to Practice
