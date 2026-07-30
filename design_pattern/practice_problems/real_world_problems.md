@@ -37,7 +37,7 @@ In these problems, you will not be told which Design Pattern to use. Just like i
   - **Scenario:** You are tasked with designing a fully functional Parking Lot system. The parking lot has multiple floors and different types of parking spots (Compact, Large, Motorcycle, Handicapped). Different vehicles (Car, Truck, Motorcycle) have different requirements. There are entry terminals and exit terminals. The system must issue a ticket at entry and calculate the fee at exit.
   - **Challenge:** Architect the classes and relationships for this system. Apply appropriate Design Patterns (e.g. Strategy for fee calculation, Observer for full-capacity display boards). Your design must be scalable and adhere to SOLID principles.
 
-- [ ] **Problem 7: The Meeting Room Scheduler (Calendar)**
+- ✅ **Problem 7: The Meeting Room Scheduler (Calendar)**
   - **Scenario:** You have multiple meeting rooms in an office. Users can book a room for specific time slots (e.g., 2:00 PM to 3:00 PM). 
   - **Challenge:** Design the `MeetingRoom` and `Calendar` classes to maintain their own schedule. You must implement the logic to check for overlaps and reject conflicting bookings without using a database query.
 
