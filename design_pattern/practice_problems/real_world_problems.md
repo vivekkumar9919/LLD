@@ -41,7 +41,7 @@ In these problems, you will not be told which Design Pattern to use. Just like i
   - **Scenario:** You have multiple meeting rooms in an office. Users can book a room for specific time slots (e.g., 2:00 PM to 3:00 PM). 
   - **Challenge:** Design the `MeetingRoom` and `Calendar` classes to maintain their own schedule. You must implement the logic to check for overlaps and reject conflicting bookings without using a database query.
 
-- [ ] **Problem 8: The Movie Theater Booking System**
+- ✅ **Problem 8: The Movie Theater Booking System**
   - **Scenario:** Users want to book specific seats (e.g., A1, A2) for a specific movie showing. When a user selects a seat, it is "Held" for 5 minutes. If they don't pay in 5 minutes, it becomes available again.
   - **Challenge:** Manage the state of hundreds of `Seat` objects entirely in memory. Implement the "Hold" logic using pure OOP state management, ensuring two users cannot double-book the same seat.
 
