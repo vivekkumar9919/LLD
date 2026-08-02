@@ -45,7 +45,7 @@ In these problems, you will not be told which Design Pattern to use. Just like i
   - **Scenario:** Users want to book specific seats (e.g., A1, A2) for a specific movie showing. When a user selects a seat, it is "Held" for 5 minutes. If they don't pay in 5 minutes, it becomes available again.
   - **Challenge:** Manage the state of hundreds of `Seat` objects entirely in memory. Implement the "Hold" logic using pure OOP state management, ensuring two users cannot double-book the same seat.
 
-- [ ] **Problem 9: The LRU Cache**
+- ✅ **Problem 9: The LRU Cache**
   - **Scenario:** Your web server is too slow, so you need to build an In-Memory Cache that holds a maximum of 100 items. When the cache is full, you must evict the Least Recently Used item.
   - **Challenge:** This is the ultimate "No Databases Allowed" problem. You must combine a Hash Map and a Doubly Linked List of Node objects to manage state and eviction logic in $O(1)$ time.
 

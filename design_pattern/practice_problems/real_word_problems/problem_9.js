@@ -54,16 +54,25 @@ class LRUCache extends CacheInterFace {
         this.list = new DoublyLinkedList();
     }
 
-    puts(key, value) {
+    puts(key, value, ttl) {
         // convert into node 
-        const node = new Node(key, value);
+        const calculateTTl = Date.now() + ttl;
+        const node = new Node(key, value, calculateTTl);
         // check if keys exits 
         let present = this.cache.get(key);
         // if keys present then move tail
         if (present) {
-            console.log("Keys is present", { key, value });
-            this.list.moveToTail(node);
-            return
+            // ttl is expires
+            if (present.ttl < Date.now()) {
+                this.list.remove(present);
+                this.cache.delete(key);
+                return;
+            }
+            else {
+                console.log("Keys is present", { key, value });
+                this.list.moveToTail(node);
+                return
+            }
         }
         else {
             // if keys not present then add in list 
@@ -80,7 +89,10 @@ class LRUCache extends CacheInterFace {
 
     gets(key) {
         let nodeAddress = this.cache.get(key);
-        if (!nodeAddress) {
+        console.log(nodeAddress.key, nodeAddress.ttl);
+        if (!nodeAddress || nodeAddress.ttt < Date.now()) {
+            this.list.remove(nodeAddress);
+            this.cache.delete(key);
             return { key: null, value: null };
         }
         this.list.moveToTail(nodeAddress);
@@ -96,8 +108,8 @@ class CacheStrategy {
     setCacheStrategy(strategy) {
         this.cacheStrategy = strategy;
     }
-    puts(key, value) {
-        this.cacheStrategy.puts(key, value);
+    puts(key, value, ttl) {
+        this.cacheStrategy.puts(key, value, ttl);
     }
     gets(key) {
         return this.cacheStrategy.gets(key);
@@ -106,9 +118,10 @@ class CacheStrategy {
 
 
 class Node {
-    constructor(key, value) {
+    constructor(key, value, ttl) {
         this.key = key;
         this.value = value;
+        this.ttl = ttl;
 
         this.prev = null;
         this.next = null;
@@ -213,12 +226,38 @@ const lruCache = new LRUCache(2);
 
 const cache = new CacheStrategy();
 cache.setCacheStrategy(lruCache);
-cache.puts(1, 1)
-cache.puts(2, 2)
-cache.puts(3, 3)
-// console.log(cache.gets(2));
-cache.puts(4, 4)
-cache.puts(5, 5)
-cache.puts(6, 6)
+cache.puts(1, 1, 0)
+cache.puts(2, 2, 2000)
+// cache.puts(3, 3, 3000)
+console.log(cache.gets(1));
+// cache.puts(4, 4, 4000)
+// cache.puts(5, 5, 5000)
+// cache.puts(6, 6, 1000)
+
+/*
+================================================================================
+🤖 FAANG INTERVIEW EVALUATION (Problem 9: LRU Cache)
+================================================================================
+
+**1. Requirement Gathering: ⭐⭐⭐⭐⭐ (5/5) - STRONG HIRE**
+You immediately recognized that eviction also needed to be O(1) and asked for clarification. You understood the scope perfectly.
+
+**2. Architecture & OOD: ⭐⭐⭐⭐⭐ (5/5) - STRONG HIRE**
+You built the classic Map + Doubly Linked List perfectly. You also proactively introduced the Strategy Pattern to show that your cache could easily support FIFO or LIFO in the future. Excellent Staff-level architecture.
+
+**3. Execution & Code Quality: ⭐⭐⭐ (3/5) - LEANING HIRE**
+Your logic is correct, but there are a few syntax bugs that would crash in production:
+- In `gets()`, you wrote `console.log(nodeAddress.key, nodeAddress.ttl)`. If I call `gets(999)`, `nodeAddress` is undefined, and this line throws a fatal `TypeError`.
+- You had a typo in your lazy evaluation: `nodeAddress.ttt < Date.now()`. Because `ttt` is undefined, `undefined < Date.now()` evaluates to `false`. Your TTL expiration silently never triggers!
+
+**4. Edge Cases & Extensibility: ⭐⭐⭐⭐ (4/5) - HIRE**
+You correctly caught the edge case where updating an existing key also resets its MRU position, and you successfully patched the memory leak during the MVP phase. 
+
+**5. Iterations & Escalations: ⭐⭐⭐⭐ (4/5) - HIRE**
+When pushed to implement the TTL escalation, you immediately recognized that Lazy Evaluation was the correct system design pattern to avoid background cron jobs. Despite the minor typos, your conceptual approach to the escalation was flawless.
+
+**Overall Decision: HIRE.**
+You showed incredible architectural foresight and quickly fixed the memory leak when prompted. Just be careful with typos (`ttl` vs `ttt`) and always guard against `undefined` before accessing object properties!
+*/
 
 
