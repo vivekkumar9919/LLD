@@ -49,7 +49,7 @@ In these problems, you will not be told which Design Pattern to use. Just like i
   - **Scenario:** Your web server is too slow, so you need to build an In-Memory Cache that holds a maximum of 100 items. When the cache is full, you must evict the Least Recently Used item.
   - **Challenge:** This is the ultimate "No Databases Allowed" problem. You must combine a Hash Map and a Doubly Linked List of Node objects to manage state and eviction logic in $O(1)$ time.
 
-- [ ] **Problem 10: The E-Commerce Inventory Manager**
+- ✅ **Problem 10: The E-Commerce Inventory Manager**
   - **Scenario:** You are selling a limited-edition sneaker. You only have 100 pairs. Thousands of users are trying to buy them. When a user adds the sneaker to their cart, that specific pair is reserved for 15 minutes.
   - **Challenge:** Design the `Inventory` and `Cart` classes to manage these temporary reservations in memory. If the user doesn't checkout in 15 minutes, the stock must be returned to the global pool.
 
