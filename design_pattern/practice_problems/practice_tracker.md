@@ -129,7 +129,7 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 
 ## Behavioral: Chain of Responsibility Pattern
 *Status: Ready to Practice*
-- [ ] **cor_1** (Logger System): Build a `Logger` hierarchy (`DebugLogger`, `InfoLogger`, `ErrorLogger`). A message with severity `ERROR` should bubble past Debug/Info and only be handled by the `ErrorLogger`. 
+- ✅ **cor_1** (Logger System): Build a `Logger` hierarchy (`DebugLogger`, `InfoLogger`, `ErrorLogger`). A message with severity `ERROR` should bubble past Debug/Info and only be handled by the `ErrorLogger`. 
 - [ ] **cor_2** (Express Middleware Simulator): Create an HTTP `Request` object and pass it through a chain of middlewares: `AuthMiddleware` (checks token), `LoggingMiddleware` (logs IP), and `ValidationMiddleware` (checks payload). If any middleware fails, it should abort the chain and throw an Error.
 - [ ] **cor_3** (Customer Support System): Build a ticketing system. A `Ticket` has an `issueType` and `difficulty`. Pass it through `Level1Support`, `Level2Support`, and `ManagerSupport`. If Level 1 can't handle the difficulty, they pass it up the chain.
 - [ ] **cor_4** (E-commerce Discount Pipeline): Create a chain of discount appliers (`CouponDiscount`, `LoyaltyDiscount`, `SeasonalSale`). Pass a `Cart` object through the chain where each handler reduces the `cart.totalPrice` sequentially before checkout.
