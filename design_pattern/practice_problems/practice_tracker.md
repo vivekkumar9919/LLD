@@ -136,7 +136,7 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 
 ## Behavioral: Iterator Pattern
 *Status: Ready to Practice*
-- [ ] **iterator_1** (Native JS Iterable): Build a custom `PaginationCollection` that holds 100 items. Implement the native `[Symbol.iterator]()` so that a client can do `for (const page of pagination) { ... }` and it yields exactly 10 items at a time.
+- ✅ **iterator_1** (Native JS Iterable): Build a custom `PaginationCollection` that holds 100 items. Implement the native `[Symbol.iterator]()` so that a client can do `for (const page of pagination) { ... }` and it yields exactly 10 items at a time.
 - [ ] **iterator_2** (Graph Traversal): Create a `GraphCollection` (nodes and edges). Implement two iterators: `BFSGraphIterator` and `DFSGraphIterator`. The collection should expose `createBFSIterator()` and `createDFSIterator()`.
 - [ ] **iterator_3** (Filtering Iterator): Create an `EmployeeCollection`. Build a `HighSalaryIterator` that wraps the standard array iterator but automatically skips any employee whose salary is under $100k during the `next()` call.
 - [ ] **iterator_4** (Fail-Fast Collection): Re-implement the `ArrayCollection` to include a `modCount` property. Create a `FailFastIterator` that caches the `modCount` on creation, and throws a `ConcurrentModificationException` inside `next()` if the collection's `modCount` has changed.
