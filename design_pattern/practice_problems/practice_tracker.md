@@ -122,7 +122,7 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 
 ## Behavioral: Command Pattern
 *Status: Ready to Practice*
-- [ ] **command_1** (Text Editor Undo): Implement a `TextEditor` (Receiver) with methods `insert(text)` and `delete(count)`. Create `InsertCommand` and `DeleteCommand`. The Invoker should maintain a history stack to support multiple `undo()` operations.
+- ✅ **command_1** (Text Editor Undo): Implement a `TextEditor` (Receiver) with methods `insert(text)` and `delete(count)`. Create `InsertCommand` and `DeleteCommand`. The Invoker should maintain a history stack to support multiple `undo()` operations.
 - [ ] **command_2** (Banking Transactions): Create a `BankAccount` (Receiver). Implement `DepositCommand` and `WithdrawCommand`. Add a `TransactionManager` (Invoker) that can execute, undo, and log all transactions to a file.
 - [ ] **command_3** (Smart Home Macros): Extend the Smart Home remote. Create a `MacroCommand` that accepts an array of Commands. Build a "Morning Routine" macro that turns on the lights, starts the coffee maker, and opens the blinds.
 - [ ] **command_4** (Job Queue System): Build a `Queue` that holds `Command` objects. A background worker loop should pop commands off the queue and call `execute()`. Implement `SendEmailCommand` and `ProcessImageCommand`.

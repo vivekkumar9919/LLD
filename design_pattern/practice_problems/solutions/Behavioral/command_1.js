@@ -79,15 +79,52 @@ class DeleteCommand extends Command {
     }
 }
 
+class CommandManager {
+    constructor() {
+        this.history = []
+    }
+    executeCommand(command) {
+        command.execute();
+        this.history.push(command)
+    }
+    undo() {
+        if (this.history.length > 0) {
+            this.history.pop().undo()
+        }
+    }
+    // this is added just to check the history value
+    getHistory() {
+        console.log("History is ", this.history);
+    }
+}
+
 const editor = new TextEditior("Hello");
+const commandManager = new CommandManager();
+commandManager.executeCommand(new InsertCommand(editor, "Hello"))
+// commandManager.getHistory()
+commandManager.executeCommand(new InsertCommand(editor, " World"))
+// commandManager.getHistory()
+commandManager.executeCommand(new DeleteCommand(editor, " Hello"))
+// commandManager.getHistory()
+commandManager.executeCommand(new DeleteCommand(editor, " World"))
+commandManager.getHistory()
+commandManager.undo()
+commandManager.getHistory()
+commandManager.undo()
+commandManager.getHistory()
 
-const history = [];
+console.log(editor.text)
 
-history.push(new InsertCommand(editor, "Hello"));
-history.push(new InsertCommand(editor, " World"));
-history.push(new DeleteCommand(editor, "Hello"));
-history.push(new DeleteCommand(editor, " World"));
+/*
+================================================================================
+📝 PRACTICE REVIEW: Command Pattern (command_1)
+================================================================================
 
-console.log(history);
+**Overall Rating: ⭐⭐⭐⭐ (4/5)**
 
+You successfully created the Receiver (`TextEditor`), the Commands (`InsertCommand`, `DeleteCommand`), and the Invoker (`CommandManager`). You correctly decoupled the execution logic so that the Invoker only needs to know about `execute()` and `undo()`. 
 
+You lost one star due to the initial flaw of pushing commands without executing them, and because your `TextEditor.delete(text)` method relies on string length slicing instead of index deletion, which could be risky for a real editor. 
+
+However, this is still a solid implementation of the Command Pattern. You have successfully unlocked global undo/redo functionality!
+*/
