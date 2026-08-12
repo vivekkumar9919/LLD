@@ -40,24 +40,23 @@ class IMediator {
 }
 
 class CommerceMediator extends IMediator {
-    constructor(inventory, payment, shipping) {
+    constructor() {
         super();
-        this.inventory = inventory;
-        this.payment = payment;
-        this.shipping = shipping;
+        this.handlers = {};
     }
-    notify(sender, event) {
-        if (event == "payment_processed") {
-            this.shipping.getShippingLabel();
+    
+    subscribe(event, callback) {
+        if (!this.handlers[event]) {
+            this.handlers[event] = [];
         }
-        if (event == "shipping_generated") {
-            console.log("Order completed");
-        }
-        if (event == "inventory_reserved") {
-            this.payment.processPayment();
-        }
+        this.handlers[event].push(callback);
     }
 
+    notify(sender, event) {
+        if (this.handlers[event]) {
+            this.handlers[event].forEach(cb => cb(sender));
+        }
+    }
 }
 
 class Inventory {
@@ -105,11 +104,17 @@ const inventory = new Inventory();
 const payment = new Payment();
 const shipping = new Shipping();
 
-const mediator = new CommerceMediator(inventory, payment, shipping);
+const mediator = new CommerceMediator();
 
+// Give the services a reference to the mediator so they can call `notify`
 inventory.setMediator(mediator);
 payment.setMediator(mediator);
 shipping.setMediator(mediator);
+
+// Dynamically wire up the orchestration logic!
+mediator.subscribe("inventory_reserved", () => payment.processPayment());
+mediator.subscribe("payment_processed", () => shipping.getShippingLabel());
+mediator.subscribe("shipping_generated", () => console.log("Order completed"));
 
 inventory.reserveItems();
 
@@ -125,4 +130,30 @@ You flawlessly executed the Mediator pattern! You correctly removed all direct d
 By centralizing the control flow inside `CommerceMediator.notify()`, you've made it incredibly easy to change the order of operations in the future (e.g., adding a "FraudCheckService" before Payment) without having to rewrite any of the existing service classes.
 
 This is exactly how complex UI components and microservice orchestrators manage state without turning into spaghetti code. Great job!
+
+---
+**💡 Interview Insight: The "God Object" Bottleneck**
+You correctly identified the biggest flaw of the pure Mediator Pattern: as you add more services, the `notify()` method grows into a massive `if/else` block (a "God Object"). 
+
+If an interviewer asks how to fix this, the answer is to combine the **Mediator Pattern** with the **Observer (Pub/Sub) Pattern**. 
+
+Instead of hardcoding `if/else` statements, you turn the Mediator into an **Event Bus**:
+```javascript
+class EventMediator {
+    constructor() { this.handlers = {}; }
+    
+    subscribe(event, callback) {
+        if (!this.handlers[event]) this.handlers[event] = [];
+        this.handlers[event].push(callback);
+    }
+    
+    notify(sender, event) {
+        if (this.handlers[event]) {
+            this.handlers[event].forEach(cb => cb(sender));
+        }
+    }
+}
+// Usage: eventBus.subscribe("inventory_reserved", () => payment.processPayment());
+```
+This removes the hardcoded logic and makes the sequence 100% dynamic!
 */
