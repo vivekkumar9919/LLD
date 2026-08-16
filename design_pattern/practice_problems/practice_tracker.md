@@ -150,7 +150,7 @@ This document tracks coding practice problems. Whenever a topic is formally revi
 
 ## Behavioral: Memento Pattern
 *Status: Ready to Practice*
-- [ ] **memento_1** (E-commerce Shopping Cart Undo): Implement a `ShoppingCart` (Originator) that stores items. Build a `CartMemento` to capture the state of items and quantities. Use a `CartHistory` (Caretaker) caret-taking stack to allow the user to undo and redo operations (adding, updating, or removing items) during checkout preparation.
+- ✅ **memento_1** (E-commerce Shopping Cart Undo): Implement a `ShoppingCart` (Originator) that stores items. Build a `CartMemento` to capture the state of items and quantities. Use a `CartHistory` (Caretaker) caret-taking stack to allow the user to undo and redo operations (adding, updating, or removing items) during checkout preparation.
 - [ ] **memento_2** (Draft Document Autosave): Create a `DocumentEditor` that holds rich text content and metadata (e.g. cursor position, font size). Build an automated Caretaker that takes snapshots every 5 seconds (autosaves) and allows restoring back to any specific checkpoint if the editor crashes.
 - [ ] **memento_3** (Database Migration Rollback Tool): Build a `SchemaManager` representing a database schema (tables and columns). Use Mementos to take snapshots of the schema before applying migrations. If a migration step fails, automatically restore the schema to its previous version.
 - [ ] **memento_4** (Multi-Step Wizard State Manager): Implement a multi-step user registration wizard (`WizardManager`). As the user moves forward or backward through pages (Personal Info -> Address -> Payment -> Review), capture the wizard's state using Mementos so the user can freely go back and forth without losing inputted values.
