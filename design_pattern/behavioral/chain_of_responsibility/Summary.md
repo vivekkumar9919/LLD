@@ -4,6 +4,50 @@
 - **Chain of Responsibility Pattern (Behavioral)**: Lets you pass requests along a chain of handlers. Upon receiving a request, each handler decides either to process it or to pass it to the next handler in the chain.
 - It decouples the sender of a request from its receiver, giving multiple objects a chance to handle the request.
 
+---
+
+## UML Diagram
+```mermaid
+classDiagram
+    class Client {
+        +requestCash(amount: Number)
+    }
+
+    class MoneyHandler {
+        <<abstract>>
+        #nextHandler: MoneyHandler
+        +setNextHandler(handler: MoneyHandler)
+        +dispenseLogic(amount: Number, noteValue: Number)
+        +dispense(amount: Number)*
+    }
+
+    class ThousandHandler {
+        -noOfNotes: Number
+        +constructor(noOfNotes: Number)
+        +dispense(amount: Number)
+    }
+
+    class FiveHundredHandler {
+        -noOfNotes: Number
+        +constructor(noOfNotes: Number)
+        +dispense(amount: Number)
+    }
+
+    class TwoHundredHandler {
+        -noOfNotes: Number
+        +constructor(noOfNotes: Number)
+        +dispense(amount: Number)
+    }
+
+    Client --> MoneyHandler : initiates dispense
+    MoneyHandler o-- MoneyHandler : nextHandler (successor)
+    MoneyHandler <|-- ThousandHandler : extends
+    MoneyHandler <|-- FiveHundredHandler : extends
+    MoneyHandler <|-- TwoHundredHandler : extends
+```
+
+---
+
 ## Resources
 - [Refactoring Guru - Chain of Responsibility](https://refactoring.guru/design-patterns/chain-of-responsibility)
 

@@ -4,6 +4,53 @@
 - **Bridge Pattern (Structural)**: Decouples an abstraction from its implementation so that the two can vary independently. 
 - It prevents a **Cartesian Product** class explosion (e.g., $N$ abstractions $\times$ $M$ implementations) by transforming inheritance into composition.
 
+---
+
+## UML Diagram
+```mermaid
+classDiagram
+    class Car {
+        <<abstract>>
+        #engine: Engine
+        +constructor(engine: Engine)
+        +drive()*
+    }
+
+    class Sedan {
+        +drive()
+    }
+
+    class SUV {
+        +drive()
+    }
+
+    class Engine {
+        <<interface>>
+        +start()*
+    }
+
+    class DieselEngine {
+        +start()
+    }
+
+    class PetrolEngine {
+        +start()
+    }
+
+    class ElectricEngine {
+        +start()
+    }
+
+    Car <|-- Sedan
+    Car <|-- SUV
+    Car o-- Engine : Bridge / has-a
+    Engine <|.. DieselEngine : implements
+    Engine <|.. PetrolEngine : implements
+    Engine <|.. ElectricEngine : implements
+```
+
+---
+
 ## Resources
 - [Refactoring Guru - Bridge](https://refactoring.guru/design-patterns/bridge)
 

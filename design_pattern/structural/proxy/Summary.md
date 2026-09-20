@@ -10,6 +10,51 @@
 3. **Remote Proxy**: Represents an object that is located remotely (e.g., in a different address space or server), managing network communication (like gRPC or REST stubs).
 4. **Cache Proxy**: Caches results of expensive operations from the real subject to improve performance for subsequent identical requests.
 
+---
+
+## UML Diagram
+```mermaid
+classDiagram
+    class Image {
+        <<interface>>
+        +display()*
+    }
+
+    class HighResolutionImage {
+        -filename: String
+        +display()
+    }
+
+    class ImageProxy {
+        -filename: String
+        -realImage: HighResolutionImage
+        +display()
+    }
+
+    class BankAccount {
+        +balance: Number
+        +viewAccount()
+    }
+
+    class BankAccountProxy {
+        -realAccount: BankAccount
+        -userRole: String
+        +viewAccount()
+    }
+
+    class Client {
+        +run()
+    }
+
+    Image <|.. HighResolutionImage : implements
+    Image <|.. ImageProxy : implements
+    ImageProxy o-- HighResolutionImage : controls access / lazy loads
+    Client --> Image : calls display()
+    BankAccountProxy o-- BankAccount : controls access (Protection)
+```
+
+---
+
 ## Resources
 - [YouTube Video Link](https://www.youtube.com/watch?v=xuT6OOYVJTQ)
 - [Refactoring Guru - Proxy](https://refactoring.guru/design-patterns/proxy)

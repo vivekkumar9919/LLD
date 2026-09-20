@@ -3,6 +3,45 @@
 ## About
 The **Mediator Design Pattern** is a behavioral design pattern that reduces chaotic dependencies between objects (colleagues). It restricts direct communications between the objects and forces them to collaborate only via a central mediator object.
 
+---
+
+## UML Diagram
+```mermaid
+classDiagram
+    class IMediator {
+        <<interface>>
+        +resisterColleague(colleague: Colleague)*
+        +send(from: Colleague, msg: String)*
+        +sendPrivate(from: Colleague, to: String, msg: String)*
+    }
+
+    class ChatMediator {
+        -colleagues: List~Colleague~
+        -mutes: Map~String, Set~
+        +resisterColleague(colleague: Colleague)
+        +send(from: Colleague, msg: String)
+        +sendPrivate(from: Colleague, to: String, msg: String)
+        +mute(user: String, target: String)
+        +unmute(user: String, target: String)
+    }
+
+    class Colleague {
+        -name: String
+        -mediator: IMediator
+        +constructor(name: String, mediator: IMediator)
+        +getName() String
+        +send(msg: String)
+        +sendPrivate(to: String, msg: String)
+        +receive(from: String, msg: String)
+    }
+
+    IMediator <|.. ChatMediator : implements
+    ChatMediator o-- Colleague : manages & coordinates
+    Colleague --> IMediator : communicates via
+```
+
+---
+
 ## Pros & Cons
 ### Pros
 - **Reduces Coupling:** Replaces many-to-many relationships with cleaner one-to-many relationships, making components highly reusable and independent.

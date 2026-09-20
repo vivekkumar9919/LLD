@@ -10,6 +10,71 @@ The Builder pattern is a creational design pattern that lets you construct compl
 4. **Director**: (Optional) Orchestrates the builder to create standard "templates" or pre-configured products.
 5. **Step Builder**: (Advanced) Enforces a strict sequence of construction steps through interface/object chaining.
 
+---
+
+## UML Diagram
+```mermaid
+classDiagram
+    class HttpRequest {
+        +url: String
+        +method: String
+        +params: Object
+        +reqBody: Object
+        +timeout: Number
+    }
+
+    class BuilderHttpRequest {
+        -req: HttpRequest
+        +withUrl(url) BuilderHttpRequest
+        +withMethod(method) BuilderHttpRequest
+        +withParams(params) BuilderHttpRequest
+        +withReqBody(reqBody) BuilderHttpRequest
+        +withTimeOut(timeout) BuilderHttpRequest
+        +build() HttpRequest
+        +reset() BuilderHttpRequest
+    }
+
+    class HttpBuilderDirector {
+        +createGetRequest(url) HttpRequest
+        +createPostRequest(url, body) HttpRequest
+    }
+
+    class UrlStep {
+        +withUrl(url) MethodStep
+    }
+
+    class MethodStep {
+        -data: Object
+        +withMethod(method) BodyStep
+    }
+
+    class BodyStep {
+        -data: Object
+        +withBody(body) OptionalStep
+    }
+
+    class OptionalStep {
+        -data: Object
+        +withParams(params) OptionalStep
+        +withTimeout(timeout) OptionalStep
+        +build() HttpRequest
+    }
+
+    class HttpRequestBuilder {
+        +create()$ UrlStep
+    }
+
+    HttpBuilderDirector o-- BuilderHttpRequest : orchestrates
+    BuilderHttpRequest ..> HttpRequest : builds
+    UrlStep ..> MethodStep : transitions to
+    MethodStep ..> BodyStep : transitions to
+    BodyStep ..> OptionalStep : transitions to
+    OptionalStep ..> HttpRequest : builds
+    HttpRequestBuilder ..> UrlStep : initiates
+```
+
+---
+
 ## Tradeoffs
 
 | Feature | Pros | Cons |

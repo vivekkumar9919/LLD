@@ -4,6 +4,43 @@
 The **Template Method Design Pattern** is a behavioral design pattern that defines the skeleton of an algorithm in a base class, letting subclasses override specific steps of the algorithm without changing its overall structure. 
 It operates on the "Hollywood Principle": "Don't call us, we'll call you."
 
+---
+
+## UML Diagram
+```mermaid
+classDiagram
+    class ModelTrainer {
+        <<abstract>>
+        +load(path: String)
+        +preprocessedData()
+        +trainModel()*
+        +evaluateModel()*
+        +saveModel()
+        +trainPipeline(path: String)
+    }
+
+    class NeuralNetwork {
+        +trainModel()
+        +evaluateModel()
+        +saveModel()
+    }
+
+    class DecisionTreeTrainer {
+        +trainModel()
+        +evaluateModel()
+    }
+
+    class Client {
+        +executeTraining()
+    }
+
+    ModelTrainer <|-- NeuralNetwork : extends
+    ModelTrainer <|-- DecisionTreeTrainer : extends
+    Client --> ModelTrainer : calls trainPipeline()
+```
+
+---
+
 ## Resources
 - [YouTube Video Link](https://www.youtube.com/watch?v=8-vE_bmEt18)
 - [Doc Link]()

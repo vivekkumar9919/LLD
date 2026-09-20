@@ -3,6 +3,36 @@
 ## About
 - The **Adapter Design Pattern** is a Structural pattern that allows objects with incompatible interfaces to collaborate. It acts as a wrapper between two objects: it catches calls for one object and transforms them to format and interface recognizable by the second object.
 
+---
+
+## UML Diagram
+```mermaid
+classDiagram
+    class Client {
+        +generateReport(report: Report)
+    }
+
+    class Report {
+        <<interface>>
+        +getJSONData(data)* Object
+    }
+
+    class XMLDataProviderAdapter {
+        -xmlProvider: XMLDataProvider
+        +getJSONData(data) Object
+    }
+
+    class XMLDataProvider {
+        +getXMLData(data) String
+    }
+
+    Client --> Report : interacts with
+    Report <|-- XMLDataProviderAdapter : implements
+    XMLDataProviderAdapter o-- XMLDataProvider : wraps / adapts
+```
+
+---
+
 ## Resources
 - [YouTube Video Link](https://www.youtube.com/watch?v=FV3x69rpwm0)
 - [Doc Link]()

@@ -4,6 +4,67 @@
 - **Command Pattern (Behavioral)**: Turns a request into a stand-alone object that contains all information about the request. This transformation lets you pass requests as a method arguments, delay or queue a request's execution, and support undoable operations.
 - It decouples the **Invoker** (the thing triggering the request, e.g., a GUI Button) from the **Receiver** (the thing performing the actual work, e.g., a Database or a Light Bulb).
 
+---
+
+## UML Diagram
+```mermaid
+classDiagram
+    class Command {
+        <<interface>>
+        +execute()*
+        +undo()*
+    }
+
+    class LightCommand {
+        -light: Light
+        +constructor(light: Light)
+        +execute()
+        +undo()
+    }
+
+    class FanCommand {
+        -fan: Fan
+        +constructor(fan: Fan)
+        +execute()
+        +undo()
+    }
+
+    class MacroCommand {
+        -commands: List~Command~
+        +constructor(commands: List~Command~)
+        +execute()
+        +undo()
+    }
+
+    class Light {
+        +on()
+        +off()
+    }
+
+    class Fan {
+        +on()
+        +off()
+    }
+
+    class RemoteController {
+        -buttons: List~Command~
+        -history: List~Command~
+        +setCommand(index: Number, cmd: Command)
+        +pressButton(index: Number)
+        +pressUndoButton()
+    }
+
+    Command <|.. LightCommand : implements
+    Command <|.. FanCommand : implements
+    Command <|.. MacroCommand : implements
+    MacroCommand o-- Command : contains list of
+    LightCommand --> Light : controls
+    FanCommand --> Fan : controls
+    RemoteController o-- Command : invokes & history stack
+```
+
+---
+
 ## Resources
 - [Refactoring Guru - Command](https://refactoring.guru/design-patterns/command)
 

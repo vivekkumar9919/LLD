@@ -3,6 +3,71 @@
 ## About
 The **Visitor Design Pattern** is a behavioral design pattern that lets you separate algorithms from the objects on which they operate. It relies heavily on a mechanism called **Double Dispatch** to execute the correct method based on both the runtime type of the visitor and the runtime type of the element.
 
+---
+
+## UML Diagram
+```mermaid
+classDiagram
+    class FileSystemVisitor {
+        <<interface>>
+        +visitTextFile(textFile: TextFile)*
+        +visitImgFile(imgFile: ImgFile)*
+        +visitVideoFile(videoFile: VideoFile)*
+    }
+
+    class SizeCalculationVisitor {
+        +visitTextFile(textFile: TextFile)
+        +visitImgFile(imgFile: ImgFile)
+        +visitVideoFile(videoFile: VideoFile)
+    }
+
+    class CompressionVisitor {
+        +visitTextFile(textFile: TextFile)
+        +visitImgFile(imgFile: ImgFile)
+        +visitVideoFile(videoFile: VideoFile)
+    }
+
+    class VirusScanningVisitor {
+        +visitTextFile(textFile: TextFile)
+        +visitImgFile(imgFile: ImgFile)
+        +visitVideoFile(videoFile: VideoFile)
+    }
+
+    class FileSystemItem {
+        <<abstract>>
+        #name: String
+        +getName() String
+        +accept(visitor: FileSystemVisitor)*
+    }
+
+    class TextFile {
+        -content: String
+        +getContent() String
+        +accept(visitor: FileSystemVisitor)
+    }
+
+    class ImgFile {
+        +accept(visitor: FileSystemVisitor)
+    }
+
+    class VideoFile {
+        +accept(visitor: FileSystemVisitor)
+    }
+
+    FileSystemVisitor <|.. SizeCalculationVisitor : implements
+    FileSystemVisitor <|.. CompressionVisitor : implements
+    FileSystemVisitor <|.. VirusScanningVisitor : implements
+
+    FileSystemItem <|-- TextFile : extends
+    FileSystemItem <|-- ImgFile : extends
+    FileSystemItem <|-- VideoFile : extends
+
+    FileSystemItem ..> FileSystemVisitor : accepts
+    FileSystemVisitor ..> FileSystemItem : visits (Double Dispatch)
+```
+
+---
+
 ## Resources
 - [YouTube Video Link](https://www.youtube.com/watch?v=DnmsxnlCyl0)
 - [Doc Link]()

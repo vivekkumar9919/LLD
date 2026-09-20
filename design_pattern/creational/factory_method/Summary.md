@@ -18,6 +18,90 @@ Provides an interface for creating families of related or dependent objects with
 - **Pros**: Ensures product consistency (families work together). Decouples client code from concrete implementations.
 - **Cons**: Adding a new product type to the family requires changing the interface and all concrete factories.
 
+---
+
+## UML Diagram
+```mermaid
+classDiagram
+    class Burger {
+        <<abstract>>
+        +prepareBurger()*
+    }
+    class BasicBurger {
+        +prepareBurger()
+    }
+    class StandardBurger {
+        +prepareBurger()
+    }
+    class PremiumBurger {
+        +prepareBurger()
+    }
+    class BasicWheatBurger {
+        +prepareBurger()
+    }
+    class StandardWheatBurger {
+        +prepareBurger()
+    }
+    class PremiumWheatBurger {
+        +prepareBurger()
+    }
+
+    Burger <|-- BasicBurger
+    Burger <|-- StandardBurger
+    Burger <|-- PremiumBurger
+    Burger <|-- BasicWheatBurger
+    Burger <|-- StandardWheatBurger
+    Burger <|-- PremiumWheatBurger
+
+    class Garlic {
+        <<abstract>>
+        +prepareGarlic()*
+    }
+    class BasicGarlicBread {
+        +prepareGarlic()
+    }
+    class CheeseGarlicBread {
+        +prepareGarlic()
+    }
+    class BasicGarlicWheatBread {
+        +prepareGarlic()
+    }
+    class CheeseGarlicWheatBread {
+        +prepareGarlic()
+    }
+
+    Garlic <|-- BasicGarlicBread
+    Garlic <|-- CheeseGarlicBread
+    Garlic <|-- BasicGarlicWheatBread
+    Garlic <|-- CheeseGarlicWheatBread
+
+    class Meal {
+        <<abstract>>
+        +createBurger(type)* Burger
+        +createGarlicBread(type)* Garlic
+    }
+
+    class HealthyFactory {
+        +createBurger(type) Burger
+        +createGarlicBread(type) Garlic
+    }
+
+    class UnHealthyFactory {
+        +createBurger(type) Burger
+        +createGarlicBread(type) Garlic
+    }
+
+    Meal <|-- HealthyFactory
+    Meal <|-- UnHealthyFactory
+
+    HealthyFactory ..> BasicWheatBurger : creates
+    HealthyFactory ..> BasicGarlicWheatBread : creates
+    UnHealthyFactory ..> BasicBurger : creates
+    UnHealthyFactory ..> BasicGarlicBread : creates
+```
+
+---
+
 ## Tradeoffs
 
 | Pattern | Use Case | Flexibility | Complexity |

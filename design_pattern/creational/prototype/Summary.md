@@ -3,7 +3,34 @@ Instead of creating objects from scratch,
 create new objects by copying/cloning existing objects.
 
 ## About
-- 
+The **Prototype Design Pattern** is a creational design pattern that lets you produce new objects by copying an existing object (the prototype) instead of creating them from scratch using `new ClassName(...)`. It avoids expensive initialization operations and helps decouple object creation from concrete classes.
+
+---
+
+## UML Diagram
+```mermaid
+classDiagram
+    class Prototype {
+        <<interface>>
+        +clone()* Prototype
+    }
+
+    class Resume {
+        +name: String
+        +skills: Array~String~
+        +print()
+        +clone() Resume
+    }
+
+    class Client {
+        +createResume()
+    }
+
+    Prototype <|.. Resume : implements
+    Client --> Prototype : calls clone()
+```
+
+---
 
 ## Resources
 - [YouTube Video Link](https://www.youtube.com/watch?v=KMQFNV8LFec)

@@ -4,6 +4,61 @@
 - **Iterator Pattern (Behavioral)**: Lets you traverse elements of a collection without exposing its underlying representation (list, stack, tree, etc.).
 - It extracts the traversal behavior of a collection into a separate object called an iterator.
 
+---
+
+## UML Diagram
+```mermaid
+classDiagram
+    class Iterator {
+        <<interface>>
+        +hasNext()* Boolean
+        +next()* Any
+    }
+
+    class ArrayIterator {
+        -items: Array
+        -index: Number
+        +hasNext() Boolean
+        +next() Any
+    }
+
+    class LinkedListIterator {
+        -current: Node
+        +hasNext() Boolean
+        +next() Any
+    }
+
+    class Collection {
+        <<interface>>
+        +createIterator()* Iterator
+    }
+
+    class ArrayCollection {
+        -items: Array
+        +createIterator() Iterator
+    }
+
+    class LinkedList {
+        -head: Node
+        +createIterator() Iterator
+    }
+
+    class Client {
+        +printCollection(collection: Collection)
+    }
+
+    Iterator <|.. ArrayIterator : implements
+    Iterator <|.. LinkedListIterator : implements
+    Collection <|.. ArrayCollection : implements
+    Collection <|.. LinkedList : implements
+    ArrayCollection ..> ArrayIterator : creates
+    LinkedList ..> LinkedListIterator : creates
+    Client --> Collection : requests iterator
+    Client --> Iterator : traverses elements
+```
+
+---
+
 ## Resources
 - [Refactoring Guru - Iterator](https://refactoring.guru/design-patterns/iterator)
 - [MDN - Iteration Protocols in JS](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols)

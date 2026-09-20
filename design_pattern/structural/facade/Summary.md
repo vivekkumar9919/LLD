@@ -4,6 +4,66 @@
 - **Facade Pattern (Structural)**: Provides a simplified, unified interface to a complex subsystem. It hides the underlying complexity and dependencies of the system from the client code.
 - Instead of making your code interact directly with dozens of classes, you create a "Facade" class that provides a simple method (like `startComputer()`) which orchestrates the complex logic internally.
 
+---
+
+## UML Diagram
+```mermaid
+classDiagram
+    class Client {
+        +boot()
+    }
+
+    class ComputerFacade {
+        -powerSupply: PowerSupply
+        -coolingSystem: CoolingSystem
+        -cpu: CPU
+        -memory: Memory
+        -hardDrive: HardDrive
+        -bios: BIOS
+        -os: OperatingSystem
+        +startComputer()
+    }
+
+    class PowerSupply {
+        +providePower()
+    }
+
+    class CoolingSystem {
+        +startFans()
+    }
+
+    class CPU {
+        +initialize()
+    }
+
+    class Memory {
+        +selfTest()
+    }
+
+    class HardDrive {
+        +spinUp()
+    }
+
+    class BIOS {
+        +boot(cpu, memory)
+    }
+
+    class OperatingSystem {
+        +load()
+    }
+
+    Client --> ComputerFacade : calls startComputer()
+    ComputerFacade o-- PowerSupply : orchestrates
+    ComputerFacade o-- CoolingSystem : orchestrates
+    ComputerFacade o-- CPU : orchestrates
+    ComputerFacade o-- Memory : orchestrates
+    ComputerFacade o-- HardDrive : orchestrates
+    ComputerFacade o-- BIOS : orchestrates
+    ComputerFacade o-- OperatingSystem : orchestrates
+```
+
+---
+
 ## Resources
 - [Refactoring Guru - Facade](https://refactoring.guru/design-patterns/facade)
 - [YouTube Link - Facade](https://www.youtube.com/watch?v=0KlnSdvsojc)

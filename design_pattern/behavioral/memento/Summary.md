@@ -3,6 +3,41 @@
 ## About
 The **Memento Design Pattern** is a behavioral design pattern that lets you save and restore the previous state of an object (Originator) without revealing the details of its implementation (encapsulation).
 
+---
+
+## UML Diagram
+```mermaid
+classDiagram
+    class Database {
+        -record: Map
+        +insert(key, value)
+        +update(key, value)
+        +remove(key)
+        +createMemento() DatabaseMemento
+        +restoreFromMemento(memento: DatabaseMemento)
+        +displayRecord()
+    }
+
+    class DatabaseMemento {
+        -#data: Map
+        +constructor(dbData: Map, key: Symbol)
+        +getState(key: Symbol) Map
+    }
+
+    class TransactionManager {
+        -backup: DatabaseMemento
+        +beginTransaction(database: Database)
+        +commitTransaction(database: Database)
+        +rollbackTransaction(database: Database)
+    }
+
+    TransactionManager --> Database : operates on
+    TransactionManager o-- DatabaseMemento : stores snapshot
+    Database ..> DatabaseMemento : creates & restores from
+```
+
+---
+
 ## Pros & Cons
 ### Pros
 - **Preserves Encapsulation:** You can capture snapshots of an object's internal state without violating its encapsulation boundaries (i.e. clients or caretakers do not need direct access to internal fields).

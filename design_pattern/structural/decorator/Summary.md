@@ -4,6 +4,44 @@
 - **Decorator Pattern (Structural)**: Attaches additional responsibilities to an object dynamically. Decorators provide a flexible alternative to subclassing for extending functionality.
 - It uses object composition instead of inheritance to wrap the original object in a "Decorator" class that shares the same interface.
 
+---
+
+## UML Diagram
+```mermaid
+classDiagram
+    class Character {
+        <<abstract>>
+        +getAbilities()* String
+    }
+
+    class Mario {
+        +getAbilities() String
+    }
+
+    class CharacterDecorator {
+        <<abstract>>
+        #character: Character
+        +constructor(character: Character)
+        +getAbilities() String
+    }
+
+    class HeightUp {
+        +getAbilities() String
+    }
+
+    class GunPower {
+        +getAbilities() String
+    }
+
+    Character <|-- Mario : extends
+    Character <|-- CharacterDecorator : extends
+    CharacterDecorator o-- Character : wraps
+    CharacterDecorator <|-- HeightUp : extends
+    CharacterDecorator <|-- GunPower : extends
+```
+
+---
+
 ## Resources
 - [YouTube Video Link](https://www.youtube.com/watch?v=Z9rFlZClYNI)
 - [Refactoring Guru - Decorator](https://refactoring.guru/design-patterns/decorator)

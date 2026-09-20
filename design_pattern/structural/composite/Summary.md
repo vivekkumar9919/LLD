@@ -4,6 +4,48 @@
 - **Composite Pattern (Structural)**: Lets you compose objects into tree structures to represent part-whole hierarchies. It allows clients to treat individual objects and compositions of objects uniformly.
 - It relies on a common interface (Component) shared by both the simple elements (Leaves) and the complex elements (Composites/Containers).
 
+---
+
+## UML Diagram
+```mermaid
+classDiagram
+    class FileSystem {
+        <<abstract>>
+        +ls()*
+        +openAll()*
+        +getSize()* Number
+        +getName()* String
+        +isFolder()* Boolean
+    }
+
+    class File {
+        -name: String
+        -size: Number
+        +ls()
+        +openAll()
+        +getSize() Number
+        +getName() String
+        +isFolder() Boolean
+    }
+
+    class Folder {
+        -name: String
+        -children: List~FileSystem~
+        +add(item: FileSystem)
+        +ls()
+        +openAll()
+        +getSize() Number
+        +getName() String
+        +isFolder() Boolean
+    }
+
+    FileSystem <|-- File : extends
+    FileSystem <|-- Folder : extends
+    Folder o-- FileSystem : contains children
+```
+
+---
+
 ## Resources
 - [YouTube Video Link](https://www.youtube.com/watch?v=xaaiMGmyDJk)
 - [Refactoring Guru - Composite](https://refactoring.guru/design-patterns/composite)
